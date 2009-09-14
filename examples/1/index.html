@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Untitled Document</title>
+		<script src="../../editablegrid.js" /></script>
+		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen"> 
+	</head>
+	<body>
+		
+		<h1>Test editablegrid</h1>
+		
+		<script>
+			var editGrid = new EditableGrid( {});
+			editGrid.init();
+			editGrid.load("grid.xml", callback = function() { 
+				alert("table loaded : " + editGrid.getRowCount()+ " row(s).") });
+		</script>
+		
+		<div id="tablecontent"></div>
+		
+	</body>
+</html>

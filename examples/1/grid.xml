@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<table>
+<metadatas>
+		<column>
+			<name>name</name>
+			<label>The name</label>
+			<datatype>string</datatype>
+		</column>
+		<column>
+			<name>firstname</name>
+			<label>The firstname</label>
+			<datatype>string</datatype>
+		</column>
+		<column>
+			<name>age</name>
+			<label>The Age</label>
+			<datatype>integer</datatype>
+		</column>
+</metadatas>
+
+<datas>
+	<row id="1">
+		<column name="Name">Beaujean</column>		
+		<column name="Firstname">Jean-Yves</column>		
+		<column name="Age">30</column>		
+	</row>
+	<row id="2">
+		<column name="Name">Breuer</column>		
+		<column name="Firstname">Stephanie</column>		
+		<column name="Age">28</column>		
+	</row>
+	<row id="3">
+		<column name="Name">Breuer</column>		
+		<column name="Firstname">Pierre</column>		
+		<column name="Age">30</column>		
+	</row>
+</datas>
+ </table>

@@ -1,0 +1,26 @@
+
+
+/* Tables */
+table.editablegrid { border-collapse: collapse;  } 
+table.editablegrid {
+	border: 1px solid #CCB;
+	margin-bottom: 2em;
+	width: 100%;
+}
+table.editablegrid th {
+	background: #E5E5E5;
+	border: 1px solid #D5D5D5;
+	color: #555;
+	text-align: left;
+	padding: 5px;
+}
+table.editablegrid tr {border-bottom: 1px solid #DDD;}
+table.editablegrid td, table th {padding: 5px;}
+table.editablegrid td {
+	border: 1px solid #E0E0E0;
+}
+
+table.editablegrid tr:hover {
+	background-color: #686868;
+	color: white;
+}
