@@ -3,17 +3,17 @@
 <metadatas>
 		<column>
 			<name>name</name>
-			<label>The name</label>
+			<label>NAME</label>
 			<datatype>string</datatype>
 		</column>
 		<column>
 			<name>firstname</name>
-			<label>The firstname</label>
+			<label>FIRSTNAME</label>
 			<datatype>string</datatype>
 		</column>
 		<column>
 			<name>age</name>
-			<label>The Age</label>
+			<label>AGE</label>
 			<datatype>integer</datatype>
 		</column>
 </metadatas>

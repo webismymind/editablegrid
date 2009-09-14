@@ -24,3 +24,9 @@ table.editablegrid tr:hover {
 	background-color: #686868;
 	color: white;
 }
+
+
+.number {
+	text-align: right;
+	font-weight: bold;
+}

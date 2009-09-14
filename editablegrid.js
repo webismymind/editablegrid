@@ -13,9 +13,21 @@ function Column(config){
         name: "",
         label: "",
         datatype: "string",
+		cellrenderer : null,
     };
     for (var p in props) 
         this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
+}
+
+
+function CellRenderer(config) {
+
+	var props = {
+        datatype: "",
+        render: function(element) { return element.value; },
+    };
+    for (var p in props) 
+        this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]	
 }
 
 
@@ -85,10 +97,34 @@ EditableGrid.prototype.processXML = function(){
         var columnRaws = metadata[0].getElementsByTagName("column");
         for (var i = 0; i < columnRaws.length; i++) {
             var col = columnRaws[i];
+			
+			// build a renderer
+			
+			if (col.getElementsByTagName("datatype")[0].firstChild.nodeValue == "integer") {
+				cellRenderer = new CellRenderer({
+					datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
+					render: function render(element){
+						element.setAttribute("class", "number");
+						return "hello " + element.innerHTML;
+					}
+				});
+			}
+			
+			else  {
+				cellRenderer = new CellRenderer({
+					datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
+					render: function render(element){
+						return "hello " + element.value;
+					}
+				});
+			}
+			
+			
             columns.push(new Column({
                 name: col.getElementsByTagName("name")[0].firstChild.nodeValue,
                 label: col.getElementsByTagName("label")[0].firstChild.nodeValue,
-                datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue
+                datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
+				cellrenderer : cellRenderer
             }));
         }
         
@@ -137,11 +173,13 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex){
 /**
  * Sets the value at the specified index
  * @param {Object} value
- * @param {Object} row
- * @param {Object} column
+ * @param {Object} rowIndex
+ * @param {Object} columnIndex
  */
-EditableGrid.prototype.setValueAt = function(value, row, column){
+EditableGrid.prototype.setValueAt = function(value, rowIndex, columnIndex){
 
+	var rowArray = datas[rowIndex];
+    rowArray[columnIndex] = value;
 }
 
 
@@ -168,7 +206,10 @@ EditableGrid.prototype.renderTable = function(){
             var tr = table.insertRow(i + 1); // on line for the header --> +1
             for (j = 0; j < row.length; j++) {
                 var td = tr.insertCell(j);
-                td.innerHTML = row[j];
+				// the content must be render
+				td.innerHTML = row[j];
+				columns[j].cellrenderer.render(td);
+                
             }
         }
         // TODO Change body by a valid container
