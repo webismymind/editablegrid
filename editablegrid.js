@@ -2,8 +2,6 @@
  * EditableGrid.js
  *
  */
-
-
 /**
  * Column object
  * @param {Object} config
@@ -13,21 +11,22 @@ function Column(config){
         name: "",
         label: "",
         datatype: "string",
-		cellrenderer : null,
+        cellrenderer: null,
     };
     for (var p in props) 
         this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
 }
 
 
-function CellRenderer(config) {
+function CellRenderer(config){
 
-	var props = {
+    var props = {
         datatype: "",
-        render: function(element) { return element.value; },
+        render: function(element){
+        },
     };
     for (var p in props) 
-        this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]	
+        this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
 }
 
 
@@ -56,7 +55,6 @@ EditableGrid.prototype.init = function(){
  */
 EditableGrid.prototype.load = function(url, callback){
 
-    // TODO Test callback before execute.
     with (this) {
         if (window.ActiveXObject) {
             xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
@@ -64,7 +62,9 @@ EditableGrid.prototype.load = function(url, callback){
                 if (dom.readyState == 4) {
                     processXML();
                     renderTable();
-                    callback();
+                    
+                    if (typeof callback == 'function') 
+                        callback();
                 }
             };
         }
@@ -74,7 +74,8 @@ EditableGrid.prototype.load = function(url, callback){
                 xmlDoc.onload = function(){
                     processXML();
                     renderTable();
-                    callback();
+                    if (typeof callback == 'function') 
+                        callback();
                 }
             }
             else {
@@ -97,34 +98,27 @@ EditableGrid.prototype.processXML = function(){
         var columnRaws = metadata[0].getElementsByTagName("column");
         for (var i = 0; i < columnRaws.length; i++) {
             var col = columnRaws[i];
-			
-			// build a renderer
-			
-			if (col.getElementsByTagName("datatype")[0].firstChild.nodeValue == "integer") {
-				cellRenderer = new CellRenderer({
-					datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
-					render: function render(element){
-						element.setAttribute("class", "number");
-						return "hello " + element.innerHTML;
-					}
-				});
-			}
-			
-			else  {
-				cellRenderer = new CellRenderer({
-					datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
-					render: function render(element){
-						return "hello " + element.value;
-					}
-				});
-			}
-			
-			
+            
+            // build a renderer
+            
+            if (col.getElementsByTagName("datatype")[0].firstChild.nodeValue == "number") {
+                cellRenderer = new CellRenderer({
+                    datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
+                    render: function render(element){
+                        element.setAttribute("class", "number");
+                    }
+                });
+            }
+            
+            else /* default cell renderer*/ 
+                cellRenderer = new CellRenderer({});
+            
+            
             columns.push(new Column({
                 name: col.getElementsByTagName("name")[0].firstChild.nodeValue,
                 label: col.getElementsByTagName("label")[0].firstChild.nodeValue,
                 datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
-				cellrenderer : cellRenderer
+                cellrenderer: cellRenderer
             }));
         }
         
@@ -178,7 +172,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex){
  */
 EditableGrid.prototype.setValueAt = function(value, rowIndex, columnIndex){
 
-	var rowArray = datas[rowIndex];
+    var rowArray = datas[rowIndex];
     rowArray[columnIndex] = value;
 }
 
@@ -206,10 +200,9 @@ EditableGrid.prototype.renderTable = function(){
             var tr = table.insertRow(i + 1); // on line for the header --> +1
             for (j = 0; j < row.length; j++) {
                 var td = tr.insertCell(j);
-				// the content must be render
-				td.innerHTML = row[j];
-				columns[j].cellrenderer.render(td);
-                
+                // the content must be render
+                td.innerHTML = row[j];
+                columns[j].cellrenderer.render(td);
             }
         }
         // TODO Change body by a valid container

@@ -14,7 +14,7 @@
 		<column>
 			<name>age</name>
 			<label>AGE</label>
-			<datatype>integer</datatype>
+			<datatype>number</datatype>
 		</column>
 </metadatas>
 
