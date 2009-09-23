@@ -7,17 +7,19 @@
 		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen"> 
 	</head>
 	<body>
-		
+
 		<h1>Test editablegrid</h1>
+
+		<div id="tablecontent">
+		</div>
 		
 		<script>
-			var editGrid = new EditableGrid( {});
+			var editGrid = new EditableGrid( {containerid: "tablecontent"});
 			editGrid.init();
 			editGrid.load("grid.xml", callback = function() { 
 				alert("table loaded : " + editGrid.getRowCount()+ " row(s).") });
 		</script>
 		
-		<div id="tablecontent"></div>
 		
 	</body>
 </html>

@@ -33,7 +33,8 @@ function CellRenderer(config){
 function EditableGrid(config){
 
     var props = {
-        id: "",
+        containerid: "",
+		doubleclick: false,
         columns: new Array(),
         datas: new Array(),
         xmlDoc: null,
@@ -47,6 +48,20 @@ function EditableGrid(config){
  * Init EditableGrid object
  */
 EditableGrid.prototype.init = function(){
+	
+	// attache all events 
+	with (this) {
+		element = document.getElementById(containerid);
+		if (element) {
+			
+			var obj = this;
+			doubleclick ? element.ondblclick = function(e) { obj.mouseClicked(e);} : 
+				element.onclick = function(e) { obj.mouseClicked(e);} 
+		}
+		else {
+			alert("Unable to get element ["+containerid+"]");
+		}
+	}
 }
 
 
@@ -160,8 +175,10 @@ EditableGrid.prototype.getColumnCount = function(){
  */
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex){
 
-    var rowArray = datas[rowIndex];
-    return rowArray[columnIndex];
+	with (this) {
+		var rowArray = datas[rowIndex];
+		return rowArray[columnIndex];
+	}
 }
 
 /**
@@ -172,8 +189,10 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex){
  */
 EditableGrid.prototype.setValueAt = function(value, rowIndex, columnIndex){
 
-    var rowArray = datas[rowIndex];
-    rowArray[columnIndex] = value;
+	with (this) {
+		var rowArray = datas[rowIndex];
+		rowArray[columnIndex] = value;
+	}
 }
 
 
@@ -205,8 +224,23 @@ EditableGrid.prototype.renderTable = function(){
                 columns[j].cellrenderer.render(td);
             }
         }
-        // TODO Change body by a valid container
-        document.body.appendChild(table);
+        document.getElementById(containerid).appendChild(table);
     }
 }
 
+EditableGrid.prototype.mouseClicked = function(e) {
+	
+ with (this) {
+	if (!e) 
+		var e = window.event;
+	var tg = (window.event) ? e.srcElement : e.target;
+	
+	var rowIndex = tg.parentNode.rowIndex-1;
+	var columnIndex = tg.cellIndex;
+	//alert("MouseClicked ! (row,col) = (" + rowIndex+ "," + columnIndex+")");
+	alert("value = " + getValueAt(rowIndex, columnIndex));
+	}
+}
+
+EditableGrid.prototype.edit = function(e){
+}
