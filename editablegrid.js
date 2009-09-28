@@ -12,6 +12,7 @@ function Column(config){
         label: "",
         datatype: "string",
         cellrenderer: null,
+		celleditor: null,
     };
     for (var p in props) 
         this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
@@ -24,6 +25,45 @@ function CellRenderer(config){
         datatype: "",
         render: function(element){
         },
+    };
+    for (var p in props) 
+        this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
+}
+
+
+function CellEditor(config){ // Default editor
+
+    var props = {
+        datatype: "",
+        cancelEditing: function(element){},
+		applyEditing: function(element){},
+		keyHandle: function (element) {
+			alert("keyHandle");
+			// apply with ENTER or TAB AND col have a callback
+             /*   if (event.keyCode == 13 || event.keyCode == 9) {
+                    if (typeof(aCol.valueChanged) == 'function') {
+						debugprint("APPLY TEST VALUE " + newValue);
+						aCol.valueChanged(aCol.name, newValue, srcElem.parentNode.id, objSrcElm, currentValue, srcElem);
+					}
+					else {
+						currentValue = aCol.render(currentValue);
+						focusLost();
+					}
+                }
+                // ESC
+                if (event.keyCode == 27) {
+					currentValue = valueBeforeEditon;
+					focusLost();
+				}
+			*/	
+		},
+		edit: function(element, value){
+			var input = document.createElement("input");
+        	input.setAttribute("type", "text");
+			input.value = value;
+			element.innerHTML = "";
+			element.appendChild(input);
+		},
     };
     for (var p in props) 
         this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p]
@@ -115,7 +155,6 @@ EditableGrid.prototype.processXML = function(){
             var col = columnRaws[i];
             
             // build a renderer
-            
             if (col.getElementsByTagName("datatype")[0].firstChild.nodeValue == "number") {
                 cellRenderer = new CellRenderer({
                     datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
@@ -127,13 +166,17 @@ EditableGrid.prototype.processXML = function(){
             
             else /* default cell renderer*/ 
                 cellRenderer = new CellRenderer({});
-            
+				
+				
+			// build a default editor	  
+			 cellEditor = new CellEditor({});          
             
             columns.push(new Column({
                 name: col.getElementsByTagName("name")[0].firstChild.nodeValue,
                 label: col.getElementsByTagName("label")[0].firstChild.nodeValue,
                 datatype: col.getElementsByTagName("datatype")[0].firstChild.nodeValue,
-                cellrenderer: cellRenderer
+                cellrenderer: cellRenderer,
+				celleditor: cellEditor
             }));
         }
         
@@ -177,7 +220,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex){
 
 	with (this) {
 		var rowArray = datas[rowIndex];
-		return rowArray[columnIndex];
+		return rowArray ? rowArray[columnIndex] : null;
 	}
 }
 
@@ -237,10 +280,23 @@ EditableGrid.prototype.mouseClicked = function(e) {
 	
 	var rowIndex = tg.parentNode.rowIndex-1;
 	var columnIndex = tg.cellIndex;
+	
+	var column = columns[columnIndex];
+	if (column) {
+		var editor = column.celleditor;
+		editor.edit(tg, getValueAt(rowIndex, columnIndex));
+	}
+	//alert("MouseClicked ! (row,col) = (" + rowIndex+ "," + columnIndex+"), type = "  +getColumnType(columnIndex) );	
+	//getColumnType(columnIndex);
 	//alert("MouseClicked ! (row,col) = (" + rowIndex+ "," + columnIndex+")");
-	alert("value = " + getValueAt(rowIndex, columnIndex));
+	//alert("value = " + getValueAt(rowIndex, columnIndex));
 	}
 }
 
-EditableGrid.prototype.edit = function(e){
+EditableGrid.prototype.getColumnType = function( columnIndex){
+	 with (this) {
+	 	var col = columns[columnIndex];
+		return col.datatype;
+	 }
 }
+
