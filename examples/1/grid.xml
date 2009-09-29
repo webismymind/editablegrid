@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <table>
 <metadatas>
-		<column>
+		<column name="name" label="NAME" datatype="string" editable="true" >
 			<name>name</name>
 			<label>NAME</label>
 			<datatype>string</datatype>
+			<editable>true</editable>			
 		</column>
 		<column>
 			<name>firstname</name>
@@ -16,6 +17,17 @@
 			<label>AGE</label>
 			<datatype>number</datatype>
 		</column>
+		<column>
+			<name>nbchild</name>
+			<label>NB CHILD</label>
+			<datatype>enum</datatype>
+			<values>
+				<value label="Un">1</value>
+				<value label="Deux">2</value>
+				<value label="Trois">3</value>
+			</values>
+
+		</column>		
 </metadatas>
 
 <datas>
