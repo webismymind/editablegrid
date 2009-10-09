@@ -258,24 +258,28 @@ EditableGrid.prototype.renderTable = function()
         $(containerid).appendChild(table);
         
         // create header
-        var trHeader = table.insertRow(0);
+        var tHead = document.createElement("THEAD");
+        table.appendChild(tHead);
+        var trHeader = tHead.insertRow(0);
         var columnCount = getColumnCount();
-        for (i = 0; i < columnCount; i++) {
-        	var col = columns[i];
-        	var td = trHeader.insertCell(i);
-        	td.innerHTML = col.label;
+        for (var c = 0; c < columnCount; c++) {
+            var headerCell = document.createElement("TH");
+        	var td = trHeader.appendChild(headerCell);
+        	td.innerHTML = columns[c].label;
         }
         
-        // create rows
+        // create bodt and rows
+        var tBody = document.createElement("TBODY");
+        table.appendChild(tBody);
         var rowCount = getRowCount();
         for (i = 0; i < rowCount; i++) {
-        	var row = data[i];
-        	var tr = table.insertRow(i + 1); // i+1 because there is one line for the header
-        	for (j = 0; j < row.length; j++) {
+        	var tr = tBody.insertRow(i);
+        	for (j = 0; j < columnCount; j++) {
         		
         		// create cell and render its content
         		var td = tr.insertCell(j);
-        		td.innerHTML = row[j];
+        		var value = getValueAt(i,j);
+        		td.innerHTML = value ? value : "";
         		columns[j].cellrenderer.render(td);
         	}
         }
