@@ -7,6 +7,15 @@ table.editablegrid {
 	width: 100%;
 }
 
+table.editablegrid tr {
+	border-bottom: 1px solid #DDD;
+}
+
+table.editablegrid>tbody tr:hover {
+	background-color: #888888;
+	color: white;
+}
+
 table.editablegrid th {
 	background: #E5E5E5;
 	border: 1px solid #D5D5D5;
@@ -15,21 +24,9 @@ table.editablegrid th {
 	padding: 5px;
 }
 
-table.editablegrid tr {
-	border-bottom: 1px solid #DDD;
-}
-
-table.editablegrid td, table th {
-	padding: 5px;
-}
-
 table.editablegrid td {
+	padding: 5px;
 	border: 1px solid #E0E0E0;
-}
-
-table.editablegrid>tbody tr:hover {
-	background-color: #888888;
-	color: white;
 }
 
 .number {
