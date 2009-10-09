@@ -2,45 +2,26 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<title>EditableGrid - Sample 1</title>
+		<title>EditableGrid Demo</title>
 		<script src="../../editablegrid.js" /></script>
-		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen"> 
-		<style>
-			body {
-				font-family:'lucida grande', tahoma, verdana, arial, sans-serif;
-				font-size:11px;
-			}
-			h1 { font-size: 15px;}
-			h2 { font-size: 13px;}
-			.ok { background-color: #0a8819; color: white; padding: 10px;}
-			
-		</style>
-	</head>
-	<body>
-		
-
-		<h1>Test editablegrid</h1>
-		
-		<div id="message">
-		</div>
-
-		<div id="tablecontent">
-		</div>
-		
+		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="index.css" type="text/css" media="screen">
+		 
 		<script>
-			
-			window.onload = function(){
-			
-				var editGrid = new EditableGrid({
-					containerid: "tablecontent"
-				});
-				editGrid.init();
-				editGrid.load("grid.xml", callback = function(){
-					document.getElementById("message").innerHTML = "<p class=\"ok\">table loaded : " + editGrid.getRowCount() + " row(s).";
+			window.onload = function() {
+				var editableGrid = new EditableGrid( { containerid: "tablecontent" });
+				editableGrid.load("grid.xml", callback = function() { 
+					$("message").innerHTML = "<p class=\"ok\">Table loaded : " + editableGrid.getRowCount() + " row(s)."; 
 				});
 			}
-		</script>
+		</script>	
 		
-		
+	</head>
+	
+	<body>
+		<h1>Test editablegrid</h1>
+		<div id="message"></div>
+		<div id="tablecontent"></div>
 	</body>
+	
 </html>

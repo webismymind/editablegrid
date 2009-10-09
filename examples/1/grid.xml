@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <table>
-<metadatas>
-		<column name="name" label="NAME" datatype="string" editable="true" >
-			<name>name</name>
-			<label>NAME</label>
-			<datatype>string</datatype>
-			<editable>true</editable>			
-		</column>
-		<column>
-			<name>firstname</name>
-			<label>FIRSTNAME</label>
-			<datatype>string</datatype>
-		</column>
-		<column>
-			<name>age</name>
-			<label>AGE</label>
-			<datatype>number</datatype>
-		</column>
-		<column>
-			<name>nbchild</name>
-			<label>NB CHILD</label>
-			<datatype>enum</datatype>
+
+	<metadata>
+
+		<column name="name" label="NAME" datatype="string" editable="true"/>
+		<column name="firstname" label="FIRSTNAME" datatype="string"/>
+		<column name="age" label="AGE" datatype="number"/>
+		<column name="nbchild" label="NB CHILD" datatype="enum">
 			<values>
-				<value label="Un">1</value>
-				<value label="Deux">2</value>
-				<value label="Trois">3</value>
+				<value label="Un" value="1"/>
+				<value label="Deux" value="1"/>
+				<value label="Trois" value="2"/>
 			</values>
-
 		</column>		
-</metadatas>
 
-<datas>
-	<row id="1">
-		<column name="Name">Beaujean</column>		
-		<column name="Firstname">Jean-Yves</column>		
-		<column name="Age">30</column>		
-	</row>
-	<row id="2">
-		<column name="Name">Breuer</column>		
-		<column name="Firstname">Stephanie</column>		
-		<column name="Age">28</column>		
-	</row>
-	<row id="3">
-		<column name="Name">Breuer</column>		
-		<column name="Firstname">Pierre</column>		
-		<column name="Age">30</column>		
-	</row>
-</datas>
+	</metadata>
+
+	<data>
+
+		<row id="1">
+			<column>Beaujean</column>		
+			<column>Jean-Yves</column>		
+			<column>30</column>		
+		</row>
+
+		<row id="2">
+			<column>Breuer</column>		
+			<column>Stephanie</column>		
+			<column>28</column>		
+		</row>
+
+		<row id="3">
+			<column>Breuer</column>		
+			<column>Pierre</column>		
+			<column>30</column>		
+		</row>
+
+	</data>
+	
  </table>

@@ -1,0 +1,16 @@
+body {
+	font-family:'lucida grande', tahoma, verdana, arial, sans-serif;
+	font-size:11px;
+}
+
+h1 { 
+	font-size: 15px;
+}
+
+h2 { 
+	font-size: 13px;
+}
+
+.ok { 
+	background-color: #0a8819; color: white; padding: 10px;
+}
