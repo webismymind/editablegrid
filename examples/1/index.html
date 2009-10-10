@@ -4,15 +4,21 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<title>EditableGrid Demo</title>
 		<script src="../../editablegrid.js" /></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_editors.js" ></script>
 		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen">
 		<link rel="stylesheet" href="index.css" type="text/css" media="screen">
 		 
 		<script>
+
+			function msg(text, style) { $("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; } 
+		
 			window.onload = function() {
-				var editableGrid = new EditableGrid( { containerid: "tablecontent" });
-				editableGrid.load("grid.xml", callback = function() { 
-					$("message").innerHTML = "<p class=\"ok\">Table loaded : " + editableGrid.getRowCount() + " row(s)."; 
-				});
+				var editableGrid = new EditableGrid( { 
+					containerid: "tablecontent",
+			        modelChanged: function(rowIndex, columnIndex, value) { msg("Cell at " + rowIndex + "," + columnIndex + " has changed: new value = '" + value + "'"); },
+		        	tableLoaded: function() { msg("Table loaded : " + this.getRowCount() + " row(s)"); }
+				 });
+				editableGrid.load("grid.xml"); 
 			}
 		</script>	
 		

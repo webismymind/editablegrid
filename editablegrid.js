@@ -31,59 +31,18 @@ function Column(config)
  * Renderer object. 
  * @param {Object} config
  */
-function CellRenderer(config){
-
+function CellRenderer(config)
+{
 	// default properties
     var props = {
         datatype: "",
-        render: function(element) { return element.value; },
+        render: function(element, value) { 
+    		element.innerHTML = value ? value : "";
+    	},
     };
 
     // override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
-}
-
-/**
- * Default cell editor
- * @param {Object} config
- */
-function CellEditor(config)
-{
-	// default properties
-    var props = {
-   		htmlinputobject: null,
-        cancelEditing: function(){ alert("cancel"); },
-		applyEditing: function(){ alert("apply"); },
-		edit: function(element, value)
-		{
-			htmlinputobject = document.createElement("input");
-        	htmlinputobject.setAttribute("type", "text");
-			htmlinputobject.value = value;
-			htmlinputobject.celleditor = this;
-
-			htmlinputobject.onkeypress = function(event) {
-
-				// ENTER or TAB: apply value
-				if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing();
-
-				// ESC: cancel editing
-				if (event.keyCode == 27) this.celleditor.cancelEditing();
-			};
-			
-			element.innerHTML = "";
-			element.appendChild(htmlinputobject);
-			htmlinputobject.select();
-			htmlinputobject.focus();
-		},
-    };
-
-    // override default properties with the ones given
-    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
-}
-
-CellEditor.prototype.getEditorValue = function() 
-{
-	return htmlinputobject.value;
 }
 
 /**
@@ -98,15 +57,19 @@ function EditableGrid(config)
 		doubleclick: false,
         columns: new Array(),
         data: new Array(),
-        xmlDoc: null
+        xmlDoc: null,
+        
+        // callback functions
+        tableLoaded: function() {},
+        modelChanged: function(rowIndex, columnIndex, value) {}
     };
     
 	// override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
 
-    // get container attach handler on click or double click 
+    // get container and attach handler on click or double click 
 	var element = $(this.containerid);
-	if (!element) alert("Unable to get element ["+this.containerid+"]");
+	if (!element) alert("Unable to get element [" + this.containerid + "]");
 	else {
 		element.editablegrid = this;
 		if (this.doubleclick) element.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
@@ -117,7 +80,7 @@ function EditableGrid(config)
 /**
  * Load the XML metadata and data
  */
-EditableGrid.prototype.load = function(url, callback)
+EditableGrid.prototype.load = function(url)
 {
     with (this) {
     	
@@ -129,7 +92,7 @@ EditableGrid.prototype.load = function(url, callback)
                 if (dom.readyState == 4) {
                     processXML();
                     renderTable();
-                    if (typeof callback == 'function') callback();
+                    tableLoaded();
                 }
             };
         }
@@ -141,7 +104,7 @@ EditableGrid.prototype.load = function(url, callback)
         	xmlDoc.onload = function() {
         		processXML();
         		renderTable();
-        		if (typeof callback == 'function') callback();
+                tableLoaded();
         	}
         }
         
@@ -174,7 +137,10 @@ EditableGrid.prototype.processXML = function()
             if (col.getAttribute("datatype") == "number") {
                 cellRenderer = new CellRenderer({
                     datatype: col.getAttribute("datatype"),
-                    render: function render(element) { element.setAttribute("class", "number"); }
+                    render: function(element, value) { 
+                		element.innerHTML = value ? value : "";
+                		element.setAttribute("class", "number");
+                	}
                 });
             }
             
@@ -182,7 +148,7 @@ EditableGrid.prototype.processXML = function()
             else cellRenderer = new CellRenderer({});
 				
 			// build a default editor	  
-            cellEditor = new CellEditor({});          
+            cellEditor = new TextCellEditor({});          
             isEditable = col.hasAttribute("editable") ? col.getAttribute("editable") : false;
             
             columns.push(new Column({
@@ -239,7 +205,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
  * @param {Object} rowIndex
  * @param {Object} columnIndex
  */
-EditableGrid.prototype.setValueAt = function(value, rowIndex, columnIndex)
+EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value)
 {
 	var rows = this.data[rowIndex];
 	if (rows) rows[columnIndex] = value;
@@ -278,9 +244,7 @@ EditableGrid.prototype.renderTable = function()
         		
         		// create cell and render its content
         		var td = tr.insertCell(j);
-        		var value = getValueAt(i,j);
-        		td.innerHTML = value ? value : "";
-        		columns[j].cellrenderer.render(td);
+        		columns[j].cellrenderer.render(td, getValueAt(i,j));
         	}
         }
     }
@@ -303,8 +267,8 @@ EditableGrid.prototype.mouseClicked = function(e)
 		// edit current cell value
 		var column = columns[columnIndex];
 		if (column) {
-			if (!column.editable) alert("Column " + columnIndex + " is not editable");
-			else column.celleditor.edit(target, getValueAt(rowIndex, columnIndex));
+			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
+			else column.celleditor._edit(this, rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 }
@@ -317,4 +281,3 @@ EditableGrid.prototype.getColumnType = function( columnIndex)
 {
 	return this.columns[columnIndex].datatype;
 }
-
