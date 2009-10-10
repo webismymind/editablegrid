@@ -54,7 +54,6 @@ InputCellEditor.prototype = new CellEditor;
 function InputCellEditor(inputType)
 {
 	CellEditor();
-   	this.super = CellEditor.prototype;
    	this.inputType = inputType;
 };
 
@@ -87,13 +86,12 @@ TextCellEditor.prototype = new InputCellEditor;
 function TextCellEditor()
 {
 	InputCellEditor("text");
-	this.super = InputCellEditor.prototype; 
 };
 
 TextCellEditor.prototype.edit = function(element, value)
 {
 	// call base edit method to create html input
-	var htmlInput = this.super.edit.call(this, element, value);
+	var htmlInput = InputCellEditor.prototype.edit.call(this, element, value);
 	
 	// listen to pressed keys
 	htmlInput.onkeypress = function(event) {
@@ -104,4 +102,56 @@ TextCellEditor.prototype.edit = function(element, value)
 		// ESC: cancel editing
 		if (event.keyCode == 27) this.celleditor.cancelEditing(this.parentNode);
 	};
+	
+	return htmlInput;
+};
+
+/**
+ * Number cell editor
+ * Class to edit a numeric cell with an HTML text input 
+ */
+
+NumberCellEditor.prototype = new TextCellEditor;
+
+function NumberCellEditor(type)
+{
+	TextCellEditor();
+	this.type = type;
+};
+
+NumberCellEditor.prototype.isValidNumber = function(value) 
+{
+	// check that it is a valid number
+	if (isNaN(value)) return false;
+	
+	// for integers check that it's not a float
+	if (this.type == "integer" && parseInt(value) != parseFloat(value)) return false;
+	
+	// it's ok
+	return true;
+}
+
+NumberCellEditor.prototype.updateStyle = function(htmlInput)
+{
+	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "#00FF33" : "#FF0033";
+}
+
+NumberCellEditor.prototype.edit = function(element, value)
+{
+	// call base edit method to create text input field
+	var htmlInput = TextCellEditor.prototype.edit.call(this, element, value);
+	
+	// update style of input field
+	this.updateStyle(htmlInput);
+	
+	// listen to keyup to check number validity and update style of input field 
+	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
+
+	return htmlInput;
+};
+
+NumberCellEditor.prototype.applyEditing = function(element, newValue) 
+{
+	// apply only if valid
+	return this.isValidNumber(newValue) ? TextCellEditor.prototype.applyEditing.call(this, element, newValue) : false;
 };

@@ -133,8 +133,9 @@ EditableGrid.prototype.processXML = function()
         for (var i = 0; i < columnDeclarations.length; i++) {
             var col = columnDeclarations[i];
             
-            // build a specific renderer for numbers
-            if (col.getAttribute("datatype") == "number") {
+            // build a specific renderer for numeric types
+            var datatype = col.getAttribute("datatype");
+            if (datatype == "integer" || datatype == "double") {
                 cellRenderer = new CellRenderer({
                     datatype: col.getAttribute("datatype"),
                     render: function(element, value) { 
@@ -148,7 +149,7 @@ EditableGrid.prototype.processXML = function()
             else cellRenderer = new CellRenderer({});
 				
 			// build a default editor	  
-            cellEditor = new TextCellEditor({});          
+            cellEditor = datatype == "integer" || datatype == "double" ? new NumberCellEditor(datatype) : new TextCellEditor();          
             isEditable = col.hasAttribute("editable") ? col.getAttribute("editable") : false;
             
             columns.push(new Column({

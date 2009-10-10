@@ -4,9 +4,10 @@
 	<metadata>
 
 		<column name="name" label="NAME" datatype="string" editable="true"/>
-		<column name="firstname" label="FIRSTNAME" datatype="string"/>
-		<column name="age" label="AGE" datatype="number"/>
-		<column name="nbchild" label="NB CHILD" datatype="enum">
+		<column name="firstname" label="FIRSTNAME" datatype="string" editable="true"/>
+		<column name="age" label="AGE" datatype="integer" editable="true"/>
+		<column name="height" label="HEIGHT" datatype="double" editable="true"/>
+		<column name="nbchild" label="NB CHILD" datatype="integer">
 			<values>
 				<value label="Un" value="1"/>
 				<value label="Deux" value="1"/>
@@ -19,21 +20,31 @@
 	<data>
 
 		<row id="1">
-			<column>Beaujean</column>		
-			<column>Jean-Yves</column>		
-			<column>30</column>		
+			<column>Duke</column>		
+			<column>Patience</column>		
+			<column>32</column>
+			<column>1.84</column>		
 		</row>
 
 		<row id="2">
-			<column>Breuer</column>		
-			<column>Stephanie</column>		
-			<column>28</column>		
+			<column>Rogers</column>		
+			<column>Denise</column>		
+			<column>59</column>		
+			<column>1.62</column>		
 		</row>
 
 		<row id="3">
-			<column>Breuer</column>		
-			<column>Pierre</column>		
-			<column>30</column>		
+			<column>Compton</column>		
+			<column>Felix</column>		
+			<column>21</column>		
+			<column>1.73</column>		
+		</row>
+
+		<row id="4">
+			<column>Conway</column>		
+			<column>Coby</column>		
+			<column>47</column>		
+			<column>1.96</column>		
 		</row>
 
 	</data>
