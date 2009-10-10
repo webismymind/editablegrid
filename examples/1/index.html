@@ -15,6 +15,7 @@
 			window.onload = function() {
 				var editableGrid = new EditableGrid( { 
 					containerid: "tablecontent",
+					className: "testgrid",
 			        modelChanged: function(rowIndex, columnIndex, value) { msg("Cell at " + rowIndex + "," + columnIndex + " has changed: new value = '" + value + "'"); },
 		        	tableLoaded: function() { msg("Table loaded : " + this.getRowCount() + " row(s)"); }
 				 });

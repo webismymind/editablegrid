@@ -16,3 +16,36 @@ h2 {
 	color: white; 
 	padding: 5px;
 }
+
+#tablecontent {
+	width: 600px;
+}
+
+table.testgrid { 
+	border-collapse: collapse; 
+	border: 1px solid #CCB;
+	margin-bottom: 2em;
+	width: 100%;
+}
+
+table.testgrid tr {
+	border-bottom: 1px solid #DDD;
+}
+
+table.testgrid>tbody tr:hover {
+	background-color: #888888;
+	color: white;
+}
+
+table.testgrid th {
+	background: #E5E5E5;
+	border: 1px solid #D5D5D5;
+	color: #555;
+	text-align: left;
+	padding: 5px;
+}
+
+table.testgrid td {
+	padding: 5px;
+	border: 1px solid #E0E0E0;
+}

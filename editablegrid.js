@@ -58,6 +58,7 @@ function EditableGrid(config)
         columns: new Array(),
         data: new Array(),
         xmlDoc: null,
+        className: "editablegrid",
         
         // callback functions
         tableLoaded: function() {},
@@ -221,7 +222,7 @@ EditableGrid.prototype.renderTable = function()
 
     	// create editablegrid table and add it to our container 
     	var table = document.createElement("table");
-        table.setAttribute("class", "editablegrid");
+        table.setAttribute("class", this.className);
         $(containerid).appendChild(table);
         
         // create header

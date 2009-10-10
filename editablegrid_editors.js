@@ -83,15 +83,17 @@ InputCellEditor.prototype.edit = function(element, value)
 
 TextCellEditor.prototype = new InputCellEditor;
 
-function TextCellEditor()
+function TextCellEditor(size)
 {
 	InputCellEditor("text");
+	this.size = size | 5;
 };
 
 TextCellEditor.prototype.edit = function(element, value)
 {
 	// call base edit method to create html input
 	var htmlInput = InputCellEditor.prototype.edit.call(this, element, value);
+	htmlInput.setAttribute("size", this.size)
 	
 	// listen to pressed keys
 	htmlInput.onkeypress = function(event) {
@@ -133,7 +135,7 @@ NumberCellEditor.prototype.isValidNumber = function(value)
 
 NumberCellEditor.prototype.updateStyle = function(htmlInput)
 {
-	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "#00FF33" : "#FF0033";
+	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "#00DD22" : "#DD0022";
 }
 
 NumberCellEditor.prototype.edit = function(element, value)
