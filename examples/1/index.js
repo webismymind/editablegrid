@@ -16,11 +16,14 @@ function initializeGrid(grid)
 		}
 	}));
 
+	// show unit when rendering the height
+	grid.setCellRenderer(3, new CellRenderer({ 
+		render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); } 
+	})); 
+
 	// use a flag image to render the selected country
 	grid.setCellRenderer(5, new CellRenderer({
-		render: function(cell, value) {
-			cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : "";
-		}
+		render: function(cell, value) { cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
 	})); 
 
 	// render the grid
