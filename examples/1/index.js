@@ -3,6 +3,12 @@ function displayMessage(text, style)
 	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
 } 
 
+FlagCellRenderer.prototype = new CellRenderer();
+function FlagCellRenderer() {}
+FlagCellRenderer.prototype.render = function(cell, value) {
+	cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; 
+};
+
 function initializeGrid(grid) 
 {
 	// the list of allowed countries depend on the selected continent
@@ -17,11 +23,7 @@ function initializeGrid(grid)
 	}));
 
 	// use a flag image to render the selected country
-	grid.setCellRenderer(5, new CellRenderer({ 
-		render: function (cell, value) { 
-			cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; 
-		}
-	}));
+	grid.setCellRenderer(5, new FlagCellRenderer()); 
 
 	// render the grid
 	grid.renderGrid();

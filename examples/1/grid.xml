@@ -7,7 +7,7 @@
 		<column name="firstname" label="FIRSTNAME" datatype="string"/>
 		<column name="age" label="AGE" datatype="integer" editable="true"/>
 		<column name="height" label="HEIGHT" datatype="double" editable="true"/>
-		
+	
 		<column name="continent" label="CONTINENT" datatype="string" editable="true">
 			<values>
 				<value value="eu" label="Europe"/>
@@ -18,6 +18,7 @@
 				
 		<column name="country" label="COUNTRY" datatype="string" editable="true"/>
 
+		<column name="freelance" label="FREELANCE" datatype="boolean" editable="true"/>
 	</metadata>
 
 	<data>
@@ -44,6 +45,7 @@
 			<column>1.62</column>
 			<column>eu</column>
 			<column>nl</column>
+			<column>1</column>
 		</row>
 
 		<row id="3">

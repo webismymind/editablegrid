@@ -32,23 +32,6 @@ function Column(config)
 }
 
 /**
- * Renderer object. 
- * @param {Object} config
- */
-function CellRenderer(config)
-{
-	// default properties
-    var props = {
-        render: function(element, value) { 
-    		element.innerHTML = value ? value : "";
-    	}
-    };
-
-    // override default properties with the ones given
-    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
-}
-
-/**
  * Enum provider object. 
  * @param {Object} config
  */
@@ -168,40 +151,19 @@ EditableGrid.prototype.processXML = function()
                 }
             }
 
-            // create a specific renderer for enumerated columns
-            if (optionValues) {
-            	cellRenderer = new CellRenderer({ 
-            		render: function(element, value) { 
-            			element.innerHTML = (value ? (value in this.optionValues ? this.optionValues[value] : value) : ""); 
-            		} 
-            	});
-            	cellRenderer.optionValues = optionValues;
-            }
-
-            // create a specific renderer for numeric types
-            else if (datatype == "integer" || datatype == "double") {
-                cellRenderer = new CellRenderer({
-                    render: function(element, value) { 
-                		element.innerHTML = value ? value : "";
-                		element.setAttribute("class", "number");
-                	}
-                });
-            }
-
-            // otherwise use the default cell renderer
-            else cellRenderer = new CellRenderer({});
-
             // create new column
             var column = new Column({
             	name: col.getAttribute("name"),
             	label: col.getAttribute("label"),
             	datatype: col.getAttribute("datatype"),
             	editable : col.hasAttribute("editable") ? col.getAttribute("editable") : false,
-            	optionValues: optionValues, 
-            	cellRenderer: cellRenderer,
+            	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
             });
+
+			// create suited cell renderer
+            _createCellRenderer(column);  
 
 			// create suited cell editor
             _createCellEditor(column);  
@@ -228,6 +190,24 @@ EditableGrid.prototype.processXML = function()
 }
 
 /**
+ * Creates a suitable cell renderer for the column
+ */
+EditableGrid.prototype._createCellRenderer = function(column)
+{
+	column.cellRenderer = 
+		column.enumProvider ? new EnumCellRenderer() :
+		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
+    	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
+    	new CellRenderer();
+		
+	// give access to the column from the cell renderer
+	if (column.cellRenderer) {
+		column.cellRenderer.editablegrid = this;
+		column.cellRenderer.column = column;
+	}
+}
+
+/**
  * Creates a suitable cell editor for the column
  */
 EditableGrid.prototype._createCellEditor = function(column)
@@ -235,11 +215,14 @@ EditableGrid.prototype._createCellEditor = function(column)
 	column.cellEditor = 
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
+		column.datatype == "boolean" ? null :
 		new TextCellEditor();  
 		
 	// give access to the column from the cell editor
-	column.cellEditor.editablegrid = this;
-	column.cellEditor.column = column;
+	if (column.cellEditor) {
+		column.cellEditor.editablegrid = this;
+		column.cellEditor.column = column;
+	}
 }
 
 /**
@@ -283,7 +266,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value)
 	
 	// render new value
 	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
-	this.columns[columnIndex].cellRenderer.render(this.getCell(rowIndex, columnIndex), value);
+	this.columns[columnIndex].cellRenderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
 }
 
 /**
@@ -307,7 +290,8 @@ EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
 	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
 	else this.columns[columnIndex].enumProvider = enumProvider;
 	
-	// we must recreate the cell editor for this column
+	// we must recreate the cell renderer and editor for this column
+	this._createCellRenderer(this.columns[columnIndex]);
 	this._createCellEditor(this.columns[columnIndex]);
 }
 
@@ -382,7 +366,7 @@ EditableGrid.prototype.renderGrid = function()
         		
         		// create cell and render its content
         		var td = tr.insertCell(j);
-        		columns[j].cellRenderer.render(td, getValueAt(i,j));
+        		columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
         	}
         }
     }
@@ -399,6 +383,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		
 		// get row and column index from the clicked cell
 		var target = e.target || e.srcElement;
+		if (target.parentNode.parentNode.tagName != "TBODY") return;
 		var rowIndex = target.parentNode.rowIndex - 1; // remove 1 for the header
 		var columnIndex = target.cellIndex;
 		
@@ -406,7 +391,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else column.cellEditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else if (column.cellEditor) column.cellEditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 }
