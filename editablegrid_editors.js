@@ -34,12 +34,12 @@ CellEditor.prototype.cancelEditing = function(element)
 	}
 };
 
-CellEditor.prototype.applyEditing = function(element, newValue) 
+CellEditor.prototype.applyEditing = function(element, newValue, render) 
 {
 	with (this) {
 		
 		// update model
-		editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue);
+		editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue, render);
 
 		// let the user handle the model change
 		editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);

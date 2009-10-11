@@ -7,6 +7,11 @@
 
 function CellRenderer(config)
 {
+	// default properties
+    var props = { render: null };
+
+    // override default properties with the ones given
+    for (var p in props) if (typeof config != 'undefined' && typeof config[p] != 'undefined') this[p] = config[p];
 }
 
 CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value) 
@@ -74,8 +79,14 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
-	htmlInput.setAttribute("size", this.fieldSize)
-	htmlInput.value = value;
+	htmlInput.checked = value ? true : false;
+	htmlInput.disabled = !this.column.editable;
+	
+	// this renderer is a little special because it allows direct edition
+	var cellEditor = new CellEditor();
+	cellEditor.editablegrid = this.editablegrid;
+	cellEditor.column = this.column;
+	htmlInput.onclick = function(event) { cellEditor.applyEditing(element, htmlInput.checked ? true : false, false); }
 
 	// give access to the cell editor and element from the editor field
 	htmlInput.element = element;

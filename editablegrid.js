@@ -156,7 +156,7 @@ EditableGrid.prototype.processXML = function()
             	name: col.getAttribute("name"),
             	label: col.getAttribute("label"),
             	datatype: col.getAttribute("datatype"),
-            	editable : col.hasAttribute("editable") ? col.getAttribute("editable") : false,
+            	editable : col.hasAttribute("editable") ? col.getAttribute("editable") == "true" : false,
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
@@ -258,15 +258,19 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
  * @param {Object} rowIndex
  * @param {Object} columnIndex
  */
-EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value)
+EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, render)
 {
+	if (typeof render == "undefined") render = true;
+	
 	// set new value in model
 	var rows = this.data[rowIndex];
 	if (rows) rows[columnIndex] = value;
 	
 	// render new value
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
-	this.columns[columnIndex].cellRenderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
+	if (render) {
+		if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+		this.columns[columnIndex].cellRenderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
+	}
 }
 
 /**
