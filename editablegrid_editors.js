@@ -8,12 +8,10 @@ function CellEditor()
 {
 }
 
-CellEditor.prototype._edit = function(editablegrid, rowIndex, columnIndex, element, value) 
+CellEditor.prototype._edit = function(rowIndex, columnIndex, element, value) 
 {
 	// remember all the things we need to apply/cancel edition
 	element.originalValue = value;
-	element.editablegrid = editablegrid;
-	element.column = editablegrid.columns[columnIndex];
 	element.rowIndex = rowIndex; 
 	element.columnIndex = columnIndex;
 	
@@ -23,8 +21,17 @@ CellEditor.prototype._edit = function(editablegrid, rowIndex, columnIndex, eleme
 
 CellEditor.prototype.cancelEditing = function(element) 
 {
-	// render value before editon
-	with (this) element.column.cellrenderer.render(element, element.originalValue);
+	with (this) {
+		
+		// render value before editon
+		if (element) column.cellrenderer.render(element, element.originalValue);
+	
+		// clear fixed editor zone if any
+		if (editablegrid.editmode == "fixed") {
+			var editorzone = $(this.editablegrid.editorzoneid);
+			while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
+		}
+	}
 };
 
 CellEditor.prototype.applyEditing = function(element, newValue) 
@@ -32,13 +39,19 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 	with (this) {
 		
 		// update model
-		element.editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue);
+		editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue);
 
 		// let the user handle the model change
-		element.editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);
+		editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);
 		
 		// render new value
-		element.column.cellrenderer.render(element, newValue);
+		column.cellrenderer.render(element, newValue);
+
+		// clear fixed editor zone if any
+		if (editablegrid.editmode == "fixed") {
+			var editorzone = $(this.editablegrid.editorzoneid);
+			while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
+		}
 	}
 };
 
@@ -51,29 +64,53 @@ CellEditor.prototype.edit = function(element, value) {};
 
 InputCellEditor.prototype = new CellEditor;
 
-function InputCellEditor(inputType)
+function InputCellEditor()
 {
 	CellEditor();
-   	this.inputType = inputType;
 };
 
-InputCellEditor.prototype.edit = function(element, value)
+InputCellEditor.prototype.edit = function(element, value, htmlInput)
 {
-	// create input field
-	var htmlInput = document.createElement("input");
-	htmlInput.setAttribute("type", this.inputType);
-	htmlInput.value = value;
+	// give access to the cell editor and element from the editor field
+	htmlInput.element = element;
 	htmlInput.celleditor = this;
+
+	// when focus is lost we cancel edition
+	htmlInput.onblur = function(event) { this.celleditor.cancelEditing(this.element); };
+
+	// listen to pressed keys
+	htmlInput.onkeypress = function(event) {
+
+		// ENTER or TAB: apply value
+		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.value);
+		
+		// ESC: cancel editing
+		if (event.keyCode == 27) this.celleditor.cancelEditing(this.element);
+	};
+
+	// static mode: add input field in the table cell
+	if (this.editablegrid.editmode == "static") {
+		while (element.hasChildNodes()) element.removeChild(element.firstChild);
+		element.appendChild(htmlInput);
+	}
 	
-	// clear cell and add input field
-	while (element.hasChildNodes()) element.removeChild(element.firstChild);
-	element.appendChild(htmlInput);
+	// absolute mode: add input field in absolute position over table cell, leaving current content
+	if (this.editablegrid.editmode == "absolute") {
+		element.appendChild(htmlInput);
+		htmlInput.style.position = "absolute";
+		htmlInput.style.left = (this.editablegrid.getCellX(element) + 1) + "px";
+		htmlInput.style.top = (this.editablegrid.getCellY(element) + 1) + "px";
+	}
+
+	// fixed mode: don't show input field in the cell 
+	if (this.editablegrid.editmode == "fixed") {
+		var editorzone = $(this.editablegrid.editorzoneid);
+		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
+		editorzone.appendChild(htmlInput);
+	}
 	
 	// give focus to the created text field
-	htmlInput.select();
 	htmlInput.focus();
-
-	return htmlInput; 
 };
 
 /**
@@ -81,31 +118,28 @@ InputCellEditor.prototype.edit = function(element, value)
  * Class to edit a cell with an HTML text input 
  */
 
-TextCellEditor.prototype = new InputCellEditor;
+TextCellEditor.prototype = new InputCellEditor();
 
 function TextCellEditor(size)
 {
-	InputCellEditor("text");
-	this.size = size | 5;
+	this.fieldSize = size || 16;
 };
 
 TextCellEditor.prototype.edit = function(element, value)
 {
-	// call base edit method to create html input
-	var htmlInput = InputCellEditor.prototype.edit.call(this, element, value);
-	htmlInput.setAttribute("size", this.size)
-	
-	// listen to pressed keys
-	htmlInput.onkeypress = function(event) {
+	// create and initialize text field
+	var htmlInput = document.createElement("input"); 
+	htmlInput.setAttribute("type", "text");
+	htmlInput.setAttribute("size", this.fieldSize)
+	htmlInput.value = value;
 
-		// ENTER or TAB: apply value
-		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.parentNode, this.value);
-		
-		// ESC: cancel editing
-		if (event.keyCode == 27) this.celleditor.cancelEditing(this.parentNode);
-	};
+	// call base edit method to display text field
+	InputCellEditor.prototype.edit.call(this, element, value, htmlInput);
+
+	// select text
+	htmlInput.select();
 	
-	return htmlInput;
+	return htmlInput; 
 };
 
 /**
@@ -113,11 +147,10 @@ TextCellEditor.prototype.edit = function(element, value)
  * Class to edit a numeric cell with an HTML text input 
  */
 
-NumberCellEditor.prototype = new TextCellEditor;
+NumberCellEditor.prototype = new TextCellEditor(4);
 
 function NumberCellEditor(type)
 {
-	TextCellEditor();
 	this.type = type;
 };
 
@@ -129,13 +162,14 @@ NumberCellEditor.prototype.isValidNumber = function(value)
 	// for integers check that it's not a float
 	if (this.type == "integer" && parseInt(value) != parseFloat(value)) return false;
 	
-	// it's ok
+	// the integer or double is valid
 	return true;
 }
 
 NumberCellEditor.prototype.updateStyle = function(htmlInput)
 {
-	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "#00DD22" : "#DD0022";
+	// red background for invalid numbers
+	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "" : "#DD0022";
 }
 
 NumberCellEditor.prototype.edit = function(element, value)
@@ -145,6 +179,9 @@ NumberCellEditor.prototype.edit = function(element, value)
 	
 	// update style of input field
 	this.updateStyle(htmlInput);
+	
+	// align field to the right
+	if (this.editablegrid.editmode == "absolute") htmlInput.style.left = (parseInt(htmlInput.style.left) + element.offsetWidth - htmlInput.offsetWidth) + "px";
 	
 	// listen to keyup to check number validity and update style of input field 
 	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
@@ -156,4 +193,49 @@ NumberCellEditor.prototype.applyEditing = function(element, newValue)
 {
 	// apply only if valid
 	return this.isValidNumber(newValue) ? TextCellEditor.prototype.applyEditing.call(this, element, newValue) : false;
+};
+
+/**
+ * Select cell editor
+ * Class to edit a cell with an HTML select input 
+ */
+
+SelectCellEditor.prototype = new InputCellEditor();
+
+function SelectCellEditor()
+{
+};
+
+SelectCellEditor.prototype.edit = function(element, value)
+{
+	// create select list
+	var htmlInput = document.createElement("select");
+
+	// add options, selecting the current one
+	var index = 0, valueFound = 0;
+	for (var optionValue in this.column.optionValues) {
+	    var option = document.createElement('option');
+	    option.text = this.column.optionValues[optionValue];
+	    option.value = optionValue;
+	    htmlInput.add(option, null);
+        if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
+        index++;
+	}
+	
+	// if the current value is not in the list add it to the front
+	if (!valueFound) {
+	    var option = document.createElement('option');
+	    option.text = value ? value : "";
+	    option.value = value ? value : "";
+		htmlInput.add(option, htmlInput.options[0]);
+		htmlInput.selectedIndex = 0;
+	}
+	                  
+	// when a new value is selected we apply it
+	htmlInput.onchange = function(event) { this.celleditor.applyEditing(this.element, this.value); };
+	
+	// call base edit method to display list
+	InputCellEditor.prototype.edit.call(this, element, value, htmlInput);
+	
+	return htmlInput; 
 };

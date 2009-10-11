@@ -4,14 +4,26 @@
 	<metadata>
 
 		<column name="name" label="NAME" datatype="string" editable="true"/>
-		<column name="firstname" label="FIRSTNAME" datatype="string" editable="true"/>
+		<column name="firstname" label="FIRSTNAME" datatype="string"/>
 		<column name="age" label="AGE" datatype="integer" editable="true"/>
 		<column name="height" label="HEIGHT" datatype="double" editable="true"/>
-		<column name="nbchild" label="NB CHILD" datatype="integer">
+		
+		<column name="continent" label="CONTINENT" datatype="string" editable="true">
 			<values>
-				<value label="Un" value="1"/>
-				<value label="Deux" value="1"/>
-				<value label="Trois" value="2"/>
+				<value value="eu" label="Europe"/>
+				<value value="am" label="America"/>
+				<value value="af" label="Africa"/>
+			</values>
+		</column>
+				
+		<column name="country" label="COUNTRY" datatype="string" editable="true">
+			<values>
+				<value value="be" label="Belgique"/>
+				<value value="br" label="Brazil"/>
+				<value value="fr" label="France"/>
+				<value value="uk" label="Great-Britain"/>
+				<value value="nl" label="Nederland"/>
+				<value value="zw" label="Zimbabwe"/>
 			</values>
 		</column>		
 
@@ -19,32 +31,44 @@
 
 	<data>
 
+		<!-- It is recommended to name your columns.
+			 This way you can give them in any order and skip some columns if you want. 
+		-->
 		<row id="1">
-			<column>Duke</column>		
-			<column>Patience</column>		
-			<column>32</column>
-			<column>1.84</column>		
+			<column name="continent">eu</column>
+			<column name="country">uk</column>
+			<column name="age">33</column>
+			<column name="name">Duke</column>
+			<column name="firstname">Patience</column>
+			<column name="height">1.84</column>
 		</row>
 
+		<!-- But naming the columns is not mandatory.
+			 The order used in metadata must then be respected. 
+		-->
 		<row id="2">
 			<column>Rogers</column>		
 			<column>Denise</column>		
 			<column>59</column>		
-			<column>1.62</column>		
+			<column>1.62</column>
+			<column>eu</column>
+			<column>nl</column>
 		</row>
 
 		<row id="3">
-			<column>Compton</column>		
-			<column>Felix</column>		
-			<column>21</column>		
-			<column>1.73</column>		
+			<column name="name">Compton</column>		
+			<column name="firstname">Felix</column>		
+			<column name="age">21</column>		
+			<column name="height">1.73</column>		
+			<column name="continent">eu</column>
 		</row>
 
 		<row id="4">
-			<column>Conway</column>		
-			<column>Coby</column>		
-			<column>47</column>		
-			<column>1.96</column>		
+			<column name="name">Conway</column>		
+			<column name="firstname">Coby</column>		
+			<column name="age">47</column>		
+			<column name="height">1.96</column>		
+			<column name="continent">eu</column>
 		</row>
 
 	</data>

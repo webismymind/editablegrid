@@ -24,7 +24,6 @@ h2 {
 table.testgrid { 
 	border-collapse: collapse; 
 	border: 1px solid #CCB;
-	margin-bottom: 2em;
 	width: 100%;
 }
 
@@ -48,4 +47,10 @@ table.testgrid th {
 table.testgrid td {
 	padding: 5px;
 	border: 1px solid #E0E0E0;
+}
+
+#edition {
+	padding-top: 5px;
+	width: 600px;
+	border: 0px;	
 }

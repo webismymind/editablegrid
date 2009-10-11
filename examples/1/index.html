@@ -3,32 +3,22 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<title>EditableGrid Demo</title>
+		
+		<!-- include javascript and css files for the EditableGrid library -->
 		<script src="../../editablegrid.js" /></script>
 		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_editors.js" ></script>
 		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen">
-		<link rel="stylesheet" href="index.css" type="text/css" media="screen">
-		 
-		<script>
 
-			function msg(text, style) { $("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; } 
-		
-			window.onload = function() {
-				var editableGrid = new EditableGrid( { 
-					containerid: "tablecontent",
-					className: "testgrid",
-			        modelChanged: function(rowIndex, columnIndex, value) { msg("Cell at " + rowIndex + "," + columnIndex + " has changed: new value = '" + value + "'"); },
-		        	tableLoaded: function() { msg("Table loaded : " + this.getRowCount() + " row(s)"); }
-				 });
-				editableGrid.load("grid.xml"); 
-			}
-		</script>	
-		
+		<!-- include javascript and css files for this demo -->
+		<script src="index.js" ></script>
+		<link rel="stylesheet" type="text/css" href="index.css" media="screen"/>
 	</head>
 	
 	<body>
 		<h1>Test editablegrid</h1>
 		<div id="message"></div>
 		<div id="tablecontent"></div>
+		<div id="edition"></div>
 	</body>
 	
 </html>

@@ -21,6 +21,7 @@ function Column(config)
         datatype: "string",
         cellrenderer: null,
 		celleditor: null,
+		optionValues: null
     };
 
     // override default properties with the ones given
@@ -35,10 +36,9 @@ function CellRenderer(config)
 {
 	// default properties
     var props = {
-        datatype: "",
         render: function(element, value) { 
     		element.innerHTML = value ? value : "";
-    	},
+    	}
     };
 
     // override default properties with the ones given
@@ -55,10 +55,12 @@ function EditableGrid(config)
     {
         containerid: "",
 		doubleclick: false,
-        columns: new Array(),
-        data: new Array(),
+        columns: [],
+        data: [],
         xmlDoc: null,
         className: "editablegrid",
+        editmode: "static",
+        editorzoneid: "",
         
         // callback functions
         tableLoaded: function() {},
@@ -92,7 +94,6 @@ EditableGrid.prototype.load = function(url)
             xmlDoc.onreadystatechange = function() {
                 if (dom.readyState == 4) {
                     processXML();
-                    renderTable();
                     tableLoaded();
                 }
             };
@@ -104,7 +105,6 @@ EditableGrid.prototype.load = function(url)
         	xmlDoc = document.implementation.createDocument("", "", null);
         	xmlDoc.onload = function() {
         		processXML();
-        		renderTable();
                 tableLoaded();
         	}
         }
@@ -132,44 +132,79 @@ EditableGrid.prototype.processXML = function()
         var metadata = xmlDoc.getElementsByTagName("metadata");
         var columnDeclarations = metadata[0].getElementsByTagName("column");
         for (var i = 0; i < columnDeclarations.length; i++) {
+        	
+        	// get column type
             var col = columnDeclarations[i];
-            
-            // build a specific renderer for numeric types
             var datatype = col.getAttribute("datatype");
-            if (datatype == "integer" || datatype == "double") {
+            
+            // get enumerated values if any
+            var enumValues = col.getElementsByTagName("values");
+            if (enumValues.length > 0) {
+            	var optionValues = {};
+                enumValues = enumValues[0].getElementsByTagName("value");
+                for (var v = 0; v < enumValues.length; v++) {
+                	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].getAttribute("label");
+                }
+            }
+
+            // create a specific renderer for enumerated columns
+            if (optionValues) {
+            	cellRenderer = new CellRenderer({ 
+            		render: function(element, value) { 
+            			element.innerHTML = (value ? (value in this.optionValues ? this.optionValues[value] : value) : ""); 
+            		} 
+            	});
+            	cellRenderer.optionValues = optionValues;
+            }
+
+            // create a specific renderer for numeric types
+            else if (datatype == "integer" || datatype == "double") {
                 cellRenderer = new CellRenderer({
-                    datatype: col.getAttribute("datatype"),
                     render: function(element, value) { 
                 		element.innerHTML = value ? value : "";
                 		element.setAttribute("class", "number");
                 	}
                 });
             }
-            
-            // otehrwise use the default cell renderer
+
+            // otherwise use the default cell renderer
             else cellRenderer = new CellRenderer({});
-				
-			// build a default editor	  
-            cellEditor = datatype == "integer" || datatype == "double" ? new NumberCellEditor(datatype) : new TextCellEditor();          
-            isEditable = col.hasAttribute("editable") ? col.getAttribute("editable") : false;
-            
-            columns.push(new Column({
+
+			// create suited cell editor	  
+            cellEditor = optionValues ? new SelectCellEditor() : 
+            			 datatype == "integer" || datatype == "double" ? new NumberCellEditor(datatype) :
+            			 new TextCellEditor();  
+
+            // create new column
+            var column = new Column({
             	name: col.getAttribute("name"),
             	label: col.getAttribute("label"),
-            	editable : isEditable,
             	datatype: col.getAttribute("datatype"),
+            	editable : col.hasAttribute("editable") ? col.getAttribute("editable") : false,
             	cellrenderer: cellRenderer,
-            	celleditor: cellEditor
-            }));
+            	celleditor: cellEditor,
+            	optionValues: optionValues 
+            });
+            
+            // add column and give access to the column from the cell editor
+            columns.push(column);
+            cellEditor.editablegrid = this;
+            cellEditor.column = column;
         }
         
         // load content
         var rows = xmlDoc.getElementsByTagName("row");
         for (var i = 0; i < rows.length; i++) {
-            var rowData = new Array();
+            var cellValues = {}
             var cols = rows[i].getElementsByTagName("column");
-            for (var j = 0; j < cols.length; j++) rowData.push(cols[j].firstChild.nodeValue);
-            data.push(rowData);
+            for (var j = 0; j < cols.length; j++) {
+            	var colname = cols[j].hasAttribute("name") ? cols[j].getAttribute("name") : columns[j].name;
+            	cellValues[colname] = cols[j].firstChild.nodeValue;
+            }
+
+            var rowData = [];
+            for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
+       		data.push(rowData);
         }
     }
 }
@@ -214,9 +249,49 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value)
 }
 
 /**
+ * Sets the cell renderer for the specified column index
+ * @param {Object} columnIndex
+ * @param {Object} cellrenderer
+ */
+EditableGrid.prototype.setCellRenderer = function(columnIndex, cellrenderer)
+{
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	else this.columns[columnIndex].cellrenderer = cellrenderer;
+}
+
+
+/**
+ * Get cell X position
+ */
+EditableGrid.prototype.getCellX = function(oElement)
+{
+	parent = $(this.containerid);
+	var iReturnValue = 0;
+	while(oElement != null && oElement != parent) try {
+		iReturnValue += oElement.offsetLeft;
+		oElement = oElement.offsetParent;
+	} catch(err) { oElement = null; }
+	return iReturnValue;
+}
+
+/**
+ * Get cell Y position
+ */
+EditableGrid.prototype.getCellY = function(oElement)
+{
+	parent = $(this.containerid);
+	var iReturnValue = 0;
+	while(oElement != null && oElement != parent) try {
+		iReturnValue += oElement.offsetTop;
+		oElement = oElement.offsetParent;
+	} catch(err) { oElement = null; }
+	return iReturnValue;
+}
+
+/**
  * Renders the table in the document
  */
-EditableGrid.prototype.renderTable = function()
+EditableGrid.prototype.renderGrid = function()
 {
     with (this) {
 
@@ -224,6 +299,7 @@ EditableGrid.prototype.renderTable = function()
     	var table = document.createElement("table");
         table.setAttribute("class", this.className);
         $(containerid).appendChild(table);
+    	$(containerid).style.position = "relative";
         
         // create header
         var tHead = document.createElement("THEAD");
@@ -270,7 +346,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else column.celleditor._edit(this, rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else column.celleditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 }
