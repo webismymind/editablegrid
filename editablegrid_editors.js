@@ -24,7 +24,7 @@ CellEditor.prototype.cancelEditing = function(element)
 	with (this) {
 		
 		// render value before editon
-		if (element) column.cellrenderer.render(element, element.originalValue);
+		if (element) column.cellRenderer.render(element, element.originalValue);
 	
 		// clear fixed editor zone if any
 		if (editablegrid.editmode == "fixed") {
@@ -44,9 +44,6 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 		// let the user handle the model change
 		editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);
 		
-		// render new value
-		column.cellrenderer.render(element, newValue);
-
 		// clear fixed editor zone if any
 		if (editablegrid.editmode == "fixed") {
 			var editorzone = $(this.editablegrid.editorzoneid);
@@ -211,11 +208,14 @@ SelectCellEditor.prototype.edit = function(element, value)
 	// create select list
 	var htmlInput = document.createElement("select");
 
-	// add options, selecting the current one
+	// get column option values for this row 
+	var optionValues = this.column.getOptionValues(element.rowIndex);
+	
+	// add these options, selecting the current one
 	var index = 0, valueFound = 0;
-	for (var optionValue in this.column.optionValues) {
+	for (var optionValue in optionValues) {
 	    var option = document.createElement('option');
-	    option.text = this.column.optionValues[optionValue];
+	    option.text = optionValues[optionValue];
 	    option.value = optionValue;
 	    htmlInput.add(option, null);
         if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }

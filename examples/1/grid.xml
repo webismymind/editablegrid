@@ -16,16 +16,7 @@
 			</values>
 		</column>
 				
-		<column name="country" label="COUNTRY" datatype="string" editable="true">
-			<values>
-				<value value="be" label="Belgique"/>
-				<value value="br" label="Brazil"/>
-				<value value="fr" label="France"/>
-				<value value="uk" label="Great-Britain"/>
-				<value value="nl" label="Nederland"/>
-				<value value="zw" label="Zimbabwe"/>
-			</values>
-		</column>		
+		<column name="country" label="COUNTRY" datatype="string" editable="true"/>
 
 	</metadata>
 

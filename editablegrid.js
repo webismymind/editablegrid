@@ -19,9 +19,12 @@ function Column(config)
         label: "",
 		editable: false,
         datatype: "string",
-        cellrenderer: null,
-		celleditor: null,
-		optionValues: null
+        cellRenderer: null,
+		cellEditor: null,
+		enumProvider: null,
+		optionValues: null,
+        getOptionValues: function(rowIndex) { return this.enumProvider.getOptionValues(this, rowIndex) },
+        columnIndex: -1
     };
 
     // override default properties with the ones given
@@ -38,6 +41,23 @@ function CellRenderer(config)
     var props = {
         render: function(element, value) { 
     		element.innerHTML = value ? value : "";
+    	}
+    };
+
+    // override default properties with the ones given
+    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+}
+
+/**
+ * Enum provider object. 
+ * @param {Object} config
+ */
+function EnumProvider(config)
+{
+	// default properties
+    var props = {
+        getOptionValues: function(column, rowIndex) {
+    		return column.optionValues;
     	}
     };
 
@@ -138,9 +158,10 @@ EditableGrid.prototype.processXML = function()
             var datatype = col.getAttribute("datatype");
             
             // get enumerated values if any
+        	var optionValues = null;
             var enumValues = col.getElementsByTagName("values");
             if (enumValues.length > 0) {
-            	var optionValues = {};
+            	optionValues = {};
                 enumValues = enumValues[0].getElementsByTagName("value");
                 for (var v = 0; v < enumValues.length; v++) {
                 	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].getAttribute("label");
@@ -170,26 +191,23 @@ EditableGrid.prototype.processXML = function()
             // otherwise use the default cell renderer
             else cellRenderer = new CellRenderer({});
 
-			// create suited cell editor	  
-            cellEditor = optionValues ? new SelectCellEditor() : 
-            			 datatype == "integer" || datatype == "double" ? new NumberCellEditor(datatype) :
-            			 new TextCellEditor();  
-
             // create new column
             var column = new Column({
             	name: col.getAttribute("name"),
             	label: col.getAttribute("label"),
             	datatype: col.getAttribute("datatype"),
             	editable : col.hasAttribute("editable") ? col.getAttribute("editable") : false,
-            	cellrenderer: cellRenderer,
-            	celleditor: cellEditor,
-            	optionValues: optionValues 
+            	optionValues: optionValues, 
+            	cellRenderer: cellRenderer,
+            	enumProvider: (optionValues ? new EnumProvider() : null),
+            	columnIndex: i
             });
-            
-            // add column and give access to the column from the cell editor
+
+			// create suited cell editor
+            _createCellEditor(column);  
+
+            // add column 
             columns.push(column);
-            cellEditor.editablegrid = this;
-            cellEditor.column = column;
         }
         
         // load content
@@ -207,6 +225,21 @@ EditableGrid.prototype.processXML = function()
        		data.push(rowData);
         }
     }
+}
+
+/**
+ * Creates a suitable cell editor for the column
+ */
+EditableGrid.prototype._createCellEditor = function(column)
+{
+	column.cellEditor = 
+		column.enumProvider ? new SelectCellEditor() :
+		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
+		new TextCellEditor();  
+		
+	// give access to the column from the cell editor
+	column.cellEditor.editablegrid = this;
+	column.cellEditor.column = column;
 }
 
 /**
@@ -244,21 +277,48 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
  */
 EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value)
 {
+	// set new value in model
 	var rows = this.data[rowIndex];
 	if (rows) rows[columnIndex] = value;
+	
+	// render new value
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	this.columns[columnIndex].cellRenderer.render(this.getCell(rowIndex, columnIndex), value);
 }
 
 /**
  * Sets the cell renderer for the specified column index
  * @param {Object} columnIndex
- * @param {Object} cellrenderer
+ * @param {Object} cellRenderer
  */
-EditableGrid.prototype.setCellRenderer = function(columnIndex, cellrenderer)
+EditableGrid.prototype.setCellRenderer = function(columnIndex, cellRenderer)
 {
 	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
-	else this.columns[columnIndex].cellrenderer = cellrenderer;
+	else this.columns[columnIndex].cellRenderer = cellRenderer;
 }
 
+/**
+ * Sets the enum provider for the specified column index
+ * @param {Object} columnIndex
+ * @param {Object} enumProvider
+ */
+EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
+{
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	else this.columns[columnIndex].enumProvider = enumProvider;
+	
+	// we must recreate the cell editor for this column
+	this._createCellEditor(this.columns[columnIndex]);
+}
+
+/**
+ * Get cell at given row and column
+ */
+EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
+{
+	var row = this.tBody.childNodes[rowIndex];
+	return row.childNodes[columnIndex];
+}
 
 /**
  * Get cell X position
@@ -296,13 +356,13 @@ EditableGrid.prototype.renderGrid = function()
     with (this) {
 
     	// create editablegrid table and add it to our container 
-    	var table = document.createElement("table");
+    	this.table = document.createElement("table");
         table.setAttribute("class", this.className);
         $(containerid).appendChild(table);
     	$(containerid).style.position = "relative";
         
         // create header
-        var tHead = document.createElement("THEAD");
+        this.tHead = document.createElement("THEAD");
         table.appendChild(tHead);
         var trHeader = tHead.insertRow(0);
         var columnCount = getColumnCount();
@@ -313,7 +373,7 @@ EditableGrid.prototype.renderGrid = function()
         }
         
         // create bodt and rows
-        var tBody = document.createElement("TBODY");
+        this.tBody = document.createElement("TBODY");
         table.appendChild(tBody);
         var rowCount = getRowCount();
         for (i = 0; i < rowCount; i++) {
@@ -322,7 +382,7 @@ EditableGrid.prototype.renderGrid = function()
         		
         		// create cell and render its content
         		var td = tr.insertCell(j);
-        		columns[j].cellrenderer.render(td, getValueAt(i,j));
+        		columns[j].cellRenderer.render(td, getValueAt(i,j));
         	}
         }
     }
@@ -346,7 +406,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else column.celleditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else column.cellEditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 }
