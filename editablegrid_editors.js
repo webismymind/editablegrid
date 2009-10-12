@@ -122,6 +122,7 @@ TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
 	// red background for invalid numbers
 	htmlInput.style.backgroundColor = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#DD0022";
+	htmlInput.style.color = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#EEEEEE";
 }
 
 TextCellEditor.prototype.getEditor = function(element, value)

@@ -17,8 +17,12 @@ h2 {
 	padding: 5px;
 }
 
+#message {
+	width: 800px;
+}
+
 #tablecontent {
-	width: 600px;
+	width: 800px;
 }
 
 table.testgrid { 

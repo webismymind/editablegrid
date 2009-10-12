@@ -14,8 +14,8 @@ function initializeGrid(grid)
 		getOptionValues: function (column, rowIndex) {
 			var continent = grid.getValueAt(rowIndex, 4);
 			if (continent == "eu") return { "be" : "Belgique", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"};
-			else if (continent == "am") return { "br" : "Brazil", "us" : "USA" };
-			else if (continent == "af") return { "ng" : "Nigeria", "zw" : "Zimbabwe" };
+			else if (continent == "am") return { "br" : "Brazil", "ca": "Canada", "us" : "USA" };
+			else if (continent == "af") return { "ng" : "Nigeria", "za": "South Africa", "zw" : "Zimbabwe" };
 			return null;
 		}
 	}));
