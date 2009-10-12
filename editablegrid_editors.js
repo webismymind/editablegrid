@@ -15,15 +15,15 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	element.columnIndex = columnIndex;
 	
 	// call the specialized getEditor method
-	var editorNode = this.getEditor(element, value);
-	if (!editorNode) return false;
+	var editorInput = this.getEditor(element, value);
+	if (!editorInput) return false;
 	
 	// give access to the cell editor and element from the editor widget
-	editorNode.element = element;
-	editorNode.celleditor = this;
+	editorInput.element = element;
+	editorInput.celleditor = this;
 
 	// listen to pressed keys
-	editorNode.onkeypress = function(event) {
+	editorInput.onkeypress = function(event) {
 
 		// ENTER or TAB: apply value
 		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
@@ -33,44 +33,48 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	};
 	
 	// and display the resulting editor widget
-	this.displayEditor(element, editorNode);
+	this.displayEditor(element, editorInput);
 	
 	// give focus to the created editor
-	editorNode.focus();
+	editorInput.focus();
 
 	// is simultaneous edition is not allowed, we cancel edition when focus is lost
-	if (!this.editablegrid.allowSimultaneousEdition) editorNode.onblur = function(event) { this.celleditor.cancelEditing(this.element); };
+	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = function(event) { this.celleditor.cancelEditing(this.element); };
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
 	return null;
 };
 
-CellEditor.prototype.getEditorValue = function(element) {
-	return null;
-};
+CellEditor.prototype.getEditorValue = function(editorInput) {
+	return editorInput.value;
+}
 
-CellEditor.prototype.displayEditor = function(element, editorNode) 
+CellEditor.prototype.formatValue = function(value) {
+	return value;
+}
+
+CellEditor.prototype.displayEditor = function(element, editorInput) 
 {
 	// static mode: add input field in the table cell
 	if (this.editablegrid.editmode == "static") {
 		while (element.hasChildNodes()) element.removeChild(element.firstChild);
-		element.appendChild(editorNode);
+		element.appendChild(editorInput);
 	}
 	
 	// absolute mode: add input field in absolute position over table cell, leaving current content
 	if (this.editablegrid.editmode == "absolute") {
-		element.appendChild(editorNode);
-		editorNode.style.position = "absolute";
-		editorNode.style.left = (this.editablegrid.getCellX(element) + 1) + "px";
-		editorNode.style.top = (this.editablegrid.getCellY(element) + 1) + "px";
+		element.appendChild(editorInput);
+		editorInput.style.position = "absolute";
+		editorInput.style.left = (this.editablegrid.getCellX(element) + 1) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) + 1) + "px";
 	}
 
 	// fixed mode: don't show input field in the cell 
 	if (this.editablegrid.editmode == "fixed") {
 		var editorzone = $(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
-		editorzone.appendChild(editorNode);
+		editorzone.appendChild(editorInput);
 	}
 }
 
@@ -104,11 +108,14 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 		// do nothing if the value is rejected by at least one validator
 		if (!column.isValid(newValue)) return false;
 
+		// format the value before applying
+		var formattedValue = formatValue(newValue);
+		
 		// update model
-		editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue, render);
+		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue, render);
 
 		// let the user handle the model change
-		editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);
+		editablegrid.modelChanged(element.rowIndex, element.columnIndex, formattedValue);
 		
 		_clearEditor(element);	
 	}
@@ -155,11 +162,6 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 	htmlInput.select();
 }
 
-TextCellEditor.prototype.getEditorValue = function(htmlInput)
-{
-	return htmlInput.value;
-}
-
 /**
  * Number cell editor
  * Class to edit a numeric cell with an HTML text input 
@@ -168,20 +170,19 @@ TextCellEditor.prototype.getEditorValue = function(htmlInput)
 NumberCellEditor.prototype = new TextCellEditor(4);
 function NumberCellEditor(type) { this.type = type; }
 
-NumberCellEditor.prototype.displayEditor = function(element, editorNode) 
+NumberCellEditor.prototype.displayEditor = function(element, editorInput) 
 {
 	// call base method
-	TextCellEditor.prototype.displayEditor.call(this, element, editorNode);
+	TextCellEditor.prototype.displayEditor.call(this, element, editorInput);
 
 	// align field to the right (in case of absolute positioning)
-	editorNode.style.left = (parseInt(editorNode.style.left) + element.offsetWidth - editorNode.offsetWidth) + "px";	
+	editorInput.style.left = (parseInt(editorInput.style.left) + element.offsetWidth - editorInput.offsetWidth) + "px";	
 }
 
-NumberCellEditor.prototype.getEditorValue = function(htmlInput)
+NumberCellEditor.prototype.formatValue = function(value)
 {
-	if (htmlInput.value == "") return "";
-	if (!this.column.isValid(htmlInput.value)) return htmlInput.value;
-	return this.type == 'integer' ? parseInt(htmlInput.value) : parseFloat(htmlInput.value);
+	if (value == "") return "";
+	return this.type == 'integer' ? parseInt(value) : parseFloat(value);
 }
 
 /**
@@ -225,8 +226,3 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	
 	return htmlInput; 
 };
-
-SelectCellEditor.prototype.getEditorValue = function(htmlInput)
-{
-	return htmlInput.value;
-}
