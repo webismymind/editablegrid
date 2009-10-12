@@ -28,7 +28,6 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
 		
 		// ESC: cancel editing
-		// TODO: on FF3.5, using ESC on select has a side effect that the flag image is not displayed: check in FF3.0, IE7 and Safari4
 		if (event.keyCode == 27) this.celleditor.cancelEditing(this.element);
 	};
 	
