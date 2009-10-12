@@ -440,7 +440,12 @@ EditableGrid.prototype.mouseClicked = function(e)
 		
 		// get row and column index from the clicked cell
 		var target = e.target || e.srcElement;
-		if (target.parentNode.parentNode.tagName != "TBODY") return;
+		
+		// go up parents to find a cell under the clicked position
+		while (target) if (target.tagName == "TD") break; else target = target.parentNode;
+		if (!target || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
+
+		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - 1; // remove 1 for the header
 		var columnIndex = target.cellIndex;
 		

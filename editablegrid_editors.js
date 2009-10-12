@@ -8,7 +8,8 @@ function CellEditor() {}
 
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
 {
-	// remember all the things we need to apply/cancel edition
+	// tag element and remember all the things we need to apply/cancel edition
+	element.isEditing = true;
 	element.originalValue = value;
 	element.rowIndex = rowIndex; 
 	element.columnIndex = columnIndex;
@@ -73,18 +74,26 @@ CellEditor.prototype.displayEditor = function(element, editorNode)
 	}
 }
 
+CellEditor.prototype._clearEditor = function(element) 
+{
+	// untag element
+	element.isEditing = false;
+
+	// clear fixed editor zone if any
+	if (editablegrid.editmode == "fixed") {
+		var editorzone = $(this.editablegrid.editorzoneid);
+		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
+	}	
+}
+
 CellEditor.prototype.cancelEditing = function(element) 
 {
 	with (this) {
 		
 		// render value before editon
 		if (element) column.cellRenderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
-	
-		// clear fixed editor zone if any
-		if (editablegrid.editmode == "fixed") {
-			var editorzone = $(this.editablegrid.editorzoneid);
-			while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
-		}
+		
+		_clearEditor(element);	
 	}
 };
 
@@ -101,11 +110,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 		// let the user handle the model change
 		editablegrid.modelChanged(element.rowIndex, element.columnIndex, newValue);
 		
-		// clear fixed editor zone if any
-		if (editablegrid.editmode == "fixed") {
-			var editorzone = $(this.editablegrid.editorzoneid);
-			while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
-		}
+		_clearEditor(element);	
 	}
 };
 
