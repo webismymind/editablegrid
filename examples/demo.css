@@ -45,7 +45,10 @@ table.testgrid th {
 	border: 1px solid #D5D5D5;
 	color: #555;
 	text-align: left;
-	padding: 5px;
+	padding-left: 5px;
+	padding-right: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 table.testgrid td {
