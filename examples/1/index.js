@@ -22,7 +22,7 @@ function initializeGrid(grid)
 
 	// use a flag image to render the selected country
 	grid.setCellRenderer(5, new CellRenderer({
-		render: function(cell, value) { cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
+		render: function(cell, value) { cell.innerHTML = value ? "<img src='images/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
 	})); 
 
 	// add a cell validator to check that the age is in [16, 100[
