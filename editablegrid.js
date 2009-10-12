@@ -21,15 +21,24 @@ function Column(config)
         datatype: "string",
         cellRenderer: null,
 		cellEditor: null,
+		cellValidators: [],
 		enumProvider: null,
 		optionValues: null,
-        getOptionValues: function(rowIndex) { return this.enumProvider.getOptionValues(this, rowIndex) },
         columnIndex: -1
     };
 
     // override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
 }
+
+Column.prototype.getOptionValues = function(rowIndex) { 
+	return this.enumProvider.getOptionValues(this, rowIndex) 
+};
+
+Column.prototype.isValid = function(value) {
+	for (var i = 0; i < this.cellValidators.length; i++) if (!this.cellValidators[i].isValid(value)) return false;
+	return true;
+} 
 
 /**
  * Enum provider object. 
@@ -64,7 +73,7 @@ function EditableGrid(config)
         className: "editablegrid",
         editmode: "static",
         editorzoneid: "",
-		allowSimultaneousEdition: true,
+		allowSimultaneousEdition: false,
         
         // callback functions
         tableLoaded: function() {},
@@ -169,6 +178,9 @@ EditableGrid.prototype.processXML = function()
 			// create suited cell editor
             _createCellEditor(column);  
 
+			// add default cell validators based on the column type
+			_addDefaultCellValidators(column);
+
             // add column 
             columns.push(column);
         }
@@ -255,9 +267,10 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 
 /**
  * Sets the value at the specified index
+ * @param {Integer} rowIndex
+ * @param {Integer} columnIndex
  * @param {Object} value
- * @param {Object} rowIndex
- * @param {Object} columnIndex
+ * @param {Boolean} render
  */
 EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, render)
 {
@@ -276,7 +289,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 
 /**
  * Sets the cell renderer for the specified column index
- * @param {Object} columnIndex
+ * @param {Integer} columnIndex
  * @param {Object} cellRenderer
  */
 EditableGrid.prototype.setCellRenderer = function(columnIndex, cellRenderer)
@@ -287,7 +300,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndex, cellRenderer)
 
 /**
  * Sets the enum provider for the specified column index
- * @param {Object} columnIndex
+ * @param {Integer} columnIndex
  * @param {Object} enumProvider
  */
 EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
@@ -298,6 +311,42 @@ EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
 	// we must recreate the cell renderer and editor for this column
 	this._createCellRenderer(this.columns[columnIndex]);
 	this._createCellEditor(this.columns[columnIndex]);
+}
+
+/**
+ * Clear all cell validators for the specified column index
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.clearCellValidators = function(columnIndex)
+{
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	else this.columns[columnIndex].cellValidators = [];
+}
+
+/**
+ * Adds default cell validators for the specified column index (according to the column type)
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.addDefaultCellValidators = function(columnIndex)
+{
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	return this._addDefaultCellValidators(this.columns[columnIndex]);
+}
+
+EditableGrid.prototype._addDefaultCellValidators = function(column)
+{
+	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
+}
+
+/**
+ * Adds a cell validator for the specified column index
+ * @param {Integer} columnIndex
+ * @param {Object} cellValidator
+ */
+EditableGrid.prototype.addCellValidator = function(columnIndex, cellValidator)
+{
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	else this.columns[columnIndex].cellValidators.push(cellValidator);
 }
 
 /**

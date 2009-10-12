@@ -25,6 +25,11 @@ function initializeGrid(grid)
 		render: function(cell, value) { cell.innerHTML = value ? "<img src='flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
 	})); 
 
+	// add a cell validator to check that the age is in [16, 100[
+	grid.addCellValidator(2, new CellValidator({ 
+		isValid: function(value) { return parseInt(value) >= 16 && parseInt(value) < 100; }
+	}));
+	
 	// render the grid
 	grid.renderGrid();
 }				

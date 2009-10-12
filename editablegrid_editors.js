@@ -27,7 +27,7 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	editorNode.onkeypress = function(event) {
 
 		// ENTER or TAB: apply value
-		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.value);
+		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
 		
 		// ESC: cancel editing
 		// TODO: on FF3.5, using ESC on select has a side effect that the flag image is not displayed: check in FF3.0, IE7 and Safari4
@@ -45,6 +45,10 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
+	return null;
+};
+
+CellEditor.prototype.getEditorValue = function(element) {
 	return null;
 };
 
@@ -91,6 +95,9 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 {
 	with (this) {
 		
+		// do nothing if the value is rejected by at least one validator
+		if (!column.isValid(newValue)) return false;
+
 		// update model
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, newValue, render);
 
@@ -117,6 +124,12 @@ function TextCellEditor(size)
 	this.fieldSize = size || 16;
 };
 
+TextCellEditor.prototype.updateStyle = function(htmlInput)
+{
+	// red background for invalid numbers
+	htmlInput.style.backgroundColor = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#DD0022";
+}
+
 TextCellEditor.prototype.getEditor = function(element, value)
 {
 	// create and initialize text field
@@ -125,16 +138,27 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	htmlInput.setAttribute("size", this.fieldSize)
 	htmlInput.value = value;
 
+	// listen to keyup to check validity and update style of input field 
+	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
+
 	return htmlInput; 
 };
 
-TextCellEditor.prototype.displayEditor = function(element, textInput) 
+TextCellEditor.prototype.displayEditor = function(element, htmlInput) 
 {
 	// call base method
-	CellEditor.prototype.displayEditor.call(this, element, textInput);
+	CellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
+	// update style of input field
+	this.updateStyle(htmlInput);
+	
 	// select text
-	textInput.select();
+	htmlInput.select();
+}
+
+TextCellEditor.prototype.getEditorValue = function(htmlInput)
+{
+	return htmlInput.value;
 }
 
 /**
@@ -149,52 +173,21 @@ function NumberCellEditor(type)
 	this.type = type;
 };
 
-NumberCellEditor.prototype.isValidNumber = function(value) 
-{
-	// check that it is a valid number
-	if (isNaN(value)) return false;
-	
-	// for integers check that it's not a float
-	if (this.type == "integer" && parseInt(value) != parseFloat(value)) return false;
-	
-	// the integer or double is valid
-	return true;
-}
-
-NumberCellEditor.prototype.updateStyle = function(htmlInput)
-{
-	// red background for invalid numbers
-	htmlInput.style.backgroundColor = this.isValidNumber(htmlInput.value) ? "" : "#DD0022";
-}
-
-NumberCellEditor.prototype.getEditor = function(element, value)
-{
-	// call base edit method to create text input field
-	var htmlInput = TextCellEditor.prototype.getEditor.call(this, element, value);
-	
-	// listen to keyup to check number validity and update style of input field 
-	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
-
-	return htmlInput;
-};
-
 NumberCellEditor.prototype.displayEditor = function(element, editorNode) 
 {
 	// call base method
 	TextCellEditor.prototype.displayEditor.call(this, element, editorNode);
 
-	// update style of input field
-	this.updateStyle(editorNode);
-	
 	// align field to the right (in case of absolute positioning)
 	editorNode.style.left = (parseInt(editorNode.style.left) + element.offsetWidth - editorNode.offsetWidth) + "px";	
 }
 
-NumberCellEditor.prototype.applyEditing = function(element, newValue) 
+NumberCellEditor.prototype.getEditorValue = function(htmlInput)
 {
-	// apply only if valid
-	return this.isValidNumber(newValue) ? TextCellEditor.prototype.applyEditing.call(this, element, newValue) : false;
-};
+	if (htmlInput.value == "") return "";
+	if (!this.column.isValid(htmlInput.value)) return htmlInput.value;
+	return this.type == 'integer' ? parseInt(htmlInput.value) : parseFloat(htmlInput.value);
+}
 
 /**
  * Select cell editor
@@ -240,3 +233,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	
 	return htmlInput; 
 };
+
+SelectCellEditor.prototype.getEditorValue = function(htmlInput)
+{
+	return htmlInput.value;
+}
