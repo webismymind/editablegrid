@@ -115,7 +115,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue, render);
 
 		// let the user handle the model change
-		editablegrid.modelChanged(element.rowIndex, element.columnIndex, formattedValue);
+		editablegrid.modelChanged(element.rowIndex, element.columnIndex, formattedValue, this.editablegrid.tBody.childNodes[element.rowIndex]);
 		
 		_clearEditor(element);	
 	}
@@ -127,7 +127,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
  */
 
 TextCellEditor.prototype = new CellEditor();
-function TextCellEditor(size) { this.fieldSize = size || 16; };
+function TextCellEditor(size) { this.fieldSize = size || 12; };
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {

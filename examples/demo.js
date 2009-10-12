@@ -47,8 +47,8 @@ window.onload = function()
 			initializeGrid(this); 
 		},
 
-		modelChanged: function(rowIndex, columnIndex, value) { 
-			displayMessage("Cell at " + rowIndex + "," + columnIndex + " has changed: new value = '" + value + "'");
+		modelChanged: function(rowIndex, columnIndex, value, row) { 
+			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed: new value = '" + value + "'");
 			if (columnIndex == 4) this.setValueAt(rowIndex, 5, ""); // if we changed the continent, reset the country
 		}
 	 });

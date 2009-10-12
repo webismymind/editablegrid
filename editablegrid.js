@@ -157,7 +157,7 @@ EditableGrid.prototype.processXML = function()
             	optionValues = {};
                 enumValues = enumValues[0].getElementsByTagName("value");
                 for (var v = 0; v < enumValues.length; v++) {
-                	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].getAttribute("label");
+                	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
                 }
             }
 
@@ -192,12 +192,12 @@ EditableGrid.prototype.processXML = function()
             var cols = rows[i].getElementsByTagName("column");
             for (var j = 0; j < cols.length; j++) {
             	var colname = cols[j].hasAttribute("name") ? cols[j].getAttribute("name") : columns[j].name;
-            	cellValues[colname] = cols[j].firstChild.nodeValue;
+            	cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
             }
 
             var rowData = [];
             for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
-       		data.push(rowData);
+       		data.push({id: rows[i].hasAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
         }
     }
 }
@@ -211,7 +211,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.enumProvider ? new EnumCellRenderer() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
-    	column.datatype == "email" ? new EmailCellRenderer() : 
+    	column.datatype.startsWith("email") ? new EmailCellRenderer() : 
     	new CellRenderer();
 		
 	// give access to the column from the cell renderer
@@ -226,12 +226,15 @@ EditableGrid.prototype._createCellRenderer = function(column)
  */
 EditableGrid.prototype._createCellEditor = function(column)
 {
+	var length = column.datatype.startsWith("string") ? column.datatype.substr(7, column.datatype.length - 8) : 
+				 column.datatype.startsWith("email") ? column.datatype.substr(6, column.datatype.length - 7) : null;
+	
 	column.cellEditor = 
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
-		column.datatype == "email" ? new TextCellEditor(32) :
-		new TextCellEditor();  
+		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : 32) :
+		new TextCellEditor(length);  
 		
 	// give access to the column from the cell editor
 	if (column.cellEditor) {
@@ -263,7 +266,7 @@ EditableGrid.prototype.getColumnCount = function()
  */
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
-	var rows = this.data[rowIndex];
+	var rows = this.data[rowIndex]['columns'];
 	return rows ? rows[columnIndex] : null;
 }
 
@@ -279,7 +282,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	if (typeof render == "undefined") render = true;
 	
 	// set new value in model
-	var rows = this.data[rowIndex];
+	var rows = this.data[rowIndex]['columns'];
 	if (rows) rows[columnIndex] = value;
 	
 	// render new value
@@ -338,7 +341,7 @@ EditableGrid.prototype.addDefaultCellValidators = function(columnIndex)
 EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
-	else if (column.datatype == "email") column.cellValidators.push(new EmailCellValidator());
+	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
 }
 
 /**
@@ -413,12 +416,13 @@ EditableGrid.prototype.renderGrid = function()
         	td.innerHTML = columns[c].label;
         }
         
-        // create bodt and rows
+        // create body and rows
         this.tBody = document.createElement("TBODY");
         table.appendChild(tBody);
         var rowCount = getRowCount();
         for (i = 0; i < rowCount; i++) {
         	var tr = tBody.insertRow(i);
+        	tr.id = data[i]['id'];
         	for (j = 0; j < columnCount; j++) {
         		
         		// create cell and render its content
@@ -459,10 +463,26 @@ EditableGrid.prototype.mouseClicked = function(e)
 }
 
 /**
- * Returns the type of a column
- * @param {Object} columnIndex
+ * Returns the name of a column
+ * @param {Integer} columnIndex
  */
-EditableGrid.prototype.getColumnType = function( columnIndex)
+EditableGrid.prototype.getColumnName = function(columnIndex)
+{
+	return this.columns[columnIndex].name;
+}
+
+/**
+ * Returns the type of a column
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.getColumnType = function(columnIndex)
 {
 	return this.columns[columnIndex].datatype;
 }
+
+/**
+ * Useful string methods 
+ */
+String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")) };
+String.prototype.startsWith = function(str) { return (this.match("^"+str)==str) };
+String.prototype.endsWith = function(str) { return (this.match(str+"$")==str) };
