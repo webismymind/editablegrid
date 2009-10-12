@@ -53,5 +53,5 @@ window.onload = function()
 		}
 	 });
 				 
-	editableGrid.load("grid.xml");
+	editableGrid.load("demo.xml");
 }
