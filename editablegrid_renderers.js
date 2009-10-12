@@ -38,10 +38,7 @@ CellRenderer.prototype.render = function(element, value)
  */
 
 EnumCellRenderer.prototype = new CellRenderer();
-
-function EnumCellRenderer()
-{
-};
+function EnumCellRenderer() {};
 
 EnumCellRenderer.prototype.render = function(element, value)
 {
@@ -55,10 +52,7 @@ EnumCellRenderer.prototype.render = function(element, value)
  */
 
 NumberCellRenderer.prototype = new CellRenderer();
-
-function NumberCellRenderer()
-{
-};
+function NumberCellRenderer() {};
 
 NumberCellRenderer.prototype.render = function(element, value)
 {
@@ -72,17 +66,14 @@ NumberCellRenderer.prototype.render = function(element, value)
  */
 
 CheckboxCellRenderer.prototype = new CellRenderer();
-
-function CheckboxCellRenderer()
-{
-};
+function CheckboxCellRenderer() {};
 
 CheckboxCellRenderer.prototype.render = function(element, value)
 {
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
-	htmlInput.checked = value ? true : false;
+	htmlInput.checked = (value && value != 0 && value != "false") ? true : false;
 	htmlInput.disabled = !this.column.editable;
 	
 	// this renderer is a little special because it allows direct edition
@@ -98,3 +89,17 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 	element.appendChild(htmlInput);
 };
+
+/**
+ * Email cell renderer
+ * Class to render a cell with emails
+ */
+
+EmailCellRenderer.prototype = new CellRenderer();
+function EmailCellRenderer() {};
+
+EmailCellRenderer.prototype.render = function(element, value)
+{
+	element.innerHTML = value ? "<a href='mailto:" + value + "'>" + value : "</a>";
+};
+

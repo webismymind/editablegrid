@@ -4,9 +4,7 @@
  * Base class for all cell editors
  */
 
-function CellEditor() 
-{
-}
+function CellEditor() {}
 
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
 {
@@ -118,11 +116,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
  */
 
 TextCellEditor.prototype = new CellEditor();
-
-function TextCellEditor(size)
-{
-	this.fieldSize = size || 16;
-};
+function TextCellEditor(size) { this.fieldSize = size || 16; };
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
@@ -167,11 +161,7 @@ TextCellEditor.prototype.getEditorValue = function(htmlInput)
  */
 
 NumberCellEditor.prototype = new TextCellEditor(4);
-
-function NumberCellEditor(type)
-{
-	this.type = type;
-};
+function NumberCellEditor(type) { this.type = type; }
 
 NumberCellEditor.prototype.displayEditor = function(element, editorNode) 
 {
@@ -195,10 +185,7 @@ NumberCellEditor.prototype.getEditorValue = function(htmlInput)
  */
 
 SelectCellEditor.prototype = new CellEditor();
-
-function SelectCellEditor()
-{
-};
+function SelectCellEditor() {}
 
 SelectCellEditor.prototype.getEditor = function(element, value)
 {

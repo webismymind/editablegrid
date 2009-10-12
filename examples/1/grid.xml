@@ -15,6 +15,7 @@
 			</values>
 		</column>
 		<column name="country" label="COUNTRY" datatype="string" editable="true"/>
+		<column name="email" label="EMAIL" datatype="email" editable="true"/>
 		<column name="freelance" label="FREELANCE" datatype="boolean" editable="true"/>
 
 	</metadata>
@@ -31,6 +32,7 @@
 			<column name="name">Duke</column>
 			<column name="firstname">Patience</column>
 			<column name="height">1.84</column>
+			<column name="email">patience.duke@gmail.com</column>
 		</row>
 
 		<!-- But naming the columns is not mandatory.
@@ -43,7 +45,6 @@
 			<column>1.62</column>
 			<column>eu</column>
 			<column>nl</column>
-			<column>1</column>
 		</row>
 
 		<row id="3">
@@ -52,6 +53,8 @@
 			<column name="age">21</column>		
 			<column name="height">1.73</column>		
 			<column name="continent">eu</column>
+			<column name="email">felix.compton@yahoo.fr</column>
+			<column name="freelance">true</column>
 		</row>
 
 		<row id="4">
@@ -60,6 +63,8 @@
 			<column name="age">47</column>		
 			<column name="height">1.96</column>		
 			<column name="continent">eu</column>
+			<column name="email">coby@conwayinc.com</column>
+			<column name="freelance">false</column>
 		</row>
 
 	</data>

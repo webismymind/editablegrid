@@ -211,6 +211,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.enumProvider ? new EnumCellRenderer() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
+    	column.datatype == "email" ? new EmailCellRenderer() : 
     	new CellRenderer();
 		
 	// give access to the column from the cell renderer
@@ -229,6 +230,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
+		column.datatype == "email" ? new TextCellEditor(32) :
 		new TextCellEditor();  
 		
 	// give access to the column from the cell editor
@@ -336,6 +338,7 @@ EditableGrid.prototype.addDefaultCellValidators = function(columnIndex)
 EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
+	else if (column.datatype == "email") column.cellValidators.push(new EmailCellValidator());
 }
 
 /**
