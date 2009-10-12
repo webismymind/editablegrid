@@ -80,7 +80,7 @@ CellEditor.prototype._clearEditor = function(element)
 	element.isEditing = false;
 
 	// clear fixed editor zone if any
-	if (editablegrid.editmode == "fixed") {
+	if (this.editablegrid.editmode == "fixed") {
 		var editorzone = $(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 	}	
