@@ -64,6 +64,7 @@ function EditableGrid(config)
         className: "editablegrid",
         editmode: "static",
         editorzoneid: "",
+		allowSimultaneousEdition: true,
         
         // callback functions
         tableLoaded: function() {},
@@ -395,7 +396,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else if (column.cellEditor) column.cellEditor._edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 }

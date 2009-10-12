@@ -19,7 +19,10 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	// remember all the things we need
 	element.rowIndex = rowIndex; 
 	element.columnIndex = columnIndex;
-	
+
+	// remove existing content	
+	while (element.hasChildNodes()) element.removeChild(element.firstChild);
+
 	// call the specialized render method
 	return this.render(element, value);
 };
