@@ -310,12 +310,25 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	}
 }
 
+/**
+ * Find column index
+ * @param {Object} name or index of the column
+ */
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
 	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
 	return -1;
 }
+
+/**
+ * Remove row with given id
+ * @param {Integer} rowId
+ */
+EditableGrid.prototype.removeRow = function(rowId)
+{
+	this.tBody.removeChild($(rowId));
+} 
 
 /**
  * Sets the cell renderer for the specified column index
@@ -465,7 +478,7 @@ EditableGrid.prototype.renderGrid = function()
 }
 
 /**
- * Mouse click handle
+ * Mouse click handler
  * @param {Object} e
  */
 EditableGrid.prototype.mouseClicked = function(e) 

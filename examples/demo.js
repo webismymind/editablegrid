@@ -1,3 +1,5 @@
+var editableGrid = null;
+
 function displayMessage(text, style) { 
 	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
 } 
@@ -36,7 +38,7 @@ function initializeGrid(grid)
 			
 window.onload = function() 
 {
-	var editableGrid = new EditableGrid({		
+	editableGrid = new EditableGrid({		
 		containerid: "tablecontent",
 		className: "testgrid",
 		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the default mode

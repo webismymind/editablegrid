@@ -34,7 +34,7 @@
 			<column name="firstname">Patience</column>
 			<column name="height">1.84</column>
 			<column name="email">patience.duke@gmail.com</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<!-- But naming the columns is not mandatory.
@@ -49,7 +49,7 @@
 			<column>us</column>
 			<column>rogers.d@gmail.com</column>
 			<column/>
-			<column><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="3">
@@ -61,7 +61,7 @@
 			<column name="country">fr</column>
 			<column name="email">felix.compton@yahoo.fr</column>
 			<column name="freelance">true</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="4">
@@ -73,7 +73,7 @@
 			<column name="country">za</column>
 			<column name="email">coby@conwayinc.com</column>
 			<column name="freelance">true</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="5">
@@ -85,7 +85,7 @@
 			<column name="country">nl</column>
 			<column name="email">ranna.shannon@hotmail.com</column>
 			<column name="freelance">false</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="6">
@@ -97,7 +97,7 @@
 			<column name="country">ca</column>
 			<column name="email">jasmine.benton@yahoo.com</column>
 			<column name="freelance">false</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="7">
@@ -109,7 +109,7 @@
 			<column name="country">be</column>
 			<column name="email">belletoise@kiloutou.be</column>
 			<column name="freelance">true</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="8">
@@ -121,7 +121,7 @@
 			<column name="country">br</column>
 			<column name="email">martin.sm@gmail.com</column>
 			<column name="freelance">false</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="7">
@@ -133,7 +133,7 @@
 			<column name="country">ng</column>
 			<column name="email">dieumerci@gmail.com</column>
 			<column name="freelance">true</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 
 		<row id="8">
@@ -145,7 +145,7 @@
 			<column name="country">zw</column>
 			<column name="email">morin.x@yahoo.com</column>
 			<column name="freelance">false</column>
-			<column name="action"><![CDATA[<a href="javascript:alert('This would delete the user if there was a db behind!');"><img src="images/delete.png" border="0"/></a>]]></column>
+			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
 		</row>
 		
 	</data>
