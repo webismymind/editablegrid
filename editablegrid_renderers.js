@@ -73,14 +73,17 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
-	htmlInput.checked = (value && value != 0 && value != "false") ? true : false;
+	htmlInput.checked = element.originalValue = (value && value != 0 && value != "false") ? true : false;
 	htmlInput.disabled = !this.column.editable;
-	
+
 	// this renderer is a little special because it allows direct edition
 	var cellEditor = new CellEditor();
 	cellEditor.editablegrid = this.editablegrid;
 	cellEditor.column = this.column;
-	htmlInput.onclick = function(event) { cellEditor.applyEditing(element, htmlInput.checked ? true : false, false); }
+	htmlInput.onclick = function(event) { 
+		cellEditor.applyEditing(element, htmlInput.checked ? true : false, false); 
+		element.originalValue = htmlInput.checked ? true : false; 
+	}
 
 	// give access to the cell editor and element from the editor field
 	htmlInput.element = element;
