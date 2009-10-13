@@ -115,7 +115,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue, render);
 
 		// let the user handle the model change
-		editablegrid.modelChanged(element.rowIndex, element.columnIndex, formattedValue, this.editablegrid.tBody.childNodes[element.rowIndex]);
+		editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, this.editablegrid.tBody.childNodes[element.rowIndex]);
 		
 		_clearEditor(element);	
 	}

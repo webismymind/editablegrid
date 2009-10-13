@@ -47,11 +47,12 @@ window.onload = function()
 			initializeGrid(this); 
 		},
 
-		modelChanged: function(rowIndex, columnIndex, value, row) { 
-			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed: new value = '" + value + "'");
-			if (columnIndex == 4) this.setValueAt(rowIndex, 5, ""); // if we changed the continent, reset the country
+		modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) { 
+			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
+			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
 		}
 	 });
 				 
-	editableGrid.load("demo.xml");
+	// load wml file (we use a trick to avoid problems with the browser's cache)
+	editableGrid.load("demo.xml?" + Math.floor(Math.random() * 100000));
 }

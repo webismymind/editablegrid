@@ -77,7 +77,7 @@ function EditableGrid(config)
         
         // callback functions
         tableLoaded: function() {},
-        modelChanged: function(rowIndex, columnIndex, value) {}
+        modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {}
     };
     
 	// override default properties with the ones given
