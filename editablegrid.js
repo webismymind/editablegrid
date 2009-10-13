@@ -66,7 +66,6 @@ function EditableGrid(config)
 	// default properties
     var props = 
     {
-        containerid: "",
 		doubleclick: false,
         columns: [],
         data: [],
@@ -84,15 +83,6 @@ function EditableGrid(config)
     
 	// override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
-
-    // get container and attach handler on click or double click 
-	var element = $(this.containerid);
-	if (!element) alert("Unable to get element [" + this.containerid + "]");
-	else {
-		element.editablegrid = this;
-		if (this.doubleclick) element.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-		else element.onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
-	}
 }
 
 /**
@@ -465,9 +455,11 @@ EditableGrid.prototype.getCellY = function(oElement)
 /**
  * Renders the table in the document
  */
-EditableGrid.prototype.renderGrid = function()
+EditableGrid.prototype.renderGrid = function(containerid)
 {
     with (this) {
+
+    	if (!$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
 
     	// create editablegrid table and add it to our container 
     	this.table = document.createElement("table");
@@ -500,6 +492,11 @@ EditableGrid.prototype.renderGrid = function()
         		columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
         	}
         }
+        
+        // attach handler on click or double click 
+        $(containerid).editablegrid = this;
+    	if (doubleclick) $(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+    	else $(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
     }
 }
 

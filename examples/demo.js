@@ -42,14 +42,13 @@ function initializeGrid(grid)
 		isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
 	}));
 	
-	// render the grid
-	grid.renderGrid();
+	// render the grid inside div tablecontent
+	grid.renderGrid("tablecontent");
 }				
 			
 window.onload = function() 
 {
-	editableGrid = new EditableGrid({		
-		containerid: "tablecontent",
+	editableGrid = new EditableGrid({
 		className: "testgrid",
 		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the default mode
 		editorzoneid: "edition",
