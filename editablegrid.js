@@ -437,13 +437,12 @@ EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 }
 
 /**
- * Get cell X position
+ * Get cell X position relative to the first non static offset parent
  */
 EditableGrid.prototype.getCellX = function(oElement)
 {
-	parent = $(this.containerid);
 	var iReturnValue = 0;
-	while(oElement != null && oElement != parent) try {
+	while (oElement != null && this.isStatic(oElement)) try {
 		iReturnValue += oElement.offsetLeft;
 		oElement = oElement.offsetParent;
 	} catch(err) { oElement = null; }
@@ -451,13 +450,12 @@ EditableGrid.prototype.getCellX = function(oElement)
 }
 
 /**
- * Get cell Y position
+ * Get cell Y position relative to the first non static offset parent
  */
 EditableGrid.prototype.getCellY = function(oElement)
 {
-	parent = $(this.containerid);
 	var iReturnValue = 0;
-	while(oElement != null && oElement != parent) try {
+	while (oElement != null && this.isStatic(oElement)) try {
 		iReturnValue += oElement.offsetTop;
 		oElement = oElement.offsetParent;
 	} catch(err) { oElement = null; }
@@ -476,7 +474,6 @@ EditableGrid.prototype.renderGrid = function()
         table.setAttribute("class", this.className);
 		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
         $(containerid).appendChild(table);
-    	$(containerid).style.position = "relative";
         
         // create header
         this.tHead = document.createElement("THEAD");
@@ -533,6 +530,25 @@ EditableGrid.prototype.mouseClicked = function(e)
 			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
+}
+
+/**
+ * Returns computed style property for element
+ */
+EditableGrid.prototype.getStyle = function(element, styleProp)
+{
+	if (element.currentStyle) return element.currentStyle[styleProp];
+	else if (window.getComputedStyle) return document.defaultView.getComputedStyle(element,null).getPropertyValue(styleProp);
+	return element.style[styleProp];
+}
+
+/**
+ * Returns true if the element has a static positioning
+ */
+EditableGrid.prototype.isStatic = function (element) 
+{
+	var position = this.getStyle(element, 'position');
+	return (!position || position == "static");
 }
 
 /**

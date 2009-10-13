@@ -67,7 +67,7 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		element.appendChild(editorInput);
 		editorInput.style.position = "absolute";
 		editorInput.style.left = (this.editablegrid.getCellX(element) + 1) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) + 1) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) + 2) + "px";
 	}
 
 	// fixed mode: don't show input field in the cell 
