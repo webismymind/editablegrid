@@ -5,12 +5,12 @@ function displayMessage(text, style) {
 function initializeGrid(grid) 
 {
 	// show unit when rendering the height
-	grid.setCellRenderer(3, new CellRenderer({ 
+	grid.setCellRenderer("height", new CellRenderer({ 
 		render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); } 
 	})); 
 
 	// the list of allowed countries depend on the selected continent
-	grid.setEnumProvider(5, new EnumProvider({ 
+	grid.setEnumProvider("country", new EnumProvider({ 
 		getOptionValues: function (column, rowIndex) {
 			var continent = grid.getValueAt(rowIndex, 4);
 			if (continent == "eu") return { "be" : "Belgique", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"};
@@ -21,12 +21,12 @@ function initializeGrid(grid)
 	}));
 
 	// use a flag image to render the selected country
-	grid.setCellRenderer(5, new CellRenderer({
+	grid.setCellRenderer("country", new CellRenderer({
 		render: function(cell, value) { cell.innerHTML = value ? "<img src='images/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
 	})); 
 
 	// add a cell validator to check that the age is in [16, 100[
-	grid.addCellValidator(2, new CellValidator({ 
+	grid.addCellValidator("age", new CellValidator({ 
 		isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
 	}));
 	

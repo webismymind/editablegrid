@@ -260,6 +260,24 @@ EditableGrid.prototype.getColumnCount = function()
 }
 
 /**
+ * Returns the name of a column
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.getColumnName = function(columnIndex)
+{
+	return this.columns[columnIndex].name;
+}
+
+/**
+ * Returns the type of a column
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.getColumnType = function(columnIndex)
+{
+	return this.columns[columnIndex].datatype;
+}
+
+/**
  * Returns the value at the specified index
  * @param {Object} rowIndex
  * @param {Object} columnIndex
@@ -292,14 +310,22 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	}
 }
 
+EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
+{
+	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
+	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
+	return -1;
+}
+
 /**
  * Sets the cell renderer for the specified column index
  * @param {Integer} columnIndex
  * @param {Object} cellRenderer
  */
-EditableGrid.prototype.setCellRenderer = function(columnIndex, cellRenderer)
+EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRenderer)
 {
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellRenderer = cellRenderer;
 }
 
@@ -308,9 +334,10 @@ EditableGrid.prototype.setCellRenderer = function(columnIndex, cellRenderer)
  * @param {Integer} columnIndex
  * @param {Object} enumProvider
  */
-EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
+EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvider)
 {
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].enumProvider = enumProvider;
 	
 	// we must recreate the cell renderer and editor for this column
@@ -322,9 +349,10 @@ EditableGrid.prototype.setEnumProvider = function(columnIndex, enumProvider)
  * Clear all cell validators for the specified column index
  * @param {Integer} columnIndex
  */
-EditableGrid.prototype.clearCellValidators = function(columnIndex)
+EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 {
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators = [];
 }
 
@@ -332,9 +360,10 @@ EditableGrid.prototype.clearCellValidators = function(columnIndex)
  * Adds default cell validators for the specified column index (according to the column type)
  * @param {Integer} columnIndex
  */
-EditableGrid.prototype.addDefaultCellValidators = function(columnIndex)
+EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 {
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	return this._addDefaultCellValidators(this.columns[columnIndex]);
 }
 
@@ -349,9 +378,10 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
  * @param {Integer} columnIndex
  * @param {Object} cellValidator
  */
-EditableGrid.prototype.addCellValidator = function(columnIndex, cellValidator)
+EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValidator)
 {
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators.push(cellValidator);
 }
 
@@ -460,24 +490,6 @@ EditableGrid.prototype.mouseClicked = function(e)
 			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
-}
-
-/**
- * Returns the name of a column
- * @param {Integer} columnIndex
- */
-EditableGrid.prototype.getColumnName = function(columnIndex)
-{
-	return this.columns[columnIndex].name;
-}
-
-/**
- * Returns the type of a column
- * @param {Integer} columnIndex
- */
-EditableGrid.prototype.getColumnType = function(columnIndex)
-{
-	return this.columns[columnIndex].datatype;
 }
 
 /**
