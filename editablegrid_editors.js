@@ -132,7 +132,7 @@ function TextCellEditor(size) { this.fieldSize = size || 12; };
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
 	// red background for invalid numbers
-	htmlInput.style.backgroundColor = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#DD0022";
+	htmlInput.style.background = this.column.isValid(this.getEditorValue(htmlInput)) ? htmlInput.background_bkp : "#DD0022";
 	htmlInput.style.color = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#EEEEEE";
 }
 
@@ -157,6 +157,7 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 
 	// update style of input field
 	this.updateStyle(htmlInput);
+	htmlInput.background_bkp = htmlInput.style.background;
 	
 	// select text
 	htmlInput.select();
