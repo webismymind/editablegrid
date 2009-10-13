@@ -11,6 +11,10 @@ h2 {
 	font-size: 13px;
 }
 
+img {
+	border: 0;
+}
+
 .ok { 
 	background-color: #0a8819; 
 	color: white; 

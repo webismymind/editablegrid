@@ -1,11 +1,21 @@
 var editableGrid = null;
 
+InfoHeaderRenderer.prototype = new CellRenderer();
+function InfoHeaderRenderer(message) { this.message = message; };
+InfoHeaderRenderer.prototype.render = function(cell, value) {
+	cell.innerHTML = value ? value + "&nbsp;&nbsp;<a href=\"javascript:alert('" + this.message + "')\"><img src='images/information.png'/></a> " : "";
+};
+
 function displayMessage(text, style) { 
 	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
 } 
 
 function initializeGrid(grid) 
 {
+	// use a special renderer for the header of the freelance and age columns
+	grid.setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
+	grid.setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
+
 	// show unit when rendering the height
 	grid.setCellRenderer("height", new CellRenderer({ 
 		render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); } 

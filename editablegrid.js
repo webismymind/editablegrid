@@ -19,6 +19,7 @@ function Column(config)
         label: "",
 		editable: false,
         datatype: "string",
+        headerRenderer: null,
         cellRenderer: null,
 		cellEditor: null,
 		cellValidators: [],
@@ -173,8 +174,9 @@ EditableGrid.prototype.processXML = function()
             });
 
 			// create suited cell renderer
-            _createCellRenderer(column);  
-
+            _createCellRenderer(column);
+			_createHeaderRenderer(column);
+			
 			// create suited cell editor
             _createCellEditor(column);  
 
@@ -213,12 +215,26 @@ EditableGrid.prototype._createCellRenderer = function(column)
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
     	column.datatype.startsWith("email") ? new EmailCellRenderer() : 
     	new CellRenderer();
-		
+
 	// give access to the column from the cell renderer
 	if (column.cellRenderer) {
 		column.cellRenderer.editablegrid = this;
 		column.cellRenderer.column = column;
 	}
+}
+
+/**
+ * Creates a suitable header cell renderer for the column
+ */
+EditableGrid.prototype._createHeaderRenderer = function(column)
+{
+	column.headerRenderer = new CellRenderer();
+
+	// give access to the column from the header cell renderer
+	if (column.headerRenderer) {
+		column.headerRenderer.editablegrid = this;
+		column.headerRenderer.column = column;
+	}		
 }
 
 /**
@@ -329,6 +345,18 @@ EditableGrid.prototype.removeRow = function(rowId)
 {
 	this.tBody.removeChild($(rowId));
 } 
+
+/**
+ * Sets the column header cell renderer for the specified column index
+ * @param {Integer} columnIndex
+ * @param {Object} cellRenderer
+ */
+EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRenderer)
+{
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
+	else this.columns[columnIndex].headerRenderer = cellRenderer;
+}
 
 /**
  * Sets the cell renderer for the specified column index
@@ -457,7 +485,7 @@ EditableGrid.prototype.renderGrid = function()
         for (var c = 0; c < columnCount; c++) {
             var headerCell = document.createElement("TH");
         	var td = trHeader.appendChild(headerCell);
-        	td.innerHTML = columns[c].label;
+        	columns[c].headerRenderer._render(-1, c, td, columns[c].label);
         }
         
         // create body and rows
