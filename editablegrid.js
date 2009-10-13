@@ -432,6 +432,7 @@ EditableGrid.prototype.renderGrid = function()
     	// create editablegrid table and add it to our container 
     	this.table = document.createElement("table");
         table.setAttribute("class", this.className);
+		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
         $(containerid).appendChild(table);
     	$(containerid).style.position = "relative";
         
