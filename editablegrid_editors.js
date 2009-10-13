@@ -126,8 +126,8 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
  * Class to edit a cell with an HTML text input 
  */
 
-TextCellEditor.prototype = new CellEditor();
 function TextCellEditor(size) { this.fieldSize = size || 12; };
+TextCellEditor.prototype = new CellEditor();
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
@@ -168,8 +168,8 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
  * Class to edit a numeric cell with an HTML text input 
  */
 
-NumberCellEditor.prototype = new TextCellEditor(4);
 function NumberCellEditor(type) { this.type = type; }
+NumberCellEditor.prototype = new TextCellEditor(4);
 
 NumberCellEditor.prototype.displayEditor = function(element, editorInput) 
 {
@@ -191,8 +191,8 @@ NumberCellEditor.prototype.formatValue = function(value)
  * Class to edit a cell with an HTML select input 
  */
 
-SelectCellEditor.prototype = new CellEditor();
 function SelectCellEditor() {}
+SelectCellEditor.prototype = new CellEditor();
 
 SelectCellEditor.prototype.getEditor = function(element, value)
 {

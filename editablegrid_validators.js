@@ -23,8 +23,8 @@ CellValidator.prototype.isValid = function(value)
  * Class to validate a numeric cell
  */
 
-NumberCellValidator.prototype = new CellValidator;
 function NumberCellValidator(type) { this.type = type; }
+NumberCellValidator.prototype = new CellValidator;
 
 NumberCellValidator.prototype.isValid = function(value) 
 {
@@ -43,8 +43,8 @@ NumberCellValidator.prototype.isValid = function(value)
  * Class to validate a cell containing an email
  */
 
-EmailCellValidator.prototype = new CellValidator;
 function EmailCellValidator() {}
+EmailCellValidator.prototype = new CellValidator;
 
 EmailCellValidator.prototype.isValid = function(value) 
 {

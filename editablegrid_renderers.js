@@ -37,9 +37,8 @@ CellRenderer.prototype.render = function(element, value)
  * Class to render a cell with enum values
  */
 
-EnumCellRenderer.prototype = new CellRenderer();
 function EnumCellRenderer() {};
-
+EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.render = function(element, value)
 {
 	var optionValues = this.column.getOptionValues(element.rowIndex);
@@ -51,9 +50,8 @@ EnumCellRenderer.prototype.render = function(element, value)
  * Class to render a cell with numerical values
  */
 
-NumberCellRenderer.prototype = new CellRenderer();
 function NumberCellRenderer() {};
-
+NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
 	element.innerHTML = value ? value : "";
@@ -65,9 +63,8 @@ NumberCellRenderer.prototype.render = function(element, value)
  * Class to render a cell with an HTML checkbox
  */
 
-CheckboxCellRenderer.prototype = new CellRenderer();
 function CheckboxCellRenderer() {};
-
+CheckboxCellRenderer.prototype = new CellRenderer();
 CheckboxCellRenderer.prototype.render = function(element, value)
 {
 	// create and initialize checkbox
@@ -98,9 +95,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
  * Class to render a cell with emails
  */
 
-EmailCellRenderer.prototype = new CellRenderer();
 function EmailCellRenderer() {};
-
+EmailCellRenderer.prototype = new CellRenderer();
 EmailCellRenderer.prototype.render = function(element, value)
 {
 	element.innerHTML = value ? "<a href='mailto:" + value + "'>" + value : "</a>";

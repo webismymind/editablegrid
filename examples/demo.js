@@ -1,7 +1,7 @@
 var editableGrid = null;
 
-InfoHeaderRenderer.prototype = new CellRenderer();
 function InfoHeaderRenderer(message) { this.message = message; };
+InfoHeaderRenderer.prototype = new CellRenderer();
 InfoHeaderRenderer.prototype.render = function(cell, value) {
 	cell.innerHTML = value ? value + "&nbsp;&nbsp;<a href=\"javascript:alert('" + this.message + "')\"><img src='images/information.png'/></a> " : "";
 };
