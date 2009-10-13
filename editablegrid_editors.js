@@ -29,7 +29,7 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
 		
 		// ESC: cancel editing
-		if (event.keyCode == 27) this.celleditor.cancelEditing(this.element);
+		if (event.keyCode == 27) { this.celleditor.cancelEditing(this.element); return false; }
 	};
 	
 	// and display the resulting editor widget
