@@ -75,7 +75,8 @@ function EditableGrid(config)
         editmode: "static",
         editorzoneid: "",
 		allowSimultaneousEdition: false,
-        
+   		invalidClassName: "invalid",
+
         // callback functions
         tableLoaded: function() {},
         modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {}
@@ -533,6 +534,14 @@ EditableGrid.prototype.mouseClicked = function(e)
 		}
 	}
 }
+
+/**
+ * class name manipulation
+ */
+EditableGrid.prototype.strip = function(str) { return str.replace(/^\s+/, '').replace(/\s+$/, ''); },
+EditableGrid.prototype.hasClassName = function(element, className) { return (element.className.length > 0 && (element.className == className || new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className))); }
+EditableGrid.prototype.addClassName = function(element, className) { if (!this.hasClassName(element, className)) element.className += (element.className ? ' ' : '') + className; }
+EditableGrid.prototype.removeClassName = function(element, className) { element.className = this.strip(element.className.replace(new RegExp("(^|\\s+)" + className + "(\\s+|$)"), ' ')); }
 
 /**
  * Useful string methods 

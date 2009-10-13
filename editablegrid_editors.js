@@ -131,9 +131,9 @@ TextCellEditor.prototype = new CellEditor();
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
-	// red background for invalid numbers
-	htmlInput.style.background = this.column.isValid(this.getEditorValue(htmlInput)) ? htmlInput.background_bkp : "#DD0022";
-	htmlInput.style.color = this.column.isValid(this.getEditorValue(htmlInput)) ? "" : "#EEEEEE";
+	// change style for invalid values
+	if (this.column.isValid(this.getEditorValue(htmlInput))) this.editablegrid.removeClassName(htmlInput, this.editablegrid.invalidClassName);
+	else this.editablegrid.addClassName(htmlInput, this.editablegrid.invalidClassName);
 }
 
 TextCellEditor.prototype.getEditor = function(element, value)
@@ -157,7 +157,6 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 
 	// update style of input field
 	this.updateStyle(htmlInput);
-	htmlInput.background_bkp = htmlInput.style.background;
 	
 	// select text
 	htmlInput.select();

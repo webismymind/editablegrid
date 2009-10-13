@@ -21,6 +21,11 @@ img {
 	padding: 5px;
 }
 
+input.invalid {
+	background: red;
+	color: #FDFDFD;
+}
+
 #message {
 	width: 800px;
 }
