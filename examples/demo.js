@@ -49,7 +49,7 @@ EditableGrid.prototype.initializeGrid = function()
 		addHeaderRenderer("height", "The height is given in meters");
 		addHeaderRenderer("continent", "Note that the list of proposed countries depends on the selected contient");
 		addHeaderRenderer("country");
-		addHeaderRenderer("email", "Note the validator used automatically when you specify your column as being of type 'email'");
+		addHeaderRenderer("email", "Note the validator used automatically when you specify your column as being of type email");
 		addHeaderRenderer("freelance", "This column tells if the person works as a freelance or as an employee");
 
 		// show unit when rendering the height
