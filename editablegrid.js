@@ -17,7 +17,7 @@ function Column(config)
     var props = {
         name: "",
         label: "",
-		editable: false,
+		editable: true,
         datatype: "string",
         headerRenderer: null,
         cellRenderer: null,
@@ -33,7 +33,7 @@ function Column(config)
 }
 
 Column.prototype.getOptionValues = function(rowIndex) { 
-	return this.enumProvider.getOptionValues(this, rowIndex) 
+	return this.enumProvider.getOptionValues(this.editablegrid, this, rowIndex) 
 };
 
 Column.prototype.isValid = function(value) {
@@ -49,7 +49,7 @@ function EnumProvider(config)
 {
 	// default properties
     var props = {
-        getOptionValues: function(column, rowIndex) {
+        getOptionValues: function(grid, column, rowIndex) {
     		return column.optionValues;
     	}
     };
@@ -174,7 +174,8 @@ EditableGrid.prototype.processXML = function()
 			// add default cell validators based on the column type
 			_addDefaultCellValidators(column);
 
-            // add column 
+            // add column
+			column.editablegrid = this;
             columns.push(column);
         }
         
@@ -191,6 +192,56 @@ EditableGrid.prototype.processXML = function()
             var rowData = [];
             for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
        		data.push({id: rows[i].hasAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
+        }
+    }
+}
+
+/**
+ * Attach to an existing HTML table, using given column definitions
+ */
+EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
+{
+    with (this) {
+
+    	// we have our new columns
+        columns = _columns;
+        for (var c = 0; c < columns.length; c++) {
+        	
+        	// set column index and back pointer
+        	var column = columns[c];
+			column.editablegrid = this;
+        	column.columnIndex = c;
+
+			// create suited enum provider, renderer and editor if none given
+        	if (!column.enumProvider) column.enumProvider = column.optionValues ? new EnumProvider() : null;
+            if (!column.cellRenderer) _createCellRenderer(column);
+            if (!column.headerRenderer) _createHeaderRenderer(column);
+            if (!column.cellEditor) _createCellEditor(column);  
+
+			// add default cell validators based on the column type
+			_addDefaultCellValidators(column);
+        }
+
+        // get pointers to table components
+        this.table = _table;
+        this.tHead = _table.tHead;
+        this.tBody = _table.tBodies[0];
+        
+        // load header labels
+        var rows = tHead.getElementsByTagName("tr");
+        for (var i = 0; i < rows.length; i++) {
+            var cols = rows[i].getElementsByTagName("th");
+            for (var j = 0; j < cols.length && j < columns.length; j++) 
+            	if (!columns[j].label) columns[j].label = cols[j].innerHTML;
+        }
+
+        // load content
+        var rows = tBody.getElementsByTagName("tr");
+        for (var i = 0; i < rows.length; i++) {
+            var rowData = [];
+            var cols = rows[i].getElementsByTagName("td");
+            for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(cols[j].innerHTML);
+       		data.push({id: rows[i].id, columns: rowData});
         }
     }
 }
@@ -422,8 +473,8 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
  */
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
-	var row = this.tBody.childNodes[rowIndex];
-	return row.childNodes[columnIndex];
+	var row = this.tBody.getElementsByTagName("TR")[rowIndex];
+	return row.getElementsByTagName("TD")[columnIndex];
 }
 
 /**
@@ -459,44 +510,73 @@ EditableGrid.prototype.renderGrid = function(containerid)
 {
     with (this) {
 
-    	if (!$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
+    	// if we are already attached to an existing table, just update the cell contents
+    	if (typeof table != "undefined" && table) {
+    		
+            var rows = tHead.getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                var rowData = [];
+                var cols = rows[i].getElementsByTagName("th");
+                for (var j = 0; j < cols.length && j < columns.length; j++) 
+                	columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+            }
 
-    	// create editablegrid table and add it to our container 
-    	this.table = document.createElement("table");
-        table.setAttribute("class", this.className);
-		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
-        $(containerid).appendChild(table);
+            var rows = tBody.getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                var rowData = [];
+                var cols = rows[i].getElementsByTagName("td");
+                for (var j = 0; j < cols.length && j < columns.length; j++) 
+                	columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
+            }
+
+            // attach handler on click or double click 
+            table.editablegrid = this;
+        	if (doubleclick) table.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+        	else table.onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+    	}
+    	
+    	// we must render a whole new table
+    	else {
+    		
+    		if (!$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
+
+    		// create editablegrid table and add it to our container 
+    		this.table = document.createElement("table");
+    		table.setAttribute("class", this.className);
+    		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
+    		$(containerid).appendChild(table);
         
-        // create header
-        this.tHead = document.createElement("THEAD");
-        table.appendChild(tHead);
-        var trHeader = tHead.insertRow(0);
-        var columnCount = getColumnCount();
-        for (var c = 0; c < columnCount; c++) {
-            var headerCell = document.createElement("TH");
-        	var td = trHeader.appendChild(headerCell);
-        	columns[c].headerRenderer._render(-1, c, td, columns[c].label);
-        }
+    		// create header
+    		this.tHead = document.createElement("THEAD");
+    		table.appendChild(tHead);
+    		var trHeader = tHead.insertRow(0);
+    		var columnCount = getColumnCount();
+    		for (var c = 0; c < columnCount; c++) {
+    			var headerCell = document.createElement("TH");
+    			var td = trHeader.appendChild(headerCell);
+        		columns[c].headerRenderer._render(-1, c, td, columns[c].label);
+    		}
         
-        // create body and rows
-        this.tBody = document.createElement("TBODY");
-        table.appendChild(tBody);
-        var rowCount = getRowCount();
-        for (i = 0; i < rowCount; i++) {
-        	var tr = tBody.insertRow(i);
-        	tr.id = data[i]['id'];
-        	for (j = 0; j < columnCount; j++) {
+    		// create body and rows
+    		this.tBody = document.createElement("TBODY");
+    		table.appendChild(tBody);
+    		var rowCount = getRowCount();
+    		for (i = 0; i < rowCount; i++) {
+    			var tr = tBody.insertRow(i);
+    			tr.id = data[i]['id'];
+    			for (j = 0; j < columnCount; j++) {
         		
-        		// create cell and render its content
-        		var td = tr.insertCell(j);
-        		columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
-        	}
-        }
-        
-        // attach handler on click or double click 
-        $(containerid).editablegrid = this;
-    	if (doubleclick) $(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-    	else $(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+    				// create cell and render its content
+    				var td = tr.insertCell(j);
+    				columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
+    			}
+    		}
+
+    		// attach handler on click or double click 
+            $(containerid).editablegrid = this;
+        	if (doubleclick) $(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+        	else $(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+    	}    	
     }
 }
 
@@ -514,7 +594,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		
 		// go up parents to find a cell under the clicked position
 		while (target) if (target.tagName == "TD") break; else target = target.parentNode;
-		if (!target || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
+		if (!target || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
 
 		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - 1; // remove 1 for the header
