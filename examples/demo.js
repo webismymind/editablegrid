@@ -1,10 +1,38 @@
 var editableGrid = null;
+var sortedColumnName = null;
+var descending = false;
 
-function InfoHeaderRenderer(message) { this.message = message; };
-InfoHeaderRenderer.prototype = new CellRenderer();
-InfoHeaderRenderer.prototype.render = function(cell, value) {
-	cell.innerHTML = value ? value + "&nbsp;&nbsp;<a href=\"javascript:alert('" + this.message + "')\"><img src='images/information.png'/></a> " : "";
+function HeaderRenderer(name, message) { this.name = name; this.message = message; };
+HeaderRenderer.prototype = new CellRenderer();
+HeaderRenderer.prototype.render = function(cell, value) 
+{
+	if (!value) cell.innerHTML = "";
+	else {
+		
+		// create a link that will sort alternatively ascending/descending
+		var link = document.createElement("a");
+		cell.appendChild(link);
+		link.href = "#";
+		link.name = this.name;
+		link.innerHTML = value;
+		link.editablegrid = this.editablegrid;
+		link.onclick = function() {
+			descending = (sortedColumnName == this.name) ? !descending : false;
+			this.editablegrid.sort(sortedColumnName = this.name, descending); 
+		};
+
+		// show info message if any
+		if (this.message) {
+			var msg = document.createElement("span");
+			msg.innerHTML = "&nbsp;&nbsp;<a href=\"javascript:alert('" + this.message + "');\"><img src='images/information.png'/></a>"; 
+			cell.appendChild(msg);
+		}
+	}
 };
+
+function addHeaderRenderer(name, message) {
+	editableGrid.setHeaderRenderer(name, new HeaderRenderer(name, message));	
+}
 
 function displayMessage(text, style) { 
 	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
@@ -15,8 +43,14 @@ EditableGrid.prototype.initializeGrid = function()
 	with (this) {
 
 		// use a special renderer for the header of the freelance and age columns
-		setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
-		setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
+		addHeaderRenderer("name");
+		addHeaderRenderer("firstname");
+		addHeaderRenderer("age", "The age must be an integer between 16 and 99");
+		addHeaderRenderer("height", "The height is given in meters");
+		addHeaderRenderer("continent", "Note that the list of proposed countries depends on the selected contient");
+		addHeaderRenderer("country");
+		addHeaderRenderer("email", "Note the validator used automatically when you specify your column as being of type 'email'");
+		addHeaderRenderer("freelance", "This column tells if the person works as a freelance or as an employee");
 
 		// show unit when rendering the height
 		setCellRenderer("height", new CellRenderer({ 

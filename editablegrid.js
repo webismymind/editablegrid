@@ -385,7 +385,9 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
+	var rowIndex = $(rowId).rowIndex - 1; // remove 1 for the header
 	this.tBody.removeChild($(rowId));
+	this.data.splice(rowIndex, 1);
 } 
 
 /**
@@ -397,7 +399,16 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
-	else this.columns[columnIndex].headerRenderer = cellRenderer;
+	else {
+		var column = this.columns[columnIndex];
+		column.headerRenderer = cellRenderer;
+
+		// give access to the column from the cell renderer
+		if (cellRenderer) {
+			cellRenderer.editablegrid = this;
+			cellRenderer.column = column;
+		}
+	}
 }
 
 /**
@@ -409,7 +420,16 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
-	else this.columns[columnIndex].cellRenderer = cellRenderer;
+	else {
+		var column = this.columns[columnIndex];
+		column.cellRenderer = cellRenderer;
+	
+		// give access to the column from the cell renderer
+		if (cellRenderer) {
+			cellRenderer.editablegrid = this;
+			cellRenderer.column = column;
+		}
+	}
 }
 
 /**
@@ -607,6 +627,53 @@ EditableGrid.prototype.mouseClicked = function(e)
 			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
+}
+
+EditableGrid.prototype.sort = function(columnIndexOrName, descending)
+{
+	with (this) {
+
+		var columnIndex = this.getColumnIndex(columnIndexOrName);
+		if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
+		else {
+			var type = getColumnType(columnIndex);
+			var row_array = [];
+			var rows = tBody.getElementsByTagName("TR");
+			for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i]]);
+			row_array.sort(type == "integer" || type == "double" ? sort_numeric :
+						   type == "boolean" ? sort_boolean :
+						   sort_alpha);
+			var _data = data;
+			data = [];
+			if (descending) row_array = row_array.reverse();
+			for (var i = 0; i < row_array.length; i++) {
+				data.push(_data[row_array[i][1]]);
+				tBody.appendChild(row_array[i][2]);
+			}
+			delete row_array;
+		}
+	}
+}
+
+EditableGrid.prototype.sort_numeric = function(a,b) 
+{
+  aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
+  bb = isNaN(b[0]) ? 0 : parseFloat(b[0]);
+  return aa-bb;
+}
+
+EditableGrid.prototype.sort_boolean = function(a,b) 
+{
+  aa = !a[0] || a[0] == "false" ? 0 : 1;
+  bb = !b[0] || b[0] == "false" ? 0 : 1;
+  return aa-bb;
+}
+
+EditableGrid.prototype.sort_alpha = function(a,b) 
+{
+  if (a[0]==b[0]) return 0;
+  if (a[0]<b[0]) return -1;
+  return 1;
 }
 
 /**
