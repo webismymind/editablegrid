@@ -147,8 +147,8 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 			}
 		}
 		if (isNaN(intMonth)) return 3;
-		if (intMonth>12 || intMonth<1) return 5;
 	}
+	if (intMonth>12 || intMonth<1) return 5;
 
 	// get and check year
 	intYear = parseInt(strYear, 10);
