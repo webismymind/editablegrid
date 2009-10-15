@@ -145,7 +145,7 @@ DateCellRenderer.prototype = new CellRenderer;
 
 DateCellRenderer.prototype.render = function(cell, value) 
 {
-	var date = checkDate(value);
+	var date = this.editablegrid.checkDate(value);
 	if (typeof date == "string") cell.innerHTML = date;
 	else cell.innerHTML = value;
 }

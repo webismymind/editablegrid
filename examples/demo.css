@@ -36,13 +36,13 @@ input.invalid {
 }
 
 #message {
-	width: 800px;
+	width: 850px;
 }
 
 table.testgrid { 
 	border-collapse: collapse; 
 	border: 1px solid #CCB;
-	width: 800px;
+	width: 850px;
 }
 
 table.testgrid tr {

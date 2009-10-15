@@ -531,7 +531,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
 	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
-	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator());
+	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator(this));
 }
 
 /**
@@ -687,6 +687,11 @@ EditableGrid.prototype.mouseClicked = function(e)
 	}
 }
 
+/**
+ * Sort on a column
+ * @param {Object} columnIndexOrName
+ * @param {Boolean} descending
+ */
 EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 {
 	with (this) {
@@ -712,58 +717,3 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		}
 	}
 }
-
-EditableGrid.prototype.sort_numeric = function(a,b) 
-{
-  aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
-  bb = isNaN(b[0]) ? 0 : parseFloat(b[0]);
-  return aa-bb;
-}
-
-EditableGrid.prototype.sort_boolean = function(a,b) 
-{
-  aa = !a[0] || a[0] == "false" ? 0 : 1;
-  bb = !b[0] || b[0] == "false" ? 0 : 1;
-  return aa-bb;
-}
-
-EditableGrid.prototype.sort_alpha = function(a,b) 
-{
-  if (a[0]==b[0]) return 0;
-  if (a[0]<b[0]) return -1;
-  return 1;
-}
-
-/**
- * Returns computed style property for element
- */
-EditableGrid.prototype.getStyle = function(element, styleProp)
-{
-	if (element.currentStyle) return element.currentStyle[styleProp];
-	else if (window.getComputedStyle) return document.defaultView.getComputedStyle(element,null).getPropertyValue(styleProp);
-	return element.style[styleProp];
-}
-
-/**
- * Returns true if the element has a static positioning
- */
-EditableGrid.prototype.isStatic = function (element) 
-{
-	var position = this.getStyle(element, 'position');
-	return (!position || position == "static");
-}
-
-/**
- * class name manipulation
- */
-EditableGrid.prototype.strip = function(str) { return str.replace(/^\s+/, '').replace(/\s+$/, ''); },
-EditableGrid.prototype.hasClassName = function(element, className) { return (element.className.length > 0 && (element.className == className || new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className))); }
-EditableGrid.prototype.addClassName = function(element, className) { if (!this.hasClassName(element, className)) element.className += (element.className ? ' ' : '') + className; }
-EditableGrid.prototype.removeClassName = function(element, className) { element.className = this.strip(element.className.replace(new RegExp("(^|\\s+)" + className + "(\\s+|$)"), ' ')); }
-
-/**
- * Useful string methods 
- */
-String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")) };
-String.prototype.startsWith = function(str) { return (this.match("^"+str)==str) };
-String.prototype.endsWith = function(str) { return (this.match(str+"$")==str) };

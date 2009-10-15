@@ -56,10 +56,10 @@ EmailCellValidator.prototype.isValid = function(value)
  * Class to validate a cell containing a date
  */
 
-function DateCellValidator() {}
+function DateCellValidator(grid) { this.grid = grid; }
 DateCellValidator.prototype = new CellValidator;
 
 DateCellValidator.prototype.isValid = function(value) 
 {
-	return typeof checkDate(value) == "string";
+	return typeof this.grid.checkDate(value) == "string";
 }
