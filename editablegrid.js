@@ -83,6 +83,14 @@ function EditableGrid(config)
     
 	// override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+    
+    with (this) {
+    	IE =  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1);
+    	Opera = navigator.userAgent.indexOf('Opera') > -1;
+    	WebKit = navigator.userAgent.indexOf('AppleWebKit/') > -1;
+    	Gecko = navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1;
+    	MobileSafari = !!navigator.userAgent.match(/Apple.*Mobile.*Safari/);
+    };
 }
 
 /**
@@ -102,6 +110,22 @@ EditableGrid.prototype.load = function(url)
                     tableLoaded();
                 }
             };
+            xmlDoc.load(url);
+        }
+        
+        // Safari
+        else if (WebKit && window.XMLHttpRequest) 
+        {
+           	xmlDoc = new XMLHttpRequest();
+           	xmlDoc.onreadystatechange = function () {
+       			if (xmlDoc.readyState == 4) {
+       				xmlDoc = xmlDoc.responseXML;
+       				processXML()
+       				tableLoaded();
+       			}
+       		}
+           	xmlDoc.open("GET", url, true);
+           	xmlDoc.send("");
         }
         
         // other browsers
@@ -112,6 +136,7 @@ EditableGrid.prototype.load = function(url)
         		processXML();
                 tableLoaded();
         	}
+            xmlDoc.load(url);
         }
         
         // should never happen
@@ -120,8 +145,6 @@ EditableGrid.prototype.load = function(url)
         	return false;
         }
     
-        // load XML file
-        xmlDoc.load(url);
         return true;
     }
 }
