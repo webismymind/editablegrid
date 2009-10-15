@@ -218,7 +218,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	    var option = document.createElement('option');
 	    option.text = optionValues[optionValue];
 	    option.value = optionValue;
-	    htmlInput.add(option);
+	    // add does not work as expected in IE7 (cf. second arg)
+		try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
         if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
         index++;
 	}
