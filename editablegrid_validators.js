@@ -61,5 +61,5 @@ DateCellValidator.prototype = new CellValidator;
 
 DateCellValidator.prototype.isValid = function(value) 
 {
-	return typeof this.grid.checkDate(value) == "string";
+	return value == "" || typeof this.grid.checkDate(value) == "object";
 }

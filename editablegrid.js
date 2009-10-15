@@ -705,6 +705,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i]]);
 			row_array.sort(type == "integer" || type == "double" ? sort_numeric :
 						   type == "boolean" ? sort_boolean :
+						   type.startsWith("date") ? sort_date :
 						   sort_alpha);
 			var _data = data;
 			data = [];

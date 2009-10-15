@@ -1,22 +1,31 @@
 EditableGrid.prototype.sort_numeric = function(a,b) 
 {
-  aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
-  bb = isNaN(b[0]) ? 0 : parseFloat(b[0]);
-  return aa-bb;
+	aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
+	bb = isNaN(b[0]) ? 0 : parseFloat(b[0]);
+	return aa-bb;
 }
 
 EditableGrid.prototype.sort_boolean = function(a,b) 
 {
-  aa = !a[0] || a[0] == "false" ? 0 : 1;
-  bb = !b[0] || b[0] == "false" ? 0 : 1;
-  return aa-bb;
+	aa = !a[0] || a[0] == "false" ? 0 : 1;
+	bb = !b[0] || b[0] == "false" ? 0 : 1;
+	return aa-bb;
 }
 
 EditableGrid.prototype.sort_alpha = function(a,b) 
 {
-  if (a[0]==b[0]) return 0;
-  if (a[0]<b[0]) return -1;
-  return 1;
+	if (a[0]==b[0]) return 0;
+	if (a[0]<b[0]) return -1;
+	return 1;
+}
+
+EditableGrid.prototype.sort_date = function(a,b) 
+{
+	date = EditableGrid.prototype.checkDate(a[0]);
+	aa = typeof date == "object" ? date.sortDate : 0;
+	date = EditableGrid.prototype.checkDate(b[0]);
+	bb = typeof date == "object" ? date.sortDate : 0;
+	return aa-bb;
 }
 
 /**
@@ -156,7 +165,10 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	}
 
 	// return formatted date
-	return strDatestyle == "US" ? strMonthArray[intMonth-1] + " " + intday+" " + strYear : intday + " " + strMonthArray[intMonth-1]/*.toLowerCase()*/ + " " + strYear;
+	return { 
+		formattedDate: (strDatestyle == "US" ? strMonthArray[intMonth-1] + " " + intday+" " + strYear : intday + " " + strMonthArray[intMonth-1]/*.toLowerCase()*/ + " " + strYear),
+		sortDate: Date.parse(intMonth + "/" + intday + "/" + intYear)
+	};
 }
 
 function LeapYear(intYear) 
