@@ -344,6 +344,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
 		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : 32) :
+		column.datatype.startsWith("date") ? new TextCellEditor(length ? length : 9) :
 		new TextCellEditor(length);  
 		
 	// give access to the column from the cell editor
