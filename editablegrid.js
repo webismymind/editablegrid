@@ -66,9 +66,8 @@ function EditableGrid(config)
 	// default properties
     var props = 
     {
-   		enableSort: false,
+   		enableSort: true,
 		doubleclick: false,
-        className: "editablegrid",
         editmode: "absolute",
         editorzoneid: "",
 		allowSimultaneousEdition: false,
@@ -103,6 +102,10 @@ function EditableGrid(config)
  */
 EditableGrid.prototype.load = function(url)
 {
+	// we use a trick to avoid getting an old version from the browser's cache
+	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
+	url += sep + Math.floor(Math.random() * 100000);
+
     with (this) {
     	
     	// IE
@@ -163,6 +166,7 @@ EditableGrid.prototype.processXML = function()
     	
         // load metadata (only one tag <metadata> --> metadata[0])
         var metadata = xmlDoc.getElementsByTagName("metadata");
+        if (!metadata || metadata.length < 1) return false;
         var columnDeclarations = metadata[0].getElementsByTagName("column");
         for (var i = 0; i < columnDeclarations.length; i++) {
         	
@@ -184,8 +188,8 @@ EditableGrid.prototype.processXML = function()
             // create new column           
             var column = new Column({
             	name: col.getAttribute("name"),
-            	label: col.getAttribute("label"),
-            	datatype: col.getAttribute("datatype"),
+            	label: col.getAttribute("label") ? col.getAttribute("label") : col.getAttribute("name"),
+            	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
             	editable : col.getAttribute("editable") == "true",
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
@@ -585,7 +589,7 @@ EditableGrid.prototype.getCellY = function(oElement)
 /**
  * Renders the table in the document
  */
-EditableGrid.prototype.renderGrid = function(containerid)
+EditableGrid.prototype.renderGrid = function(containerid, className)
 {
     with (this) {
 
@@ -621,7 +625,7 @@ EditableGrid.prototype.renderGrid = function(containerid)
 
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
-    		table.className = this.className;
+    		table.className = className || "editablegrid";
     		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
     		$(containerid).appendChild(table);
         

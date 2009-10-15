@@ -1,5 +1,17 @@
-var editableGrid = null;
 
+// create our editable grid
+var editableGrid = new EditableGrid({
+	enableSort: true, // true is the default, set it to false if you don't want sorting to be enabled
+	editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
+	editorzoneid: "edition" // will be used only if editmode is set to "fixed"
+});
+
+// helper method to display a message
+function displayMessage(text, style) { 
+	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
+} 
+
+// this will be used to render our table headers
 function InfoHeaderRenderer(message) { this.message = message; };
 InfoHeaderRenderer.prototype = new CellRenderer();
 InfoHeaderRenderer.prototype.render = function(cell, value) 
@@ -14,13 +26,10 @@ InfoHeaderRenderer.prototype.render = function(cell, value)
 	}
 };
 
-function displayMessage(text, style) { 
-	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
-} 
-
-EditableGrid.prototype.initializeGrid = function() 
+// this function will initialize our editable grid
+function initializeGrid() 
 {
-	with (this) {
+	with (editableGrid) {
 
 		// use a special header renderer to show an info icon for some columns
 		setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
@@ -58,45 +67,32 @@ EditableGrid.prototype.initializeGrid = function()
 		addCellValidator("age", new CellValidator({ 
 			isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
 		}));
+		
+		// register the function that will handle model changes
+		modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) { 
+			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
+			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
+		}
+		
+		// render the grid (the two parameters will be ignored if we have attached to an existing HTML table)
+		renderGrid("tablecontent", "testgrid");	
 	}
 }
 
 function onloadXML() 
 {
-	editableGrid = new EditableGrid(
-	{
-		enableSort: true,
-		className: "testgrid",
-		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
-		editorzoneid: "edition",
+	// register the function that will be called when the XML has been fully loaded
+	editableGrid.tableLoaded = function() { 
+		displayMessage("Grid loaded from XML: " + this.getRowCount() + " row(s)"); 
+		initializeGrid();
+	};
 
-   		tableLoaded: function() { 
-			displayMessage("Table loaded from XML: " + this.getRowCount() + " row(s)"); 
-			this.initializeGrid();
-			this.renderGrid("tablecontent");				
-		},
-
-		modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) { 
-			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
-			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
-		}
-	});
-
-	// load wml file (we use a trick to avoid getting an old version from the browser's cache)
-	editableGrid.load("demo.xml?" + Math.floor(Math.random() * 100000));
+	// load XML file
+	editableGrid.load("demo.xml");
 }
 
 function onloadHTML() 
 {
-	editableGrid = new EditableGrid(
-	{
-		enableSort: true,
-		modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) { 
-			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
-			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
-		}
-	});
-
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable($('htmlgrid'), 
 		[ new Column({ name: "name", datatype: "string(24)" }),
@@ -108,7 +104,6 @@ function onloadHTML()
 		  new Column({ name: "email", datatype: "email(26)" }),
 		  new Column({ name: "freelance", datatype: "boolean" }) ]);
 
-	displayMessage("Table attached: " + editableGrid.getRowCount() + " row(s)"); 
-	editableGrid.initializeGrid();
-	editableGrid.renderGrid();				
+	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
+	initializeGrid();
 }

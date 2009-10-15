@@ -1,0 +1,13 @@
+[17/10/2009] EditableGrid v1.0.0
+================================
+
+First stable public release, including the following main features:
+- load grid from an XML file or attach to an existing HTML table
+- edit cells with a suitable editor (string, integer, double, boolean, email, date)
+- built-in renderers for dates, emails and numbers
+- built-in validators for numeric values, emails and dates
+- possibility to plug your own cell renderers, editors and validators 
+- possibility to declare a list of possible values for each column (static in XML, or dynamic in Javascript)
+- sort columns accordingly to their types, by clicking on the header
+
+This release has been tested on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
