@@ -28,6 +28,8 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	// - with onkeydown everything is fine (but don't forget to return false)
 	editorInput.onkeydown = function(event) {
 
+		event = event || window.event;
+		
 		// ENTER or TAB: apply value
 		if (event.keyCode == 13 || event.keyCode == 9) {
 			this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
