@@ -255,19 +255,42 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
         this.tHead = _table.tHead;
         this.tBody = _table.tBodies[0];
         
-        // load header labels
-        var rows = tHead.getElementsByTagName("tr");
-        for (var i = 0; i < rows.length; i++) {
-            var cols = rows[i].getElementsByTagName("th");
-            for (var j = 0; j < cols.length && j < columns.length; j++) 
-            	if (!columns[j].label) columns[j].label = cols[j].innerHTML;
+        // create table body if needed
+        if (!tBody) {
+        	tBody = document.createElement("TBODY");
+        	table.insertBefore(tBody, table.firstChild);
         }
 
+        // create table header if needed
+        if (!tHead) {
+        	tHead = document.createElement("THEAD");
+        	table.insertBefore(tHead, tBody);
+        }
+
+        // if header is empty use first body row as header
+        if (tHead.rows.length == 0 && tBody.rows.length > 0) 
+        	tHead.appendChild(tBody.rows[0]);
+
+        // check that header has exactly one row
+        if (tHead.rows.length != 1) {
+        	alert("You table header must have exactly row!");
+        	return false;
+        }
+
+        // load header labels
+       	var rows = tHead.rows;
+       	for (var i = 0; i < rows.length; i++) {
+       		var cols = rows[i].cells;
+       		for (var j = 0; j < cols.length && j < columns.length; j++) {
+       			if (!columns[j].label) columns[j].label = cols[j].innerHTML;
+       		}
+       	}
+
         // load content
-        var rows = tBody.getElementsByTagName("tr");
+        var rows = tBody.rows;
         for (var i = 0; i < rows.length; i++) {
             var rowData = [];
-            var cols = rows[i].getElementsByTagName("td");
+            var cols = rows[i].cells;
             for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(cols[j].innerHTML);
        		data.push({id: rows[i].id, columns: rowData});
         }
@@ -526,8 +549,8 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
  */
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
-	var row = this.tBody.getElementsByTagName("TR")[rowIndex];
-	return row.getElementsByTagName("TD")[columnIndex];
+	var row = this.tBody.rows[rowIndex];
+	return row.cells[columnIndex];
 }
 
 /**
@@ -566,18 +589,18 @@ EditableGrid.prototype.renderGrid = function(containerid)
     	// if we are already attached to an existing table, just update the cell contents
     	if (typeof table != "undefined" && table) {
     		
-            var rows = tHead.getElementsByTagName("tr");
-            for (var i = 0; i < rows.length; i++) {
-                var rowData = [];
-                var cols = rows[i].getElementsByTagName("th");
-                for (var j = 0; j < cols.length && j < columns.length; j++) 
-                	columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
-            }
+           	var rows = tHead.rows;
+           	for (var i = 0; i < rows.length; i++) {
+           		var rowData = [];
+           		var cols = rows[i].cells;
+           		for (var j = 0; j < cols.length && j < columns.length; j++) 
+           			columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+           	}
 
-            var rows = tBody.getElementsByTagName("tr");
+            var rows = tBody.rows;
             for (var i = 0; i < rows.length; i++) {
                 var rowData = [];
-                var cols = rows[i].getElementsByTagName("td");
+                var cols = rows[i].cells;
                 for (var j = 0; j < cols.length && j < columns.length; j++) 
                 	columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
             }
@@ -671,7 +694,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		else {
 			var type = getColumnType(columnIndex);
 			var row_array = [];
-			var rows = tBody.getElementsByTagName("TR");
+			var rows = tBody.rows;
 			for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i]]);
 			row_array.sort(type == "integer" || type == "double" ? sort_numeric :
 						   type == "boolean" ? sort_boolean :
