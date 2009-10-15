@@ -71,7 +71,7 @@ function EditableGrid(config)
         data: [],
         xmlDoc: null,
         className: "editablegrid",
-        editmode: "static",
+        editmode: "absolute",
         editorzoneid: "",
 		allowSimultaneousEdition: false,
    		invalidClassName: "invalid",

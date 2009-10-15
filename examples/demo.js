@@ -85,7 +85,7 @@ function onloadXML()
 	editableGrid = new EditableGrid(
 	{
 		className: "testgrid",
-		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the default mode
+		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
 		editorzoneid: "edition",
 
    		tableLoaded: function() { 
