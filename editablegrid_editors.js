@@ -23,15 +23,24 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	editorInput.celleditor = this;
 
 	// listen to pressed keys
-	editorInput.onkeypress = function(event) {
+	// - tab does not work with onkeyup (it's too late)
+	// - on Safari escape does not work with onkeypress
+	// - with onkeydown everything is fine (but don't forget to return false)
+	editorInput.onkeydown = function(event) {
 
 		// ENTER or TAB: apply value
-		if (event.keyCode == 13 || event.keyCode == 9) this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
+		if (event.keyCode == 13 || event.keyCode == 9) {
+			this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
+			return false;
+		}
 		
 		// ESC: cancel editing
-		if (event.keyCode == 27) { this.celleditor.cancelEditing(this.element); return false; }
+		if (event.keyCode == 27) { 
+			this.celleditor.cancelEditing(this.element); 
+			return false; 
+		}
 	};
-	
+
 	// and display the resulting editor widget
 	this.displayEditor(element, editorInput);
 	

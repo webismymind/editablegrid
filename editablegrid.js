@@ -84,12 +84,12 @@ function EditableGrid(config)
 	// override default properties with the ones given
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
     
-    with (this) {
-    	IE =  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1);
-    	Opera = navigator.userAgent.indexOf('Opera') > -1;
-    	WebKit = navigator.userAgent.indexOf('AppleWebKit/') > -1;
-    	Gecko = navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1;
-    	MobileSafari = !!navigator.userAgent.match(/Apple.*Mobile.*Safari/);
+    this.Browser = {
+    		IE:  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+    		Opera: navigator.userAgent.indexOf('Opera') > -1,
+    		WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+    		Gecko: navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+    		MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
     };
 }
 
@@ -114,7 +114,7 @@ EditableGrid.prototype.load = function(url)
         }
         
         // Safari
-        else if (WebKit && window.XMLHttpRequest) 
+        else if (Browser.WebKit && window.XMLHttpRequest) 
         {
            	xmlDoc = new XMLHttpRequest();
            	xmlDoc.onreadystatechange = function () {
