@@ -135,3 +135,17 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 	}
 };
 
+/**
+ * Date cell renderer
+ * Class to render a cell containing a date
+ */
+
+function DateCellRenderer() {}
+DateCellRenderer.prototype = new CellRenderer;
+
+DateCellRenderer.prototype.render = function(cell, value) 
+{
+	var date = checkDate(value);
+	if (typeof date == "string") cell.innerHTML = date;
+	else cell.innerHTML = value;
+}

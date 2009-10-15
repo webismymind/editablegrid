@@ -307,6 +307,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
     	column.datatype.startsWith("email") ? new EmailCellRenderer() : 
+        column.datatype.startsWith("date") ? new DateCellRenderer() : 
     	new CellRenderer();
 
 	// give access to the column from the cell renderer
@@ -530,6 +531,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
 	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
+	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator());
 }
 
 /**

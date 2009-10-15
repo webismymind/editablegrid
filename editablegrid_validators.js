@@ -50,3 +50,16 @@ EmailCellValidator.prototype.isValid = function(value)
 {
 	return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value);
 }
+
+/**
+ * Date cell validator
+ * Class to validate a cell containing a date
+ */
+
+function DateCellValidator() {}
+DateCellValidator.prototype = new CellValidator;
+
+DateCellValidator.prototype.isValid = function(value) 
+{
+	return typeof checkDate(value) == "string";
+}
