@@ -103,3 +103,34 @@ EmailCellRenderer.prototype.render = function(element, value)
 	element.innerHTML = value ? "<a href='mailto:" + value + "'>" + value : "</a>";
 };
 
+/**
+ * Sort header renderer
+ * Class to add sorting functionalities to headers (for lazy users :)
+ */
+
+function SortHeaderRenderer(columnName, cellRenderer) { this.columnName = columnName; this.cellRenderer = cellRenderer; };
+SortHeaderRenderer.prototype = new CellRenderer();
+SortHeaderRenderer.prototype.render = function(cell, value) 
+{
+	if (!value) { if (this.cellRenderer) this.cellRenderer.render(cell, value); }
+	else {
+				
+		// create a link that will sort (alternatively ascending/descending)
+		var link = document.createElement("a");
+		cell.appendChild(link);
+		link.href = "#";
+		link.columnName = this.columnName;
+		link.innerHTML = value;
+		link.editablegrid = this.editablegrid;
+		link.onclick = function() {
+			with (this.editablegrid) {
+				sortDescending = (sortedColumnName == this.columnName) ? !sortDescending : false;
+				sort(sortedColumnName = this.columnName, sortDescending);
+			}
+		};
+		
+		// call user renderer
+		if (this.cellRenderer) this.cellRenderer.render(cell, value);
+	}
+};
+

@@ -1,38 +1,18 @@
 var editableGrid = null;
-var sortedColumnName = null;
-var descending = false;
 
-function HeaderRenderer(name, message) { this.name = name; this.message = message; };
-HeaderRenderer.prototype = new CellRenderer();
-HeaderRenderer.prototype.render = function(cell, value) 
+function InfoHeaderRenderer(message) { this.message = message; };
+InfoHeaderRenderer.prototype = new CellRenderer();
+InfoHeaderRenderer.prototype.render = function(cell, value) 
 {
-	if (!value) cell.innerHTML = "";
-	else {
-		
-		// create a link that will sort alternatively ascending/descending
+	if (value) {
+		// here we don't user cell.innerHTML="..." in order not to break the sorting header that has been create dfor us (cf. option enableSort: true)
 		var link = document.createElement("a");
+		link.href = "javascript:alert('" + this.message + "');";
+		link.innerHTML = "<img src='images/information.png'/>";
+		cell.appendChild(document.createTextNode("\u00a0\u00a0"));
 		cell.appendChild(link);
-		link.href = "#";
-		link.name = this.name;
-		link.innerHTML = value;
-		link.editablegrid = this.editablegrid;
-		link.onclick = function() {
-			descending = (sortedColumnName == this.name) ? !descending : false;
-			this.editablegrid.sort(sortedColumnName = this.name, descending); 
-		};
-
-		// show info message if any
-		if (this.message) {
-			var msg = document.createElement("span");
-			msg.innerHTML = "&nbsp;&nbsp;<a href=\"javascript:alert('" + this.message + "');\"><img src='images/information.png'/></a>"; 
-			cell.appendChild(msg);
-		}
 	}
 };
-
-function addHeaderRenderer(name, message) {
-	editableGrid.setHeaderRenderer(name, new HeaderRenderer(name, message));	
-}
 
 function displayMessage(text, style) { 
 	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
@@ -42,16 +22,13 @@ EditableGrid.prototype.initializeGrid = function()
 {
 	with (this) {
 
-		// use a special renderer for the header of the freelance and age columns
-		addHeaderRenderer("name");
-		addHeaderRenderer("firstname");
-		addHeaderRenderer("age", "The age must be an integer between 16 and 99");
-		addHeaderRenderer("height", "The height is given in meters");
-		addHeaderRenderer("continent", "Note that the list of proposed countries depends on the selected continent");
-		addHeaderRenderer("country");
-		addHeaderRenderer("email", "Note the validator used automatically when you specify your column as being of type email");
-		addHeaderRenderer("freelance", "This column tells if the person works as a freelance or as an employee");
-
+		// use a special header renderer to show an info icon for some columns
+		setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
+		setHeaderRenderer("height", new InfoHeaderRenderer("The height is given in meters"));
+		setHeaderRenderer("continent", new InfoHeaderRenderer("Note that the list of proposed countries depends on the selected continent"));
+		setHeaderRenderer("email", new InfoHeaderRenderer("Note the validator used automatically when you specify your column as being of type email"));
+		setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
+		
 		// show unit when rendering the height
 		setCellRenderer("height", new CellRenderer({ 
 			render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); } 
@@ -84,6 +61,7 @@ function onloadXML()
 {
 	editableGrid = new EditableGrid(
 	{
+		enableSort: true,
 		className: "testgrid",
 		editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
 		editorzoneid: "edition",
@@ -108,12 +86,14 @@ function onloadHTML()
 {
 	editableGrid = new EditableGrid(
 	{
+		enableSort: true,
 		modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) { 
 			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
 		}
 	});
 
+	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable($('htmlgrid'), 
 		[ new Column({ name: "name", datatype: "string(24)" }),
 		  new Column({ name: "firstname", datatype: "string" }),

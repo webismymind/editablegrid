@@ -66,10 +66,8 @@ function EditableGrid(config)
 	// default properties
     var props = 
     {
+   		enableSort: false,
 		doubleclick: false,
-        columns: [],
-        data: [],
-        xmlDoc: null,
         className: "editablegrid",
         editmode: "absolute",
         editorzoneid: "",
@@ -91,6 +89,13 @@ function EditableGrid(config)
     		Gecko: navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
     		MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
     };
+    
+    // private data
+    this.columns = [];
+    this.data = [];
+    this.xmlDoc = null;
+    this.sortedColumnName = null;
+    this.sortDescending = false;
 }
 
 /**
@@ -128,7 +133,7 @@ EditableGrid.prototype.load = function(url)
            	xmlDoc.send("");
         }
         
-        // other browsers
+        // Firefox (and other browsers) 
         else if (document.implementation && document.implementation.createDocument) 
         {
         	xmlDoc = document.implementation.createDocument("", "", null);
@@ -293,7 +298,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
  */
 EditableGrid.prototype._createHeaderRenderer = function(column)
 {
-	column.headerRenderer = new CellRenderer();
+	column.headerRenderer = this.enableSort ? new SortHeaderRenderer(column.name) : new CellRenderer();
 
 	// give access to the column from the header cell renderer
 	if (column.headerRenderer) {
@@ -397,6 +402,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
  */
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
+	if (typeof columnIndexOrName == "undefined" || columnIndexOrName === "") return -1;
 	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
 	return -1;
@@ -424,10 +430,14 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
-		column.headerRenderer = cellRenderer;
+		column.headerRenderer = this.enableSort ? new SortHeaderRenderer(column.name, cellRenderer) : cellRenderer;
 
 		// give access to the column from the cell renderer
 		if (cellRenderer) {
+			if (this.enableSort) {
+				column.headerRenderer.editablegrid = this;
+				column.headerRenderer.column = column;
+			}
 			cellRenderer.editablegrid = this;
 			cellRenderer.column = column;
 		}
