@@ -11,8 +11,14 @@ h2 {
 	font-size: 13px;
 }
 
-a { color: #548dc4; 	text-decoration: none; }
-a:hover {text-decoration: underline; }
+a { 
+	color: #548dc4;
+	text-decoration: nonoe;
+}
+
+a:hover {
+	text-decoration: underline;
+}
 
 img {
 	border: 0;

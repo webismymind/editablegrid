@@ -213,12 +213,12 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var optionValues = this.column.getOptionValues(element.rowIndex);
 	
 	// add these options, selecting the current one
-	var index = 0, valueFound = 0;
+	var index = 0, valueFound = false;
 	for (var optionValue in optionValues) {
 	    var option = document.createElement('option');
 	    option.text = optionValues[optionValue];
 	    option.value = optionValue;
-	    htmlInput.add(option, null);
+	    htmlInput.add(option);
         if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
         index++;
 	}
@@ -228,7 +228,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	    var option = document.createElement('option');
 	    option.text = value ? value : "";
 	    option.value = value ? value : "";
-		htmlInput.add(option, htmlInput.options[0]);
+	    // add does not work as expected in IE7 (cf. second arg)
+		try { htmlInput.add(option, htmlInput.options[0]); } catch (e) { htmlInput.add(option); } 
 		htmlInput.selectedIndex = 0;
 	}
 	                  

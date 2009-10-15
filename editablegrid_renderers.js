@@ -55,7 +55,7 @@ NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
 	element.innerHTML = value ? value : "";
-	element.setAttribute("class", "number");
+	element.className = "number";
 };
 
 /**
@@ -70,8 +70,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
-	htmlInput.checked = element.originalValue = (value && value != 0 && value != "false") ? true : false;
-	htmlInput.disabled = !this.column.editable;
+	element.originalValue = (value && value != 0 && value != "false") ? true : false;
 
 	// this renderer is a little special because it allows direct edition
 	var cellEditor = new CellEditor();
@@ -89,6 +88,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 	element.appendChild(htmlInput);
+	htmlInput.checked = element.originalValue;
+	htmlInput.disabled = !this.column.editable;
 };
 
 /**

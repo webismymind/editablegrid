@@ -110,7 +110,7 @@ EditableGrid.prototype.load = function(url)
         {
             xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
             xmlDoc.onreadystatechange = function() {
-                if (dom.readyState == 4) {
+                if (xmlDoc.readyState == 4) {
                     processXML();
                     tableLoaded();
                 }
@@ -169,7 +169,7 @@ EditableGrid.prototype.processXML = function()
         	// get column type
             var col = columnDeclarations[i];
             var datatype = col.getAttribute("datatype");
-            
+
             // get enumerated values if any
         	var optionValues = null;
             var enumValues = col.getElementsByTagName("values");
@@ -181,12 +181,12 @@ EditableGrid.prototype.processXML = function()
                 }
             }
 
-            // create new column
+            // create new column           
             var column = new Column({
             	name: col.getAttribute("name"),
             	label: col.getAttribute("label"),
             	datatype: col.getAttribute("datatype"),
-            	editable : col.hasAttribute("editable") ? col.getAttribute("editable") == "true" : false,
+            	editable : col.getAttribute("editable") == "true",
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
@@ -213,13 +213,13 @@ EditableGrid.prototype.processXML = function()
             var cellValues = {}
             var cols = rows[i].getElementsByTagName("column");
             for (var j = 0; j < cols.length; j++) {
-            	var colname = cols[j].hasAttribute("name") ? cols[j].getAttribute("name") : columns[j].name;
+            	var colname = cols[j].getAttribute("name") ? cols[j].getAttribute("name") : columns[j].name;
             	cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
             }
 
             var rowData = [];
             for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
-       		data.push({id: rows[i].hasAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
+       		data.push({id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
         }
     }
 }
@@ -618,7 +618,7 @@ EditableGrid.prototype.renderGrid = function(containerid)
 
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
-    		table.setAttribute("class", this.className);
+    		table.className = this.className;
     		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
     		$(containerid).appendChild(table);
         
