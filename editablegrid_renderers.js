@@ -105,37 +105,6 @@ EmailCellRenderer.prototype.render = function(element, value)
 };
 
 /**
- * Sort header renderer
- * Class to add sorting functionalities to headers (for lazy users :)
- */
-
-function SortHeaderRenderer(columnName, cellRenderer) { this.columnName = columnName; this.cellRenderer = cellRenderer; };
-SortHeaderRenderer.prototype = new CellRenderer();
-SortHeaderRenderer.prototype.render = function(cell, value) 
-{
-	if (!value) { if (this.cellRenderer) this.cellRenderer.render(cell, value); }
-	else {
-				
-		// create a link that will sort (alternatively ascending/descending)
-		var link = document.createElement("a");
-		cell.appendChild(link);
-		link.href = "#";
-		link.columnName = this.columnName;
-		link.innerHTML = value;
-		link.editablegrid = this.editablegrid;
-		link.onclick = function() {
-			with (this.editablegrid) {
-				sortDescending = (sortedColumnName == this.columnName) ? !sortDescending : false;
-				sort(sortedColumnName = this.columnName, sortDescending);
-			}
-		};
-		
-		// call user renderer
-		if (this.cellRenderer) this.cellRenderer.render(cell, value);
-	}
-};
-
-/**
  * Date cell renderer
  * Class to render a cell containing a date
  */
@@ -149,3 +118,50 @@ DateCellRenderer.prototype.render = function(cell, value)
 	if (typeof date == "object") cell.innerHTML = date.formattedDate;
 	else cell.innerHTML = value;
 }
+
+/**
+ * Sort header renderer
+ * Class to add sorting functionalities to headers (for lazy users :)
+ */
+
+function SortHeaderRenderer(columnName, cellRenderer) { this.columnName = columnName; this.cellRenderer = cellRenderer; };
+SortHeaderRenderer.prototype = new CellRenderer();
+SortHeaderRenderer.prototype.render = function(cell, value) 
+{
+	if (!value) { if (this.cellRenderer) this.cellRenderer.render(cell, value); }
+	else {
+						
+		// create a link that will sort (alternatively ascending/descending)
+		var link = document.createElement("a");
+		cell.appendChild(link);
+		link.href = "#";
+		link.columnName = this.columnName;
+		link.innerHTML = value;
+		link.editablegrid = this.editablegrid;
+		link.renderer = this;
+		link.onclick = function() {
+			with (this.editablegrid) {
+				
+				if (sortedColumnName != this.columnName) sortedColumnName = this.columnName;
+				else {
+					if (!sortDescending) sortDescending = true;
+					else { sortedColumnName = -1; sortDescending = false; }
+				} 
+				
+				sort(sortedColumnName, sortDescending);
+				this.editablegrid._renderHeaders();
+			}
+		};
+
+		// add an arrow to indicate if sort is ascending or descending
+		if (this.editablegrid.sortedColumnName == this.columnName) {
+			var img = document.createElement("img");
+			img.src = this.editablegrid.baseUrl + "/images/bullet_arrow_" +  (this.editablegrid.sortDescending ? "down" : "up") + ".png";
+			cell.appendChild(document.createTextNode("\u00a0"));
+			cell.appendChild(img);
+		}
+
+		// call user renderer if any
+		if (this.cellRenderer) this.cellRenderer.render(cell, value);
+	}
+};

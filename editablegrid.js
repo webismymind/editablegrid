@@ -95,6 +95,7 @@ function EditableGrid(config)
     this.xmlDoc = null;
     this.sortedColumnName = null;
     this.sortDescending = false;
+    this.baseUrl = this.detectDir();
 }
 
 /**
@@ -223,7 +224,7 @@ EditableGrid.prototype.processXML = function()
 
             var rowData = [];
             for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
-       		data.push({id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
+       		data.push({originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
         }
     }
 }
@@ -296,7 +297,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
             var rowData = [];
             var cols = rows[i].cells;
             for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(cols[j].innerHTML);
-       		data.push({id: rows[i].id, columns: rowData});
+       		data.push({originalIndex: i, id: rows[i].id, columns: rowData});
         }
     }
 }
@@ -596,14 +597,10 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     	// if we are already attached to an existing table, just update the cell contents
     	if (typeof table != "undefined" && table) {
     		
-           	var rows = tHead.rows;
-           	for (var i = 0; i < rows.length; i++) {
-           		var rowData = [];
-           		var cols = rows[i].cells;
-           		for (var j = 0; j < cols.length && j < columns.length; j++) 
-           			columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
-           	}
-
+    		// render headers
+    		_renderHeaders();
+    		
+    		// render content
             var rows = tBody.rows;
             for (var i = 0; i < rows.length; i++) {
                 var rowData = [];
@@ -663,6 +660,19 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     }
 }
 
+EditableGrid.prototype._renderHeaders = function() 
+{
+	with (this) {
+		var rows = tHead.rows;
+		for (var i = 0; i < rows.length; i++) {
+			var rowData = [];
+			var cols = rows[i].cells;
+			for (var j = 0; j < cols.length && j < columns.length; j++) 
+				columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+		}
+	}
+}
+
 /**
  * Mouse click handler
  * @param {Object} e
@@ -701,25 +711,32 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 {
 	with (this) {
 
-		var columnIndex = this.getColumnIndex(columnIndexOrName);
-		if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
-		else {
-			var type = getColumnType(columnIndex);
-			var row_array = [];
-			var rows = tBody.rows;
-			for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i]]);
-			row_array.sort(type == "integer" || type == "double" ? sort_numeric :
-						   type == "boolean" ? sort_boolean :
-						   type.startsWith("date") ? sort_date :
-						   sort_alpha);
-			var _data = data;
-			data = [];
-			if (descending) row_array = row_array.reverse();
-			for (var i = 0; i < row_array.length; i++) {
-				data.push(_data[row_array[i][1]]);
-				tBody.appendChild(row_array[i][2]);
+		var columnIndex = columnIndexOrName;
+		if (columnIndex !== -1) {
+			columnIndex = this.getColumnIndex(columnIndexOrName);
+			if (columnIndex < 0) {
+				alert("Invalid column: " + columnIndexOrName);
+				return false;
 			}
-			delete row_array;
 		}
+		
+		var type = columnIndex < 0 ? ""  : getColumnType(columnIndex);
+		var row_array = [];
+		var rows = tBody.rows;
+		for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
+		row_array.sort(columnIndex < 0 ? unsort :
+					   type == "integer" || type == "double" ? sort_numeric :
+					   type == "boolean" ? sort_boolean :
+					   type.startsWith("date") ? sort_date :
+					   sort_alpha);
+		
+		var _data = data;
+		data = [];
+		if (descending) row_array = row_array.reverse();
+		for (var i = 0; i < row_array.length; i++) {
+			data.push(_data[row_array[i][1]]);
+			tBody.appendChild(row_array[i][2]);
+		}
+		delete row_array;
 	}
 }

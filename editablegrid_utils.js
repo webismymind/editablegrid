@@ -1,3 +1,10 @@
+EditableGrid.prototype.unsort = function(a,b) 
+{
+	aa = isNaN(a[3]) ? 0 : parseFloat(a[3]);
+	bb = isNaN(b[3]) ? 0 : parseFloat(b[3]);
+	return aa-bb;
+}
+
 EditableGrid.prototype.sort_numeric = function(a,b) 
 {
 	aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
@@ -46,6 +53,27 @@ EditableGrid.prototype.isStatic = function (element)
 	var position = this.getStyle(element, 'position');
 	return (!position || position == "static");
 }
+
+EditableGrid.prototype.detectDir = function() 
+{
+	var base = location.href;
+	var e = document.getElementsByTagName('base');
+	for (var i=0; i<e.length; i++) if(e[i].href) base = e[i].href;
+
+	var e = document.getElementsByTagName('script')
+	for (var i=0; i<e.length; i++) {
+		if (e[i].src && /(^|\/)editablegrid.*\.js([?#].*)?$/i.test(e[i].src)) {
+			var src = new URI(e[i].src);
+			var srcAbs = src.toAbsolute(base);
+			srcAbs.path = srcAbs.path.replace(/[^\/]+$/, ''); // remove filename
+			delete srcAbs.query;
+			delete srcAbs.fragment;
+			return srcAbs.toString();
+		}
+	}
+	
+	return false;
+},
 
 /**
  * class name manipulation
@@ -177,3 +205,110 @@ function LeapYear(intYear)
 	else if ((intYear % 4) == 0) return true;
 	return false;
 }
+
+// See RFC3986
+URI = function(uri) 
+{ 
+	this.scheme = null
+	this.authority = null
+	this.path = ''
+	this.query = null
+	this.fragment = null
+
+	this.parse = function(uri) {
+		var m = uri.match(/^(([A-Za-z][0-9A-Za-z+.-]*)(:))?((\/\/)([^\/?#]*))?([^?#]*)((\?)([^#]*))?((#)(.*))?/)
+		this.scheme = m[3] ? m[2] : null
+		this.authority = m[5] ? m[6] : null
+		this.path = m[7]
+		this.query = m[9] ? m[10] : null
+		this.fragment = m[12] ? m[13] : null
+		return this
+	}
+
+	this.toString = function() {
+		var result = ''
+		if(this.scheme != null) result = result + this.scheme + ':'
+		if(this.authority != null) result = result + '//' + this.authority
+		if(this.path != null) result = result + this.path
+		if(this.query != null) result = result + '?' + this.query
+		if(this.fragment != null) result = result + '#' + this.fragment
+		return result
+	}
+
+	this.toAbsolute = function(base) {
+		var base = new URI(base)
+		var r = this
+		var t = new URI
+
+		if(base.scheme == null) return false
+
+		if(r.scheme != null && r.scheme.toLowerCase() == base.scheme.toLowerCase()) {
+			r.scheme = null
+		}
+
+		if(r.scheme != null) {
+			t.scheme = r.scheme
+			t.authority = r.authority
+			t.path = removeDotSegments(r.path)
+			t.query = r.query
+		} else {
+			if(r.authority != null) {
+				t.authority = r.authority
+				t.path = removeDotSegments(r.path)
+				t.query = r.query
+			} else {
+				if(r.path == '') {
+					t.path = base.path
+					if(r.query != null) {
+						t.query = r.query
+					} else {
+						t.query = base.query
+					}
+				} else {
+					if(r.path.substr(0,1) == '/') {
+						t.path = removeDotSegments(r.path)
+					} else {
+						if(base.authority != null && base.path == '') {
+							t.path = '/'+r.path
+						} else {
+							t.path = base.path.replace(/[^\/]+$/,'')+r.path
+						}
+						t.path = removeDotSegments(t.path)
+					}
+					t.query = r.query
+				}
+				t.authority = base.authority
+			}
+			t.scheme = base.scheme
+		}
+		t.fragment = r.fragment
+
+		return t
+	}
+
+	function removeDotSegments(path) {
+		var out = ''
+		while(path) {
+			if(path.substr(0,3)=='../' || path.substr(0,2)=='./') {
+				path = path.replace(/^\.+/,'').substr(1)
+			} else if(path.substr(0,3)=='/./' || path=='/.') {
+				path = '/'+path.substr(3)
+			} else if(path.substr(0,4)=='/../' || path=='/..') {
+				path = '/'+path.substr(4)
+				out = out.replace(/\/?[^\/]*$/, '')
+			} else if(path=='.' || path=='..') {
+				path = ''
+			} else {
+				var rm = path.match(/^\/?[^\/]*/)[0]
+				path = path.substr(rm.length)
+				out = out + rm
+			}
+		}
+		return out
+	}
+
+	if(uri) {
+		this.parse(uri)
+	}
+
+};
