@@ -478,7 +478,7 @@ EditableGrid.prototype.removeRow = function(rowId)
 /**
  * Sets the column header cell renderer for the specified column index
  * @param {Integer} columnIndex
- * @param {Object} cellRenderer
+ * @param {CellRenderer} cellRenderer
  */
 EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRenderer)
 {
@@ -503,7 +503,7 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 /**
  * Sets the cell renderer for the specified column index
  * @param {Integer} columnIndex
- * @param {Object} cellRenderer
+ * @param {CellRenderer} cellRenderer
  */
 EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRenderer)
 {
@@ -524,7 +524,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 /**
  * Sets the enum provider for the specified column index
  * @param {Integer} columnIndex
- * @param {Object} enumProvider
+ * @param {EnumProvider} enumProvider
  */
 EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvider)
 {
@@ -573,7 +573,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 /**
  * Adds a cell validator for the specified column index
  * @param {Integer} columnIndex
- * @param {Object} cellValidator
+ * @param {CellValidator} cellValidator
  */
 EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValidator)
 {
