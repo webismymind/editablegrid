@@ -1,7 +1,8 @@
 
 /**
  * Abstract cell renderer
- * Base class for all cell renderers
+ * @constructor
+ * @class Base class for all cell renderers
  * @param {Object} config
  */
 
@@ -34,7 +35,8 @@ CellRenderer.prototype.render = function(element, value)
 
 /**
  * Enum cell renderer
- * Class to render a cell with enum values
+ * @constructor
+ * @class Class to render a cell with enum values
  */
 
 function EnumCellRenderer() {};
@@ -47,7 +49,8 @@ EnumCellRenderer.prototype.render = function(element, value)
 
 /**
  * Number cell renderer
- * Class to render a cell with numerical values
+ * @constructor
+ * @class Class to render a cell with numerical values
  */
 
 function NumberCellRenderer() {};
@@ -60,7 +63,8 @@ NumberCellRenderer.prototype.render = function(element, value)
 
 /**
  * Checkbox cell renderer
- * Class to render a cell with an HTML checkbox
+ * @constructor
+ * @class Class to render a cell with an HTML checkbox
  */
 
 function CheckboxCellRenderer() {};
@@ -94,7 +98,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 
 /**
  * Email cell renderer
- * Class to render a cell with emails
+ * @constructor
+ * @class Class to render a cell with emails
  */
 
 function EmailCellRenderer() {};
@@ -106,7 +111,8 @@ EmailCellRenderer.prototype.render = function(element, value)
 
 /**
  * Date cell renderer
- * Class to render a cell containing a date
+ * @constructor
+ * @class Class to render a cell containing a date
  */
 
 function DateCellRenderer() {}
@@ -121,7 +127,8 @@ DateCellRenderer.prototype.render = function(cell, value)
 
 /**
  * Sort header renderer
- * Class to add sorting functionalities to headers (for lazy users :)
+ * @constructor
+ * @class Class to add sorting functionalities to headers
  */
 
 function SortHeaderRenderer(columnName, cellRenderer) { this.columnName = columnName; this.cellRenderer = cellRenderer; };

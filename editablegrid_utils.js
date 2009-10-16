@@ -37,6 +37,7 @@ EditableGrid.prototype.sort_date = function(a,b)
 
 /**
  * Returns computed style property for element
+ * @private
  */
 EditableGrid.prototype.getStyle = function(element, styleProp)
 {
@@ -47,6 +48,7 @@ EditableGrid.prototype.getStyle = function(element, styleProp)
 
 /**
  * Returns true if the element has a static positioning
+ * @private
  */
 EditableGrid.prototype.isStatic = function (element) 
 {
@@ -54,6 +56,10 @@ EditableGrid.prototype.isStatic = function (element)
 	return (!position || position == "static");
 }
 
+/**
+ * Detects the directory when the js sources can be found
+ * @private
+ */
 EditableGrid.prototype.detectDir = function() 
 {
 	var base = location.href;
@@ -77,6 +83,7 @@ EditableGrid.prototype.detectDir = function()
 
 /**
  * class name manipulation
+ * @private
  */
 EditableGrid.prototype.strip = function(str) { return str.replace(/^\s+/, '').replace(/\s+$/, ''); },
 EditableGrid.prototype.hasClassName = function(element, className) { return (element.className.length > 0 && (element.className == className || new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className))); }
@@ -85,6 +92,7 @@ EditableGrid.prototype.removeClassName = function(element, className) { element.
 
 /**
  * Useful string methods 
+ * @private
  */
 String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")) };
 String.prototype.startsWith = function(str) { return (this.match("^"+str)==str) };
@@ -111,6 +119,10 @@ String.prototype.endsWith = function(str) { return (this.match(str+"$")==str) };
 // // m d yy,
 // // mmm d yy (yy is 20yy) 
 
+/**
+ * Checks validity of a date string 
+ * @private
+ */
 EditableGrid.prototype.checkDate = function(strDate, strDatestyle) 
 {
 	strDatestyle = strDatestyle || "EU";

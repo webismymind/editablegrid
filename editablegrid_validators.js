@@ -1,7 +1,8 @@
 
 /**
  * Abstract cell validator
- * Base class for all cell validators
+ * @constructor
+ * @class Base class for all cell validators
  */
 
 function CellValidator(config) 
@@ -20,7 +21,8 @@ CellValidator.prototype.isValid = function(value)
 
 /**
  * Number cell validator
- * Class to validate a numeric cell
+ * @constructor
+ * @class Class to validate a numeric cell
  */
 
 function NumberCellValidator(type) { this.type = type; }
@@ -40,7 +42,8 @@ NumberCellValidator.prototype.isValid = function(value)
 
 /**
  * Email cell validator
- * Class to validate a cell containing an email
+ * @constructor
+ * @class Class to validate a cell containing an email
  */
 
 function EmailCellValidator() {}
@@ -53,7 +56,9 @@ EmailCellValidator.prototype.isValid = function(value)
 
 /**
  * Date cell validator
- * Class to validate a cell containing a date
+ * @constructor
+ * @augments CellValidator
+ * @class Class to validate a cell containing a date
  */
 
 function DateCellValidator(grid) { this.grid = grid; }

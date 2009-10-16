@@ -88,7 +88,7 @@ function onloadXML()
 	};
 
 	// load XML file
-	editableGrid.load("demo.xml");
+	editableGrid.loadXML("demo.xml");
 }
 
 function onloadHTML() 

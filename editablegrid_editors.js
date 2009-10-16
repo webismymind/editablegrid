@@ -1,7 +1,8 @@
 
 /**
  * Abstract cell editor
- * Base class for all cell editors
+ * @constructor
+ * @class Base class for all cell editors
  */
 
 function CellEditor() {}
@@ -134,7 +135,8 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 
 /**
  * Text cell editor
- * Class to edit a cell with an HTML text input 
+ * @constructor
+ * @class Class to edit a cell with an HTML text input 
  */
 
 function TextCellEditor(size) { this.fieldSize = size || 12; };
@@ -175,7 +177,8 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 
 /**
  * Number cell editor
- * Class to edit a numeric cell with an HTML text input 
+ * @constructor
+ * @class Class to edit a numeric cell with an HTML text input 
  */
 
 function NumberCellEditor(type) { this.type = type; }
@@ -198,7 +201,8 @@ NumberCellEditor.prototype.formatValue = function(value)
 
 /**
  * Select cell editor
- * Class to edit a cell with an HTML select input 
+ * @constructor
+ * @class Class to edit a cell with an HTML select input 
  */
 
 function SelectCellEditor() {}

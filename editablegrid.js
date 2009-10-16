@@ -8,7 +8,9 @@ if (typeof $ == 'undefined') {
 }
 
 /**
- * Column object
+ * Creates a new column
+ * @constructor
+ * @class Represents a column in the editable grid
  * @param {Object} config
  */
 function Column(config)
@@ -42,7 +44,9 @@ Column.prototype.isValid = function(value) {
 } 
 
 /**
- * Enum provider object. 
+ * Creates a new enumeration provider 
+ * @constructor
+ * @class Base class for all enumeration providers
  * @param {Object} config
  */
 function EnumProvider(config)
@@ -59,7 +63,25 @@ function EnumProvider(config)
 }
 
 /**
- * EditableGrid constructor
+ * Creates a new EditableGrid.
+ * <p>You can specify here some configuration options (optional).
+ * <br/>You can also set these same configuration options afterwards.
+ * <p>These options are:
+ * <ul>
+ * <li>enableSort: enable sorting when clicking on column headers (default=true)</li>
+ * <li>doubleclick: use double click to edit cells (default=false)</li>
+ * <li>editmode: can be one of
+ * <ul>
+ * 		<li>absolute: cell editor comes over the cell (default)</li>
+ * 		<li>static: cell editor comes inside the cell</li>
+ * 		<li>fixed: cell editor comes in an external div</li>
+ * </ul>
+ * <li>editorzoneid: used only when editmode is set to fixed, it is the id of the div to use for cell editors</li>
+ * <li>allowSimultaneousEdition: tells if several cells can be edited at the same time (default=false)</li>
+ * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
+ * </ul>
+ * @constructor
+ * @class EditableGrid
  */
 function EditableGrid(config)
 {
@@ -99,9 +121,9 @@ function EditableGrid(config)
 }
 
 /**
- * Load the XML metadata and data
+ * Load metadata and data from an XML url
  */
-EditableGrid.prototype.load = function(url)
+EditableGrid.prototype.loadXML = function(url)
 {
 	// we use a trick to avoid getting an old version from the browser's cache
 	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
@@ -160,6 +182,7 @@ EditableGrid.prototype.load = function(url)
 
 /**
  * Process the XML content
+ * @private
  */
 EditableGrid.prototype.processXML = function()
 {
@@ -304,6 +327,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 
 /**
  * Creates a suitable cell renderer for the column
+ * @private
  */
 EditableGrid.prototype._createCellRenderer = function(column)
 {
@@ -324,6 +348,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 
 /**
  * Creates a suitable header cell renderer for the column
+ * @private
  */
 EditableGrid.prototype._createHeaderRenderer = function(column)
 {
@@ -338,6 +363,7 @@ EditableGrid.prototype._createHeaderRenderer = function(column)
 
 /**
  * Creates a suitable cell editor for the column
+ * @private
  */
 EditableGrid.prototype._createCellEditor = function(column)
 {
@@ -427,7 +453,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 }
 
 /**
- * Find column index
+ * Find column index from its name
  * @param {Object} name or index of the column
  */
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
@@ -533,6 +559,10 @@ EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 	return this._addDefaultCellValidators(this.columns[columnIndex]);
 }
 
+/**
+ * Adds default cell validators for the specified column
+ * @private
+ */
 EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
@@ -553,7 +583,7 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
 }
 
 /**
- * Get cell at given row and column
+ * Get cell element at given row and column
  */
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
@@ -563,6 +593,7 @@ EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 
 /**
  * Get cell X position relative to the first non static offset parent
+ * @private
  */
 EditableGrid.prototype.getCellX = function(oElement)
 {
@@ -576,6 +607,7 @@ EditableGrid.prototype.getCellX = function(oElement)
 
 /**
  * Get cell Y position relative to the first non static offset parent
+ * @private
  */
 EditableGrid.prototype.getCellY = function(oElement)
 {
@@ -588,7 +620,13 @@ EditableGrid.prototype.getCellY = function(oElement)
 }
 
 /**
- * Renders the table in the document
+ * Renders the grid as an HTML table in the document
+ * @param {String} containerid 
+ * id of the div in which you wish to render the HTML table (this parameter is ignored if you used attachToHTMLTable)
+ * @param {String} className 
+ * CSS class name to be applied to the table (this parameter is ignored if you used attachToHTMLTable)
+ * @see EditableGrid#attachToHTMLTable
+ * @see EditableGrid#loadXML
  */
 EditableGrid.prototype.renderGrid = function(containerid, className)
 {
@@ -660,6 +698,10 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     }
 }
 
+/**
+ * Render all column headers 
+ * @private
+ */
 EditableGrid.prototype._renderHeaders = function() 
 {
 	with (this) {
@@ -676,6 +718,7 @@ EditableGrid.prototype._renderHeaders = function()
 /**
  * Mouse click handler
  * @param {Object} e
+ * @private
  */
 EditableGrid.prototype.mouseClicked = function(e) 
 {
