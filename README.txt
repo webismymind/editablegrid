@@ -28,7 +28,7 @@ A first example
 ---------------
 
 This library is very simple to use, so the best way to start is just to check out an example.
-First, let's have a look at the result: open up demo.html in your favorite browser.
+First, let's have a look at the result: open up examples/demo.html in your favorite browser.
 This example will let you edit cells of various types (string, numeric, enum, email, boolean, date).
 It will also let you sort columns by clicking on the column header and remove rows.
 
