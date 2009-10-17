@@ -76,6 +76,7 @@ function EnumProvider(config)
  * 		<li>static: cell editor comes inside the cell</li>
  * 		<li>fixed: cell editor comes in an external div</li>
  * </ul>
+ * </li>
  * <li>editorzoneid: used only when editmode is set to fixed, it is the id of the div to use for cell editors</li>
  * <li>allowSimultaneousEdition: tells if several cells can be edited at the same time (default=false)</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
