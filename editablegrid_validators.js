@@ -57,7 +57,7 @@ EmailCellValidator.prototype.isValid = function(value) { return value == "" || /
 
 function WebsiteCellValidator() {}
 WebsiteCellValidator.prototype = new CellValidator;
-WebsiteCellValidator.prototype.isValid = function(value) { return value.indexOf(".") > 0 && value.indexOf(".") < (value.length - 2); }
+WebsiteCellValidator.prototype.isValid = function(value) { return value == "" || (value.indexOf(".") > 0 && value.indexOf(".") < (value.length - 2)); }
 
 /**
  * Date cell validator
