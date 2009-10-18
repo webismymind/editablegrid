@@ -242,7 +242,11 @@ EditableGrid.prototype.processXML = function()
             var cellValues = {}
             var cols = rows[i].getElementsByTagName("column");
             for (var j = 0; j < cols.length; j++) {
-            	var colname = cols[j].getAttribute("name") ? cols[j].getAttribute("name") : columns[j].name;
+            	var colname = cols[j].getAttribute("name");
+            	if (!colname) {
+            		if (j >= columns.length) alert("You defined too many columns for row " + (i+1));
+            		else colname = columns[j].name; 
+            	}
             	cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
             }
 
