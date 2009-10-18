@@ -337,6 +337,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
     	column.datatype.startsWith("email") ? new EmailCellRenderer() : 
+        column.datatype.startsWith("website") ? new WebsiteCellRenderer() : 
         column.datatype.startsWith("date") ? new DateCellRenderer() : 
     	new CellRenderer();
 
@@ -369,13 +370,15 @@ EditableGrid.prototype._createHeaderRenderer = function(column)
 EditableGrid.prototype._createCellEditor = function(column)
 {
 	var length = column.datatype.startsWith("string") ? column.datatype.substr(7, column.datatype.length - 8) : 
-				 column.datatype.startsWith("email") ? column.datatype.substr(6, column.datatype.length - 7) : null;
+				 column.datatype.startsWith("email") ? column.datatype.substr(6, column.datatype.length - 7) :
+				 column.datatype.startsWith("website") ? column.datatype.substr(8, column.datatype.length - 9) : null;
 	
 	column.cellEditor = 
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
 		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : 32) :
+		column.datatype.startsWith("website") ? new TextCellEditor(length ? length : 32) :
 		column.datatype.startsWith("date") ? new TextCellEditor(length ? length : 11) :
 		new TextCellEditor(length);  
 		
@@ -568,6 +571,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
 	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
+	else if (column.datatype.startsWith("website")) column.cellValidators.push(new WebsiteCellValidator());
 	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator(this));
 }
 

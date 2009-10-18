@@ -35,6 +35,7 @@
 		</column>
 				
 		<column name="email" label="EMAIL" datatype="email(26)" editable="true"/>
+		<column name="website" label="WEBSITE" datatype="website(26)" editable="true"/>
 		<column name="freelance" label="FREELANCE" datatype="boolean" editable="true"/>
 		<column name="lastvisit" label="LAST VISIT" datatype="date" editable="true"/>
 		<column name="action" label="" datatype="html"/>
@@ -69,6 +70,7 @@
 			<column>am</column>
 			<column>us</column>
 			<column>rogers.d@gmail.com</column>
+			<column/>
 			<column/>
 			<column name="lastvisit">07/05/2003</column>
 			<column><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>
@@ -108,6 +110,7 @@
 			<column name="continent">eu</column>
 			<column name="country">nl</column>
 			<column name="email">ranna.shannon@hotmail.com</column>
+			<column name="website">www.shannon.com</column>
 			<column name="freelance">false</column>
 			<column name="lastvisit">07/10/2009</column>		
 			<column name="action"><![CDATA[<a href="#" onclick="if (confirm('Are you sure you want to delete this person ?')) editableGrid.removeRow(this.parentNode.parentNode.id)"><img src="images/delete.png" border="0"/></a>]]></column>

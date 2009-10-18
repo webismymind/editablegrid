@@ -27,7 +27,6 @@ CellValidator.prototype.isValid = function(value)
 
 function NumberCellValidator(type) { this.type = type; }
 NumberCellValidator.prototype = new CellValidator;
-
 NumberCellValidator.prototype.isValid = function(value) 
 {
 	// check that it is a valid number
@@ -48,11 +47,17 @@ NumberCellValidator.prototype.isValid = function(value)
 
 function EmailCellValidator() {}
 EmailCellValidator.prototype = new CellValidator;
+EmailCellValidator.prototype.isValid = function(value) { return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value); }
 
-EmailCellValidator.prototype.isValid = function(value) 
-{
-	return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value);
-}
+/**
+ * Website cell validator
+ * @constructor
+ * @class Class to validate a cell containing a website
+ */
+
+function WebsiteCellValidator() {}
+WebsiteCellValidator.prototype = new CellValidator;
+WebsiteCellValidator.prototype.isValid = function(value) { return value.indexOf(".") > 0 && value.indexOf(".") < (value.length - 2); }
 
 /**
  * Date cell validator

@@ -53,11 +53,11 @@ Let's analyze each file in more details:
       Declaring the structure of your table consists in declaring a list of columns and give the following information for each column:
       - name: this name can for example be the name of the corresponding field in a database (or anything else you may find useful to know which data has been modified)
       - label: this label will be used in the table header (if no label is given, the name is used) 
-      - type: type can be one of the following: string, integer, double, email, boolean, date, html (if not given, "string" is assumed)
+      - type: type can be one of the following: string, integer, double, boolean, date, email, website, html (if not given, "string" is assumed)
       - editable: is the column editable or not (if not specified, it won't be editable)
 
       For string and email columns, you can also specify the desired length of the text field used when editing these values, like this: string(40) or email(24).
-      The default length is 12 for string and 32 for email. 
+      The default length is 12 for string and 32 for email and website. 
 
       A specific style will be applied to numeric columns (bold and aligned to the right).
       Also, when a numeric cell is edited, the user won't be able to apply its changes until he enters a valid numeric value.

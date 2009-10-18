@@ -106,7 +106,20 @@ function EmailCellRenderer() {};
 EmailCellRenderer.prototype = new CellRenderer();
 EmailCellRenderer.prototype.render = function(element, value)
 {
-	element.innerHTML = value ? "<a href='mailto:" + value + "'>" + value : "</a>";
+	element.innerHTML = value ? "<a href='mailto:" + value + "'>" + value + "</a>" : "";
+};
+
+/**
+ * Website cell renderer
+ * @constructor
+ * @class Class to render a cell with websites
+ */
+
+function WebsiteCellRenderer() {};
+WebsiteCellRenderer.prototype = new CellRenderer();
+WebsiteCellRenderer.prototype.render = function(element, value)
+{
+	element.innerHTML = value ? "<a href='" + (value.indexOf("//") == -1 ? "http://" + value : value) + "'>" + value + "</a>" : "";
 };
 
 /**
