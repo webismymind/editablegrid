@@ -182,7 +182,7 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
  */
 
 function NumberCellEditor(type) { this.type = type; }
-NumberCellEditor.prototype = new TextCellEditor(4);
+NumberCellEditor.prototype = new TextCellEditor(6);
 
 NumberCellEditor.prototype.displayEditor = function(element, editorInput) 
 {

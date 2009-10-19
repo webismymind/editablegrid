@@ -154,8 +154,8 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 		// create a link that will sort (alternatively ascending/descending)
 		var link = document.createElement("a");
 		cell.appendChild(link);
-		link.href = "#";
 		link.columnName = this.columnName;
+		link.style.cursor = "pointer";
 		link.innerHTML = value;
 		link.editablegrid = this.editablegrid;
 		link.renderer = this;

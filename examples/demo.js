@@ -8,7 +8,7 @@ var editableGrid = new EditableGrid({
 
 // helper method to display a message
 function displayMessage(text, style) { 
-	$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
+	_$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
 } 
 
 // this will be used to render our table headers
@@ -94,7 +94,7 @@ function onloadXML()
 function onloadHTML() 
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
-	editableGrid.attachToHTMLTable($('htmlgrid'), 
+	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
 		[ new Column({ name: "name", datatype: "string(24)" }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
