@@ -738,6 +738,9 @@ EditableGrid.prototype.mouseClicked = function(e)
 		// get row and column index from the clicked cell
 		var target = e.target || e.srcElement;
 		
+		// don't handle clicks on links
+		if (target.tagName == "A") return;
+		
 		// go up parents to find a cell under the clicked position
 		while (target) if (target.tagName == "TD") break; else target = target.parentNode;
 		if (!target || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
