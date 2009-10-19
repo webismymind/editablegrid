@@ -504,7 +504,6 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		tr.id = rowId;
 		for (var c = 0; c < columns.length; c++) {
 			var td = tr.insertCell(c);
-			alert(getValueAt(rowIndex,c));
 			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
 		}
 
