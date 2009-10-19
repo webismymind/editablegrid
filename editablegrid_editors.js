@@ -84,7 +84,7 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 
 	// fixed mode: don't show input field in the cell 
 	if (this.editablegrid.editmode == "fixed") {
-		var editorzone = $(this.editablegrid.editorzoneid);
+		var editorzone = _$(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 		editorzone.appendChild(editorInput);
 	}
@@ -97,7 +97,7 @@ CellEditor.prototype._clearEditor = function(element)
 
 	// clear fixed editor zone if any
 	if (this.editablegrid.editmode == "fixed") {
-		var editorzone = $(this.editablegrid.editorzoneid);
+		var editorzone = _$(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 	}	
 }

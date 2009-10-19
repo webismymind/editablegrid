@@ -3,8 +3,8 @@
  * 
  */
 
-if (typeof $ == 'undefined') {
-	function $(elementId) { return document.getElementById(elementId); }
+if (typeof _$ == 'undefined') {
+	function _$(elementId) { return document.getElementById(elementId); }
 }
 
 /**
@@ -478,8 +478,8 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
-	var rowIndex = $(rowId).rowIndex - 1; // remove 1 for the header
-	this.tBody.removeChild($(rowId));
+	var rowIndex = _$(rowId).rowIndex - 1; // remove 1 for the header
+	this.tBody.removeChild(_$(rowId));
 	this.data.splice(rowIndex, 1);
 } 
 
@@ -665,13 +665,13 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     	// we must render a whole new table
     	else {
     		
-    		if (!$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
+    		if (!_$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
 
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
     		table.className = className || "editablegrid";
-    		while ($(containerid).hasChildNodes()) $(containerid).removeChild($(containerid).firstChild);
-    		$(containerid).appendChild(table);
+    		while (_$(containerid).hasChildNodes()) _$(containerid).removeChild(_$(containerid).firstChild);
+    		_$(containerid).appendChild(table);
         
     		// create header
     		this.tHead = document.createElement("THEAD");
@@ -700,9 +700,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     		}
 
     		// attach handler on click or double click 
-            $(containerid).editablegrid = this;
-        	if (doubleclick) $(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-        	else $(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+            _$(containerid).editablegrid = this;
+        	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+        	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
     	}    	
     }
 }
