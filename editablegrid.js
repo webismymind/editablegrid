@@ -214,7 +214,7 @@ EditableGrid.prototype.processXML = function()
             // create new column           
             var column = new Column({
             	name: col.getAttribute("name"),
-            	label: col.getAttribute("label") ? col.getAttribute("label") : col.getAttribute("name"),
+            	label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
             	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
             	editable : col.getAttribute("editable") == "true",
             	optionValues: optionValues,

@@ -74,6 +74,12 @@ function initializeGrid()
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
 		}
 		
+		// render for the action column
+		setCellRenderer("action", new CellRenderer({render: function(cell, value) { 
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + value + ");\" style=\"cursor:pointer\"" +
+							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
+		}})); 
+
 		// render the grid (the two parameters will be ignored if we have attached to an existing HTML table)
 		renderGrid("tablecontent", "testgrid");	
 	}
@@ -102,7 +108,8 @@ function onloadHTML()
 		  new Column({ name: "continent", datatype: "string", optionValues: {"eu": "Europa", "am": "America", "af": "Africa" }}),
 		  new Column({ name: "country", datatype: "string" }),
 		  new Column({ name: "email", datatype: "email(26)" }),
-		  new Column({ name: "freelance", datatype: "boolean" }) ]);
+		  new Column({ name: "freelance", datatype: "boolean" }),
+		  new Column({ name: "action", datatype: "html" }) ]);
 
 	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
 	initializeGrid();

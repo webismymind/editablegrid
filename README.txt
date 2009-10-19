@@ -78,7 +78,8 @@ Let's analyze each file in more details:
 3) In the Javascript file demo_simple.js, all we do is to create an EditableGrid object and specify two things:
 
    a) A function "tableLoaded" that will be called when the grid has been fully loaded.
-      Here we simply display a message and render the loaded grid in our div "tablecontent" using out css style "testgrid"
+      Here we simply display a message and define a renderer for the action column in order to display a delete button (see below for more details about cell renderers).
+      Then we render the loaded grid in our div "tablecontent" using out css style "testgrid".
 
    b) A function "modelChanged" that will be called each time a cell has been modified by the uses.
       Here we just display a message showing the new value.
