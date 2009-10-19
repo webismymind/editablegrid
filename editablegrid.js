@@ -35,7 +35,8 @@ function Column(config)
 }
 
 Column.prototype.getOptionValues = function(rowIndex) { 
-	return this.enumProvider.getOptionValues(this.editablegrid, this, rowIndex) 
+	var values = this.enumProvider.getOptionValues(this.editablegrid, this, rowIndex);
+	return values ? values : this.optionValues;
 };
 
 Column.prototype.isValid = function(value) {
@@ -54,7 +55,7 @@ function EnumProvider(config)
 	// default properties
     var props = {
         getOptionValues: function(grid, column, rowIndex) {
-    		return column.optionValues;
+    		return null;
     	}
     };
 

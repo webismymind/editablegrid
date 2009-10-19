@@ -50,7 +50,7 @@ function initializeGrid()
 			// here we do only client-side processing, but you could use Ajax here to talk with your server
 			// if you do, then don't forget to use Ajax in synchronous mode 
 			getOptionValues: function (grid, column, rowIndex) {
-				var continent = grid.getValueAt(rowIndex, 4);
+				var continent = grid.getValueAt(rowIndex, grid.getColumnIndex("continent"));
 				if (continent == "eu") return { "be" : "Belgique", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"};
 				else if (continent == "am") return { "br" : "Brazil", "ca": "Canada", "us" : "USA" };
 				else if (continent == "af") return { "ng" : "Nigeria", "za": "South Africa", "zw" : "Zimbabwe" };
