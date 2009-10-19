@@ -141,7 +141,7 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	var strMonthArray = new Array(12);
 	
 	strMonthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-	if (strDate.length < 1) return 0;
+	if (!strDate || strDate.length < 1) return 0;
 
 	for (intElementNr = 0; intElementNr < strSeparatorArray.length; intElementNr++) {
 		if (strDate.indexOf(strSeparatorArray[intElementNr]) != -1) {

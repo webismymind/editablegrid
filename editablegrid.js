@@ -117,7 +117,7 @@ function EditableGrid(config)
     this.columns = [];
     this.data = [];
     this.xmlDoc = null;
-    this.sortedColumnName = null;
+    this.sortedColumnName = -1;
     this.sortDescending = false;
     this.baseUrl = this.detectDir();
 }
@@ -485,6 +485,36 @@ EditableGrid.prototype.removeRow = function(rowId)
 } 
 
 /**
+ * Add row with given id and data
+ * @param {Integer} rowId
+ * @param {Integer} columns
+ */
+EditableGrid.prototype.addRow = function(rowId, cellValues)
+{
+	with (this) {
+		
+		// add row in data
+		var rowData = [];
+		for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
+		var rowIndex = data.length;
+		data.push({originalIndex: rowIndex, id: rowId, columns: rowData});
+		
+		// create row in table and render content
+		var tr = tBody.insertRow(rowIndex);
+		tr.id = rowId;
+		for (var c = 0; c < columns.length; c++) {
+			var td = tr.insertCell(c);
+			alert(getValueAt(rowIndex,c));
+			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
+		}
+
+		// resort table
+		sort(sortedColumnName, sortDescending);
+
+	}
+} 
+
+/**
  * Sets the column header cell renderer for the specified column index
  * @param {Integer} columnIndex
  * @param {CellRenderer} cellRenderer
@@ -776,7 +806,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			}
 		}
 		
-		var type = columnIndex < 0 ? ""  : getColumnType(columnIndex);
+		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
 		var rows = tBody.rows;
 		for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
