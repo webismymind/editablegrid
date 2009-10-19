@@ -162,7 +162,10 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 		link.onclick = function() {
 			with (this.editablegrid) {
 				
-				if (sortedColumnName != this.columnName) sortedColumnName = this.columnName;
+				if (sortedColumnName != this.columnName) {
+					sortedColumnName = this.columnName;
+					sortDescending = false;
+				}
 				else {
 					if (!sortDescending) sortDescending = true;
 					else { sortedColumnName = -1; sortDescending = false; }
