@@ -666,7 +666,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     	// we must render a whole new table
     	else {
     		
-    		if (!_$(containerid)) return alert("Unable to get element [" + this.containerid + "]");
+    		if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
 
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
