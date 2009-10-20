@@ -43,7 +43,7 @@ function EnumCellRenderer() {};
 EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.render = function(element, value)
 {
-	var optionValues = this.column.getOptionValues(element.rowIndex);
+	var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
 	element.innerHTML = (value ? (value in optionValues ? optionValues[value] : value) : ""); 
 };
 

@@ -34,8 +34,13 @@ function Column(config)
     for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
 }
 
-Column.prototype.getOptionValues = function(rowIndex) { 
-	var values = this.enumProvider.getOptionValues(this.editablegrid, this, rowIndex);
+Column.prototype.getOptionValuesForRender = function(rowIndex) { 
+	var values = this.enumProvider.getOptionValuesForRender(this.editablegrid, this, rowIndex);
+	return values ? values : this.optionValues;
+};
+
+Column.prototype.getOptionValuesForEdit = function(rowIndex) { 
+	var values = this.enumProvider.getOptionValuesForEdit(this.editablegrid, this, rowIndex);
 	return values ? values : this.optionValues;
 };
 
@@ -54,9 +59,8 @@ function EnumProvider(config)
 {
 	// default properties
     var props = {
-        getOptionValues: function(grid, column, rowIndex) {
-    		return null;
-    	}
+        getOptionValuesForRender: function(grid, column, rowIndex) { return null; },
+        getOptionValuesForEdit: function(grid, column, rowIndex) { return null; }
     };
 
     // override default properties with the ones given

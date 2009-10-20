@@ -214,7 +214,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("select");
 
 	// get column option values for this row 
-	var optionValues = this.column.getOptionValues(element.rowIndex);
+	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
 	
 	// add these options, selecting the current one
 	var index = 0, valueFound = false;
