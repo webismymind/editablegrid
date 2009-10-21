@@ -1,4 +1,4 @@
-[17/10/2009] EditableGrid v1.0.0
+[21/10/2009] EditableGrid v1.0.0
 ================================
 
 First stable public release, including the following main features:
