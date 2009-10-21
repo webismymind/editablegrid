@@ -10,4 +10,4 @@ First stable public release, including the following main features:
 - possibility to declare a list of possible values for each column (static in XML, or dynamic in Javascript)
 - sort columns accordingly to their types, by clicking on the header
 
-This release has been tested with success on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
+This release has been successfully tested on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
