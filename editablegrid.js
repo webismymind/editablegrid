@@ -151,12 +151,11 @@ EditableGrid.prototype.loadXML = function(url)
         }
         
         // Safari
-        else if (false && window.XMLHttpRequest) 
+        else if (/*Browser.WebKit && */ window.XMLHttpRequest) 
         {
            	xmlDoc = new XMLHttpRequest();
            	xmlDoc.onreadystatechange = function () {
-                _$("msg").innerHTML += xmlDoc.readyState + "...<br/>";
-                		if (xmlDoc.readyState == 4) {
+           		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
        				processXML()
        				tableLoaded();
@@ -171,16 +170,11 @@ EditableGrid.prototype.loadXML = function(url)
         {
         	xmlDoc = document.implementation.createDocument("", "", null);
         	xmlDoc.onload = function() {
-                _$("msg").innerHTML += "ONLOAD...<br/>";
         		processXML();
-                _$("msg").innerHTML += "ONLOAD2...<br/>";
                 tableLoaded();
-                _$("msg").innerHTML += "ONLOAD3...<br/>";
 
         	}
-        _$("msg").innerHTML += "LOADING...<br/>";
             xmlDoc.load(url);
-         _$("msg").innerHTML += "LOADED...<br/>";
         }
         
         // should never happen
