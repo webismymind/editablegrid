@@ -151,11 +151,12 @@ EditableGrid.prototype.loadXML = function(url)
         }
         
         // Safari
-        else if (Browser.WebKit && window.XMLHttpRequest) 
+        else if (window.XMLHttpRequest) 
         {
            	xmlDoc = new XMLHttpRequest();
            	xmlDoc.onreadystatechange = function () {
-       			if (xmlDoc.readyState == 4) {
+                _$("msg").innerHTML += xmlDoc.readyState + "...<br/>";
+                		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
        				processXML()
        				tableLoaded();
