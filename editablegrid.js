@@ -172,7 +172,6 @@ EditableGrid.prototype.loadXML = function(url)
         	xmlDoc.onload = function() {
         		processXML();
                 tableLoaded();
-
         	}
             xmlDoc.load(url);
         }
