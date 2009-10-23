@@ -170,10 +170,16 @@ EditableGrid.prototype.loadXML = function(url)
         {
         	xmlDoc = document.implementation.createDocument("", "", null);
         	xmlDoc.onload = function() {
+                _$("msg").innerHTML += "ONLOAD...";
         		processXML();
+                _$("msg").innerHTML += "ONLOAD2...";
                 tableLoaded();
+                _$("msg").innerHTML += "ONLOAD3...";
+
         	}
+        _$("msg").innerHTML += "LOADING...";
             xmlDoc.load(url);
+         _$("msg").innerHTML += "LOADED...";
         }
         
         // should never happen
