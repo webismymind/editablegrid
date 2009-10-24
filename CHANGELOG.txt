@@ -11,3 +11,8 @@ First stable public release, including the following main features:
 - sort columns accordingly to their types, by clicking on the header
 
 This release has been successfully tested on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
+
+[23/10/2009] EditableGrid v1.0.1
+================================
+
+Changed the XML loading method on Firefox: we use XMLHttpRequest which seems more stable than document.implementation.
