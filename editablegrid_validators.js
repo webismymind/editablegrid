@@ -17,7 +17,7 @@ function CellValidator(config)
 CellValidator.prototype.isValid = function(value) 
 {
 	return true;
-}
+};
 
 /**
  * Number cell validator
@@ -37,7 +37,7 @@ NumberCellValidator.prototype.isValid = function(value)
 	
 	// the integer or double is valid
 	return true;
-}
+};
 
 /**
  * Email cell validator
@@ -47,7 +47,7 @@ NumberCellValidator.prototype.isValid = function(value)
 
 function EmailCellValidator() {}
 EmailCellValidator.prototype = new CellValidator;
-EmailCellValidator.prototype.isValid = function(value) { return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value); }
+EmailCellValidator.prototype.isValid = function(value) { return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value); };
 
 /**
  * Website cell validator
@@ -57,7 +57,7 @@ EmailCellValidator.prototype.isValid = function(value) { return value == "" || /
 
 function WebsiteCellValidator() {}
 WebsiteCellValidator.prototype = new CellValidator;
-WebsiteCellValidator.prototype.isValid = function(value) { return value == "" || (value.indexOf(".") > 0 && value.indexOf(".") < (value.length - 2)); }
+WebsiteCellValidator.prototype.isValid = function(value) { return value == "" || (value.indexOf(".") > 0 && value.indexOf(".") < (value.length - 2)); };
 
 /**
  * Date cell validator

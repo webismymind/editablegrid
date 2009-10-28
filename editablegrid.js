@@ -47,7 +47,7 @@ Column.prototype.getOptionValuesForEdit = function(rowIndex) {
 Column.prototype.isValid = function(value) {
 	for (var i = 0; i < this.cellValidators.length; i++) if (!this.cellValidators[i].isValid(value)) return false;
 	return true;
-} 
+};
 
 /**
  * Creates a new enumeration provider 
@@ -157,10 +157,10 @@ EditableGrid.prototype.loadXML = function(url)
            	xmlDoc.onreadystatechange = function () {
            		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
-       				processXML()
+       				processXML();
        				tableLoaded();
        			}
-       		}
+       		};
            	xmlDoc.open("GET", url, true);
            	xmlDoc.send("");
         }
@@ -172,7 +172,7 @@ EditableGrid.prototype.loadXML = function(url)
         	xmlDoc.onload = function() {
         		processXML();
                 tableLoaded();
-        	}
+        	};
             xmlDoc.load(url);
         }
         
@@ -184,7 +184,7 @@ EditableGrid.prototype.loadXML = function(url)
     
         return true;
     }
-}
+};
 
 /**
  * Process the XML content
@@ -244,7 +244,7 @@ EditableGrid.prototype.processXML = function()
         // load content
         var rows = xmlDoc.getElementsByTagName("row");
         for (var i = 0; i < rows.length; i++) {
-            var cellValues = {}
+            var cellValues = {};
             var cols = rows[i].getElementsByTagName("column");
             for (var j = 0; j < cols.length; j++) {
             	var colname = cols[j].getAttribute("name");
@@ -260,7 +260,7 @@ EditableGrid.prototype.processXML = function()
        		data.push({originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
         }
     }
-}
+};
 
 /**
  * Attach to an existing HTML table, using given column definitions
@@ -333,7 +333,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
        		data.push({originalIndex: i, id: rows[i].id, columns: rowData});
         }
     }
-}
+};
 
 /**
  * Creates a suitable cell renderer for the column
@@ -355,7 +355,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.cellRenderer.editablegrid = this;
 		column.cellRenderer.column = column;
 	}
-}
+};
 
 /**
  * Creates a suitable header cell renderer for the column
@@ -370,7 +370,7 @@ EditableGrid.prototype._createHeaderRenderer = function(column)
 		column.headerRenderer.editablegrid = this;
 		column.headerRenderer.column = column;
 	}		
-}
+};
 
 /**
  * Creates a suitable cell editor for the column
@@ -396,7 +396,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.cellEditor.editablegrid = this;
 		column.cellEditor.column = column;
 	}
-}
+};
 
 /**
  * Returns the number of rows
@@ -404,7 +404,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 EditableGrid.prototype.getRowCount = function()
 {
 	return this.data.length;
-}
+};
 
 /**
  * Returns the number of columns
@@ -412,7 +412,7 @@ EditableGrid.prototype.getRowCount = function()
 EditableGrid.prototype.getColumnCount = function()
 {
 	return this.columns.length;
-}
+};
 
 /**
  * Returns the name of a column
@@ -421,7 +421,7 @@ EditableGrid.prototype.getColumnCount = function()
 EditableGrid.prototype.getColumnName = function(columnIndex)
 {
 	return this.columns[columnIndex].name;
-}
+};
 
 /**
  * Returns the type of a column
@@ -430,7 +430,7 @@ EditableGrid.prototype.getColumnName = function(columnIndex)
 EditableGrid.prototype.getColumnType = function(columnIndex)
 {
 	return this.columns[columnIndex].datatype;
-}
+};
 
 /**
  * Returns the value at the specified index
@@ -441,7 +441,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
 	var rows = this.data[rowIndex]['columns'];
 	return rows ? rows[columnIndex] : null;
-}
+};
 
 /**
  * Sets the value at the specified index
@@ -463,7 +463,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 		if (columnIndex < 0 || columnIndex >= this.columns.length) alert("Invalid column index " + columnIndex);
 		this.columns[columnIndex].cellRenderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
 	}
-}
+};
 
 /**
  * Find column index from its name
@@ -475,7 +475,7 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
 	return -1;
-}
+};
 
 /**
  * Remove row with given id
@@ -486,7 +486,7 @@ EditableGrid.prototype.removeRow = function(rowId)
 	var rowIndex = _$(rowId).rowIndex - 1; // remove 1 for the header
 	this.tBody.removeChild(_$(rowId));
 	this.data.splice(rowIndex, 1);
-} 
+};
 
 /**
  * Add row with given id and data
@@ -515,7 +515,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		sort(sortedColumnName, sortDescending);
 
 	}
-} 
+};
 
 /**
  * Sets the column header cell renderer for the specified column index
@@ -540,7 +540,7 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 			cellRenderer.column = column;
 		}
 	}
-}
+};
 
 /**
  * Sets the cell renderer for the specified column index
@@ -561,7 +561,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 			cellRenderer.column = column;
 		}
 	}
-}
+};
 
 /**
  * Sets the enum provider for the specified column index
@@ -577,7 +577,7 @@ EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvide
 	// we must recreate the cell renderer and editor for this column
 	this._createCellRenderer(this.columns[columnIndex]);
 	this._createCellEditor(this.columns[columnIndex]);
-}
+};
 
 /**
  * Clear all cell validators for the specified column index
@@ -588,7 +588,7 @@ EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators = [];
-}
+};
 
 /**
  * Adds default cell validators for the specified column index (according to the column type)
@@ -599,7 +599,7 @@ EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	return this._addDefaultCellValidators(this.columns[columnIndex]);
-}
+};
 
 /**
  * Adds default cell validators for the specified column
@@ -611,7 +611,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
 	else if (column.datatype.startsWith("website")) column.cellValidators.push(new WebsiteCellValidator());
 	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator(this));
-}
+};
 
 /**
  * Adds a cell validator for the specified column index
@@ -623,7 +623,7 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators.push(cellValidator);
-}
+};
 
 /**
  * Get cell element at given row and column
@@ -632,7 +632,7 @@ EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
 	var row = this.tBody.rows[rowIndex];
 	return row.cells[columnIndex];
-}
+};
 
 /**
  * Get cell X position relative to the first non static offset parent
@@ -646,7 +646,7 @@ EditableGrid.prototype.getCellX = function(oElement)
 		oElement = oElement.offsetParent;
 	} catch(err) { oElement = null; }
 	return iReturnValue;
-}
+};
 
 /**
  * Get cell Y position relative to the first non static offset parent
@@ -660,7 +660,7 @@ EditableGrid.prototype.getCellY = function(oElement)
 		oElement = oElement.offsetParent;
 	} catch(err) { oElement = null; }
 	return iReturnValue;
-}
+};
 
 /**
  * Renders the grid as an HTML table in the document
@@ -739,7 +739,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
         	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
     	}    	
     }
-}
+};
 
 /**
  * Render all column headers 
@@ -756,7 +756,7 @@ EditableGrid.prototype._renderHeaders = function()
 				columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 		}
 	}
-}
+};
 
 /**
  * Mouse click handler
@@ -789,7 +789,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
-}
+};
 
 /**
  * Sort on a column
@@ -828,4 +828,4 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		}
 		delete row_array;
 	}
-}
+};

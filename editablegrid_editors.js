@@ -60,11 +60,11 @@ CellEditor.prototype.getEditor = function(element, value) {
 
 CellEditor.prototype.getEditorValue = function(editorInput) {
 	return editorInput.value;
-}
+};
 
 CellEditor.prototype.formatValue = function(value) {
 	return value;
-}
+};
 
 CellEditor.prototype.displayEditor = function(element, editorInput) 
 {
@@ -88,7 +88,7 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 		editorzone.appendChild(editorInput);
 	}
-}
+};
 
 CellEditor.prototype._clearEditor = function(element) 
 {
@@ -100,7 +100,7 @@ CellEditor.prototype._clearEditor = function(element)
 		var editorzone = _$(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 	}	
-}
+};
 
 CellEditor.prototype.cancelEditing = function(element) 
 {
@@ -147,14 +147,14 @@ TextCellEditor.prototype.updateStyle = function(htmlInput)
 	// change style for invalid values
 	if (this.column.isValid(this.getEditorValue(htmlInput))) this.editablegrid.removeClassName(htmlInput, this.editablegrid.invalidClassName);
 	else this.editablegrid.addClassName(htmlInput, this.editablegrid.invalidClassName);
-}
+};
 
 TextCellEditor.prototype.getEditor = function(element, value)
 {
 	// create and initialize text field
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "text");
-	htmlInput.setAttribute("size", this.fieldSize)
+	htmlInput.setAttribute("size", this.fieldSize);
 	htmlInput.value = value;
 
 	// listen to keyup to check validity and update style of input field 
@@ -173,7 +173,7 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 	
 	// select text
 	htmlInput.select();
-}
+};
 
 /**
  * Number cell editor
@@ -191,13 +191,13 @@ NumberCellEditor.prototype.displayEditor = function(element, editorInput)
 
 	// align field to the right (in case of absolute positioning)
 	editorInput.style.left = (parseInt(editorInput.style.left) + element.offsetWidth - editorInput.offsetWidth) + "px";	
-}
+};
 
 NumberCellEditor.prototype.formatValue = function(value)
 {
 	if (value == "") return "";
 	return this.type == 'integer' ? parseInt(value) : parseFloat(value);
-}
+};
 
 /**
  * Select cell editor

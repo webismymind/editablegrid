@@ -72,7 +72,7 @@ function initializeGrid()
 		modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) { 
 			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
-		}
+		};
 		
 		// render for the action column
 		setCellRenderer("action", new CellRenderer({render: function(cell, value) { 
