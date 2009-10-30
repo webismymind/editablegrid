@@ -89,7 +89,7 @@ function EnumProvider(config)
  * @constructor
  * @class EditableGrid
  */
-function EditableGrid(config)
+function EditableGrid(name, config)
 {
 	// default properties
     var props = 
@@ -118,6 +118,7 @@ function EditableGrid(config)
     };
     
     // private data
+    this.name = name;
     this.columns = [];
     this.data = [];
     this.xmlDoc = null;
@@ -478,6 +479,16 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 };
 
 /**
+ * Find column index from its name
+ * @param {Object} name or index of the column
+ */
+EditableGrid.prototype.getRowId = function(rowIndex)
+{
+	var row = this.tBody.rows[rowIndex];	
+	return row ? row.id_user : -1;
+};
+
+/**
  * Remove row with given id
  * @param {Integer} rowId
  */
@@ -505,7 +516,8 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		
 		// create row in table and render content
 		var tr = tBody.insertRow(rowIndex);
-		tr.id = rowId;
+		tr.id = this.name + "_" + rowId;
+		tr.id_user = rowId;
 		for (var c = 0; c < columns.length; c++) {
 			var td = tr.insertCell(c);
 			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
@@ -724,7 +736,8 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     		var rowCount = getRowCount();
     		for (i = 0; i < rowCount; i++) {
     			var tr = tBody.insertRow(i);
-    			tr.id = data[i]['id'];
+    			tr.id = this.name + "_" + data[i]['id'];
+    			tr.id_user = data[i]['id'];
     			for (j = 0; j < columnCount; j++) {
         		
     				// create cell and render its content

@@ -1,6 +1,6 @@
 
 // create our editable grid
-var editableGrid = new EditableGrid({
+var editableGrid = new EditableGrid("DemoGrid", {
 	enableSort: true, // true is the default, set it to false if you don't want sorting to be enabled
 	editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
 	editorzoneid: "edition" // will be used only if editmode is set to "fixed"
@@ -70,7 +70,7 @@ function initializeGrid()
 		
 		// register the function that will handle model changes
 		modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) { 
-			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'");
+			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + this.getRowId(rowIndex) + " has changed from '" + oldValue + "' to '" + newValue + "'");
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
 		};
 		
