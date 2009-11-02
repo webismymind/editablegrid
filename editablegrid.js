@@ -332,6 +332,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
             var cols = rows[i].cells;
             for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(cols[j].innerHTML);
        		data.push({originalIndex: i, id: rows[i].id, columns: rowData});
+       		rows[i].id = this.name + '_' + rows[i].id;
         }
     }
 };
@@ -440,8 +441,8 @@ EditableGrid.prototype.getColumnType = function(columnIndex)
  */
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
-	var rows = this.data[rowIndex]['columns'];
-	return rows ? rows[columnIndex] : null;
+	var rowData = this.data[rowIndex]['columns'];
+	return rowData ? rowData[columnIndex] : null;
 };
 
 /**
@@ -456,8 +457,8 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	if (typeof render == "undefined") render = true;
 	
 	// set new value in model
-	var rows = this.data[rowIndex]['columns'];
-	if (rows) rows[columnIndex] = value;
+	var rowData = this.data[rowIndex]['columns'];
+	if (rowData) rowData[columnIndex] = value;
 	
 	// render new value
 	if (render) {
@@ -484,8 +485,7 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
  */
 EditableGrid.prototype.getRowId = function(rowIndex)
 {
-	var row = this.tBody.rows[rowIndex];	
-	return row ? row.id_user : -1;
+	return this.data[rowIndex]['id'];
 };
 
 /**
@@ -517,7 +517,6 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		// create row in table and render content
 		var tr = tBody.insertRow(rowIndex);
 		tr.id = this.name + "_" + rowId;
-		tr.id_user = rowId;
 		for (var c = 0; c < columns.length; c++) {
 			var td = tr.insertCell(c);
 			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
@@ -737,7 +736,6 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     		for (i = 0; i < rowCount; i++) {
     			var tr = tBody.insertRow(i);
     			tr.id = this.name + "_" + data[i]['id'];
-    			tr.id_user = data[i]['id'];
     			for (j = 0; j < columnCount; j++) {
         		
     				// create cell and render its content
