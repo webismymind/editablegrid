@@ -17,7 +17,7 @@ InfoHeaderRenderer.prototype = new CellRenderer();
 InfoHeaderRenderer.prototype.render = function(cell, value) 
 {
 	if (value) {
-		// here we don't user cell.innerHTML="..." in order not to break the sorting header that has been create dfor us (cf. option enableSort: true)
+		// here we don't use cell.innerHTML = "..." in order not to break the sorting header that has been created for us (cf. option enableSort: true)
 		var link = document.createElement("a");
 		link.href = "javascript:alert('" + this.message + "');";
 		link.innerHTML = "<img src='images/information.png'/>";
