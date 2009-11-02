@@ -106,10 +106,14 @@ CellEditor.prototype.cancelEditing = function(element)
 {
 	with (this) {
 		
-		// render value before editon
-		if (element) column.cellRenderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
+		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
+		if (element && element.isEditing) {
+
+			// render value before editon
+			column.cellRenderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
 		
-		_clearEditor(element);	
+			_clearEditor(element);
+		}
 	}
 };
 
