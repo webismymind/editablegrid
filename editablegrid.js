@@ -91,6 +91,11 @@ function EnumProvider(config)
  */
 function EditableGrid(name, config)
 {
+	if (typeof name != "string" || typeof config != "object") {
+		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
+		return;
+	};
+	
 	// default properties
     var props = 
     {
