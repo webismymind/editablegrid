@@ -139,7 +139,7 @@ EditableGrid.prototype.loadXML = function(url)
 	// we use a trick to avoid getting an old version from the browser's cache
 	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
 	url += sep + Math.floor(Math.random() * 100000);
-
+		
     with (this) {
     	
     	// IE
@@ -199,6 +199,11 @@ EditableGrid.prototype.processXML = function()
 {
 	with (this) {
     	
+		// clear model and pointer to current table
+	    this.columns = [];
+	    this.data = [];
+		this.table = null;
+
         // load metadata (only one tag <metadata> --> metadata[0])
         var metadata = xmlDoc.getElementsByTagName("metadata");
         if (!metadata || metadata.length < 1) return false;
@@ -248,7 +253,9 @@ EditableGrid.prototype.processXML = function()
         
         // load content
         var rows = xmlDoc.getElementsByTagName("row");
-        for (var i = 0; i < rows.length; i++) {
+        for (var i = 0; i < rows.length; i++) 
+        {
+        	// get all defined cell values
             var cellValues = {};
             var cols = rows[i].getElementsByTagName("column");
             for (var j = 0; j < cols.length; j++) {
@@ -260,9 +267,19 @@ EditableGrid.prototype.processXML = function()
             	cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
             }
 
-            var rowData = [];
-            for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
-       		data.push({originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "", columns: rowData});
+            // for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
+            var rowData = { originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
+            for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
+            	var node = rows[i].attributes.item(attrIndex);
+            	if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
+            }
+
+            // get column values for this rows
+            rowData.columns = [];
+            for (var c = 0; c < columns.length; c++) rowData.columns.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
+            
+            // add row data in our model
+       		data.push(rowData);
         }
     }
 };
@@ -484,12 +501,21 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 };
 
 /**
- * Find column index from its name
- * @param {Object} name or index of the column
+ * Get row id specified in XML or HTML
+ * @param {Integer} index of the row
  */
 EditableGrid.prototype.getRowId = function(rowIndex)
 {
 	return this.data[rowIndex]['id'];
+};
+
+/**
+ * Get custom row attribute specified in XML or HTML
+ * @param {Integer} index of the row
+ */
+EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
+{
+	return this.data[rowIndex][attributeName];
 };
 
 /**
@@ -498,8 +524,9 @@ EditableGrid.prototype.getRowId = function(rowIndex)
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
-	var rowIndex = _$(rowId).rowIndex - 1; // remove 1 for the header
-	this.tBody.removeChild(_$(rowId));
+	var tr = _$(this.name + "_" + rowId);
+	var rowIndex = tr.rowIndex - 1; // remove 1 for the header
+	this.tBody.removeChild(tr);
 	this.data.splice(rowIndex, 1);
 };
 
