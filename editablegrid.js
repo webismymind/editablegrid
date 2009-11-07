@@ -276,7 +276,13 @@ EditableGrid.prototype.processXML = function()
 
             // get column values for this rows
             rowData.columns = [];
-            for (var c = 0; c < columns.length; c++) rowData.columns.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
+            for (var c = 0; c < columns.length; c++) {
+            	var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
+            	if (getColumnType(c) == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
+            	if (getColumnType(c) == 'integer') cellValue = parseInt(cellValue); 
+            	if (getColumnType(c) == 'double') cellValue = parseFloat(cellValue);
+            	rowData.columns.push(cellValue);
+            }
             
             // add row data in our model
        		data.push(rowData);
