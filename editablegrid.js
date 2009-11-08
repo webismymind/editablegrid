@@ -278,16 +278,27 @@ EditableGrid.prototype.processXML = function()
             rowData.columns = [];
             for (var c = 0; c < columns.length; c++) {
             	var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
-            	if (getColumnType(c) == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
-            	if (getColumnType(c) == 'integer') cellValue = parseInt(cellValue); 
-            	if (getColumnType(c) == 'double') cellValue = parseFloat(cellValue);
-            	rowData.columns.push(cellValue);
+            	rowData.columns.push(getTypedValue(c, cellValue));
             }
             
             // add row data in our model
        		data.push(rowData);
         }
     }
+};
+
+/**
+ * Get typed value
+ * @private
+ */
+
+EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue) 
+{
+	var colType = this.getColumnType(columnIndex);
+	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
+	if (colType == 'integer') cellValue = parseInt(cellValue); 
+	if (colType == 'double') cellValue = parseFloat(cellValue);
+	return cellValue;
 };
 
 /**
@@ -547,7 +558,10 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		
 		// add row in data
 		var rowData = [];
-		for (var c = 0; c < columns.length; c++) rowData.push(columns[c].name in cellValues ? cellValues[columns[c].name] : null);
+        for (var c = 0; c < columns.length; c++) {
+        	var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
+        	rowData.push(getTypedValue(c, cellValue));
+        }
 		var rowIndex = data.length;
 		data.push({originalIndex: rowIndex, id: rowId, columns: rowData});
 		
