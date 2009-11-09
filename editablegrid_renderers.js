@@ -94,6 +94,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	element.appendChild(htmlInput);
 	htmlInput.checked = element.originalValue;
 	htmlInput.disabled = !this.column.editable;
+
+	element.className = "boolean";
 };
 
 /**
