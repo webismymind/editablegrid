@@ -403,7 +403,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
  */
 EditableGrid.prototype._createHeaderRenderer = function(column)
 {
-	column.headerRenderer = this.enableSort ? new SortHeaderRenderer(column.name) : new CellRenderer();
+	column.headerRenderer = (this.enableSort && column.datatype != "html") ? new SortHeaderRenderer(column.name) : new CellRenderer();
 
 	// give access to the column from the header cell renderer
 	if (column.headerRenderer) {
@@ -590,11 +590,11 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 	if (columnIndex < 0) alert("Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
-		column.headerRenderer = this.enableSort ? new SortHeaderRenderer(column.name, cellRenderer) : cellRenderer;
+		column.headerRenderer = (this.enableSort && column.datatype != "html") ? new SortHeaderRenderer(column.name, cellRenderer) : cellRenderer;
 
 		// give access to the column from the cell renderer
 		if (cellRenderer) {
-			if (this.enableSort) {
+			if (this.enableSort && column.datatype != "html") {
 				column.headerRenderer.editablegrid = this;
 				column.headerRenderer.column = column;
 			}
