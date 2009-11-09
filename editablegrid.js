@@ -368,7 +368,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
         for (var i = 0; i < rows.length; i++) {
             var rowData = [];
             var cols = rows[i].cells;
-            for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(cols[j].innerHTML);
+            for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
        		data.push({originalIndex: i, id: rows[i].id, columns: rowData});
        		rows[i].id = this.name + '_' + rows[i].id;
         }
@@ -541,10 +541,19 @@ EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
-	var tr = _$(this.name + "_" + rowId);
-	var rowIndex = tr.rowIndex - 1; // remove 1 for the header
+	var rowIndex = this.getRowIndex(rowId);
 	this.tBody.removeChild(tr);
 	this.data.splice(rowIndex, 1);
+};
+
+/**
+ * Get index of row with given id
+ * @param {Integer} rowId
+ */
+EditableGrid.prototype.getRowIndex = function(rowId) 
+{
+	var tr = _$(this.name + "_" + rowId);
+	return tr.rowIndex - 1; // remove 1 for the header
 };
 
 /**
@@ -749,7 +758,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
                 var rowData = [];
                 var cols = rows[i].cells;
                 for (var j = 0; j < cols.length && j < columns.length; j++) 
-                	columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
+                	if (columns[j].editable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
             }
 
             // attach handler on click or double click 
