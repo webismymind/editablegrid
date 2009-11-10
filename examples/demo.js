@@ -109,7 +109,7 @@ function onloadHTML()
 		  new Column({ name: "country", datatype: "string" }),
 		  new Column({ name: "email", datatype: "email(26)" }),
 		  new Column({ name: "freelance", datatype: "boolean" }),
-		  new Column({ name: "action", datatype: "html" }) ]);
+		  new Column({ name: "action", datatype: "html", editable: false }) ]);
 
 	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
 	initializeGrid();

@@ -20,6 +20,7 @@ function Column(config)
         name: "",
         label: "",
 		editable: true,
+		renderable: true,
         datatype: "string",
         headerRenderer: null,
         cellRenderer: null,
@@ -758,7 +759,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
                 var rowData = [];
                 var cols = rows[i].cells;
                 for (var j = 0; j < cols.length && j < columns.length; j++) 
-                	if (columns[j].editable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
+                	if (columns[j].renderable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
             }
 
             // attach handler on click or double click 
