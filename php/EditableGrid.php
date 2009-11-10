@@ -3,11 +3,9 @@
 class EditableGrid {
 	
 	protected $columns;
-	protected $translate;
 	
 	function __construct() 
 	{
-		$this->translate = Zend_Registry::get('translate');
 		$this->columns = array();
 	}
 	
@@ -29,7 +27,7 @@ class EditableGrid {
 		echo "<table><metadata>\n";
 
 		foreach ($this->columns as $name => $info) {
-			echo "<column name='$name' label='". $this->translate->_($info['label']) . "' datatype='{$info['type']}' editable='". ($info['editable'] ? "true" : "false") . "'>\n";
+			echo "<column name='$name' label='". $info['label'] . "' datatype='{$info['type']}' editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				echo "<values>\n";
 				foreach ($info['values'] as $key => $value) echo "<value value='{$key}'><![CDATA[{$value}]]></value>\n"; 

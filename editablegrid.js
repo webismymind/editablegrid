@@ -497,7 +497,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	
 	// set new value in model
 	var rowData = this.data[rowIndex]['columns'];
-	if (rowData) rowData[columnIndex] = value;
+	if (rowData) rowData[columnIndex] = getTypedValue(columnIndex, value);
 	
 	// render new value
 	if (render) {

@@ -15,19 +15,56 @@ This release has been successfully tested on: Firefox 3.0 and 3.5, Internet Expl
 [23/10/2009] EditableGrid v1.0.1
 ================================
 
-Changed the XML loading method on Firefox: we use XMLHttpRequest which seems more stable than document.implementation.
+Changed the XML loading method on Firefox: we use XMLHttpRequest which seems more reliable than document.implementation.
 
 [02/11/2009] EditableGrid v1.0.2
 ================================
-
-Bug fixed: if you edited a cell then went to another tab in Firefox, the previous value was put back into the cell.
 
 Several editable grids can now safely be put on the same page:
 - you have to give a name when creating the EditableGrid instance (this name is used to prefix the row ids in the DOM in order to keep them unique)
 - to retrieve the row id in database (ie. the row id you gave in your XML or HTML grid definition) you have to use the new method "getRowId"
 
-[../../2009] EditableGrid v1.0.3
+Bugfixes: 
+- if you edited a cell then went to another tab in Firefox, the previous value was put back into the cell.
+
+[05/11/2009] EditableGrid v1.0.3
 ================================
 
-[../../2009] EditableGrid v1.0.4
+The loadXML method now loads custom attributes that may have been set on the rows in the XML.
+The user can consult these attributes using the new method getRowAttribute(rowIndex, attributeName).
+
+Bugfixes:
+- fixed the removeRow method that had been broken in version 1.0.2
+- it is now possible to call loadXML several times: the table contents will be replaced when calling renderGrid
+
+[11/11/2009] EditableGrid v1.0.4
 ================================
+
+1) The values stored in the model are converted according to the column type (boolean, integer and double).
+   This eg. means that your render functions will always get a real javascript Number or Boolean.
+
+2) Added a simple PHP wrapper that you can use to generate the grid XML data if you work with PHP on the server side.
+
+   This PHP class has two public methods:
+   - addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL)
+   - renderXML($rows, $customRowAttributes=array()) 
+
+   The $rows argument in renderXML can be an array of objects of an array of arrays. 
+
+3) You can more easily inherit from an built-in cell renderer, for example:
+     grid.setCellRenderer("mycolumn", new CheckboxCellRenderer({render: function(cell, value) {
+	   CheckboxCellRenderer.prototype.render.call(this, cell, value); // call base method
+	   // your code here
+     }}));
+
+   Also, if you inherit from CheckboxCellRenderer, your render function will now be called each time the checbox is (un)checked.
+
+4) Improved attaching to an existing HTML table:
+   - added a flag Column.renderable that can be used to prevent EditableGrid to call the render function for this column
+   - the row passed to modelChanged was incorrect if the TBODY contained other child nodes than TR
+   - fixed the example so that the action column is not editable
+
+5) Other minor fixes and improvements:
+   - added method getRowIndex(rowId)
+   - when using sortEnable=true (which is the default), the sort header is disabled for columns with type 'html'
+   - the checkboxes in boolean columns are now centered (ie. the css style named 'boolean' is applied)
