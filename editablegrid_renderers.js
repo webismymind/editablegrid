@@ -6,7 +6,9 @@
  * @param {Object} config
  */
 
-function CellRenderer(config)
+function CellRenderer(config) { this.init(config); }
+
+CellRenderer.prototype.init = function(config) 
 {
 	// default properties
     var props = { render: null };
@@ -39,7 +41,7 @@ CellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell with enum values
  */
 
-function EnumCellRenderer() {};
+function EnumCellRenderer(config) { this.init(config); }
 EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.render = function(element, value)
 {
@@ -53,7 +55,7 @@ EnumCellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell with numerical values
  */
 
-function NumberCellRenderer() {};
+function NumberCellRenderer(config) { this.init(config); }
 NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
@@ -67,10 +69,27 @@ NumberCellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell with an HTML checkbox
  */
 
-function CheckboxCellRenderer() {};
+function CheckboxCellRenderer(config) { this.init(config); }
 CheckboxCellRenderer.prototype = new CellRenderer();
+
+CheckboxCellRenderer.prototype._render = function(rowIndex, columnIndex, element, value) 
+{
+	// if a checkbox already exists keep it, otherwise clear current content
+	if (element.firstChild && element.firstChild.getAttribute("type") != "checkbox")
+		while (element.hasChildNodes()) element.removeChild(element.firstChild);
+
+	// remember all the things we need
+	element.rowIndex = rowIndex; 
+	element.columnIndex = columnIndex;
+
+	// call the specialized render method
+	return this.render(element, value);
+};
+
 CheckboxCellRenderer.prototype.render = function(element, value)
 {
+	if (element.firstChild) return;
+	
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
@@ -82,7 +101,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	cellEditor.column = this.column;
 	htmlInput.onclick = function(event) { 
 		element.rowIndex = element.parentNode.rowIndex - 1; // in case it has changed due to sorting or remove
-		cellEditor.applyEditing(element, htmlInput.checked ? true : false, false); 
+		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
 		element.originalValue = htmlInput.checked ? true : false; 
 	};
 
@@ -90,7 +109,6 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	htmlInput.element = element;
 	htmlInput.cellrenderer = this;
 
-	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 	element.appendChild(htmlInput);
 	htmlInput.checked = element.originalValue;
 	htmlInput.disabled = !this.column.editable;
@@ -104,7 +122,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell with emails
  */
 
-function EmailCellRenderer() {};
+function EmailCellRenderer(config) { this.init(config); }
 EmailCellRenderer.prototype = new CellRenderer();
 EmailCellRenderer.prototype.render = function(element, value)
 {
@@ -117,7 +135,7 @@ EmailCellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell with websites
  */
 
-function WebsiteCellRenderer() {};
+function WebsiteCellRenderer(config) { this.init(config); }
 WebsiteCellRenderer.prototype = new CellRenderer();
 WebsiteCellRenderer.prototype.render = function(element, value)
 {
@@ -130,7 +148,7 @@ WebsiteCellRenderer.prototype.render = function(element, value)
  * @class Class to render a cell containing a date
  */
 
-function DateCellRenderer() {}
+function DateCellRenderer(config) { this.init(config); }
 DateCellRenderer.prototype = new CellRenderer;
 
 DateCellRenderer.prototype.render = function(cell, value) 

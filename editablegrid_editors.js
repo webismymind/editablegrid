@@ -117,7 +117,7 @@ CellEditor.prototype.cancelEditing = function(element)
 	}
 };
 
-CellEditor.prototype.applyEditing = function(element, newValue, render) 
+CellEditor.prototype.applyEditing = function(element, newValue) 
 {
 	with (this) {
 		
@@ -128,7 +128,7 @@ CellEditor.prototype.applyEditing = function(element, newValue, render)
 		var formattedValue = formatValue(newValue);
 		
 		// update model
-		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue, render);
+		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
 
 		// let the user handle the model change
 		editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, this.editablegrid.tBody.rows[element.rowIndex]);
