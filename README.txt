@@ -184,3 +184,7 @@ Let's see how each feature has been implemented in our example:
    But since we don't have the XML metadata to define the table columns, you must declare these columns using Javascript as shown above.
    Of course, in this case you don't have to register the callback method "tableLoaded" since nothing has to be loaded.
  
+ PHP helper class
+ ----------------
+ 
+ If you work with PHP on the server side, you can make use of the simple class EditableGrid.php to ease the creation and rendering of the XML data.

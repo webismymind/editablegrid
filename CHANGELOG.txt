@@ -25,3 +25,9 @@ Bug fixed: if you edited a cell then went to another tab in Firefox, the previou
 Several editable grids can now safely be put on the same page:
 - you have to give a name when creating the EditableGrid instance (this name is used to prefix the row ids in the DOM in order to keep them unique)
 - to retrieve the row id in database (ie. the row id you gave in your XML or HTML grid definition) you have to use the new method "getRowId"
+
+[../../2009] EditableGrid v1.0.3
+================================
+
+[../../2009] EditableGrid v1.0.4
+================================
