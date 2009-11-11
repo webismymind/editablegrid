@@ -138,6 +138,7 @@ function EditableGrid(name, config)
 EditableGrid.prototype.loadXML = function(url)
 {
 	// we use a trick to avoid getting an old version from the browser's cache
+	var orig_url = url;
 	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
 	url += sep + Math.floor(Math.random() * 100000);
 		
@@ -163,6 +164,7 @@ EditableGrid.prototype.loadXML = function(url)
            	xmlDoc.onreadystatechange = function () {
            		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
+       				if (!xmlDoc) { alert("Could not load XML from url '" + orig_url + "'"); return false; }
        				processXML();
        				tableLoaded();
        			}
@@ -847,13 +849,13 @@ EditableGrid.prototype.mouseClicked = function(e)
 		if (target.tagName == "A") return;
 		
 		// go up parents to find a cell under the clicked position
-		while (target) if (target.tagName == "TD") break; else target = target.parentNode;
-		if (!target || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
-
+		while (target) if (target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
+		if (!target || target.tagName != "TD" || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
+		
 		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - 1; // remove 1 for the header
 		var columnIndex = target.cellIndex;
-		
+
 		// edit current cell value
 		var column = columns[columnIndex];
 		if (column) {
