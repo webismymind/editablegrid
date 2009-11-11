@@ -47,7 +47,7 @@ class EditableGrid {
 			
 			foreach ($this->columns as $name => $info) {
 				$field = $info['field'];
-				echo "<column name='{$name}'><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
+				echo "<column name='{$name}'><![CDATA[" . htmlspecialchars($this->_getRowField($row, $field)) . "]]></column>\n";
 			}
 			echo "</row>\n";
 		}
