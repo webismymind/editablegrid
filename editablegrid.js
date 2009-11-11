@@ -544,7 +544,8 @@ EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
-	var rowIndex = this.getRowIndex(rowId);
+	var tr = _$(this.name + "_" + rowId);
+	var rowIndex = tr.rowIndex - 1; // remove 1 for the header
 	this.tBody.removeChild(tr);
 	this.data.splice(rowIndex, 1);
 };
