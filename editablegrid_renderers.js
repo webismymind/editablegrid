@@ -75,7 +75,7 @@ CheckboxCellRenderer.prototype = new CellRenderer();
 CheckboxCellRenderer.prototype._render = function(rowIndex, columnIndex, element, value) 
 {
 	// if a checkbox already exists keep it, otherwise clear current content
-	if (element.firstChild && element.firstChild.getAttribute("type") != "checkbox")
+	if (element.firstChild && (typeof element.firstChild.getAttribute != "function" || element.firstChild.getAttribute("type") != "checkbox"))
 		while (element.hasChildNodes()) element.removeChild(element.firstChild);
 
 	// remember all the things we need
