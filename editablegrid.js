@@ -299,8 +299,8 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 {
 	var colType = this.getColumnType(columnIndex);
 	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
-	if (colType == 'integer') cellValue = parseInt(cellValue); 
-	if (colType == 'double') cellValue = parseFloat(cellValue);
+	if (colType == 'integer') { cellValue = parseInt(cellValue); if (isNaN(cellValue)) cellValue = ""; } 
+	if (colType == 'double') { cellValue = parseFloat(cellValue); if (isNaN(cellValue)) cellValue = ""; }
 	return cellValue;
 };
 
@@ -588,7 +588,6 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 
 		// resort table
 		sort(sortedColumnName, sortDescending);
-
 	}
 };
 
@@ -812,7 +811,10 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
             _$(containerid).editablegrid = this;
         	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
         	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
-    	}    	
+    	}
+    	
+		// resort table
+		sort(sortedColumnName, sortDescending);
     }
 };
 
