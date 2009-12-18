@@ -37,7 +37,7 @@ Bugfixes:
 - fixed the removeRow method that had been broken in version 1.0.2
 - it is now possible to call loadXML several times: the table contents will be replaced when calling renderGrid
 
-[11/11/2009] EditableGrid v1.0.4
+[??/12/2009] EditableGrid v1.0.4
 ================================
 
 1) The values stored in the model are converted according to the column type (boolean, integer and double).
