@@ -132,10 +132,10 @@ function EditableGrid(name, config)
     this.baseUrl = this.detectDir();
 
     if (this.enableSort) {
-	this.sortUpImage = new Image();
-	this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
-	this.sortDownImage = new Image();
-	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
+    	this.sortUpImage = new Image();
+    	this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
+    	this.sortDownImage = new Image();
+    	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
     }
 }
 

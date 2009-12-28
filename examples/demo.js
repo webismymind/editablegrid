@@ -12,7 +12,11 @@ function displayMessage(text, style) {
 } 
 
 // this will be used to render our table headers
-function InfoHeaderRenderer(message) { this.message = message; };
+function InfoHeaderRenderer(message) { 
+	this.message = message; 
+	this.infoImage = new Image();
+	this.infoImage.src = "images/information.png";
+};
 InfoHeaderRenderer.prototype = new CellRenderer();
 InfoHeaderRenderer.prototype.render = function(cell, value) 
 {
@@ -20,7 +24,7 @@ InfoHeaderRenderer.prototype.render = function(cell, value)
 		// here we don't use cell.innerHTML = "..." in order not to break the sorting header that has been created for us (cf. option enableSort: true)
 		var link = document.createElement("a");
 		link.href = "javascript:alert('" + this.message + "');";
-		link.innerHTML = "<img src='images/information.png'/>";
+		link.appendChild(this.infoImage);
 		cell.appendChild(document.createTextNode("\u00a0\u00a0"));
 		cell.appendChild(link);
 	}
