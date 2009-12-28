@@ -181,18 +181,33 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 		link.renderer = this;
 		link.onclick = function() {
 			with (this.editablegrid) {
+
+				var cols = tHead.rows[0].cells;
+				var clearPrevious = -1;
 				
 				if (sortedColumnName != this.columnName) {
+					clearPrevious = sortedColumnName;
 					sortedColumnName = this.columnName;
 					sortDescending = false;
 				}
 				else {
 					if (!sortDescending) sortDescending = true;
-					else { sortedColumnName = -1; sortDescending = false; }
+					else { 					
+						clearPrevious = sortedColumnName;
+						sortedColumnName = -1; 
+						sortDescending = false; 
+					}
 				} 
 				
+				// render header for previous sort column
+				var j = getColumnIndex(clearPrevious);
+				if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+
 				sort(sortedColumnName, sortDescending);
-				this.editablegrid._renderHeaders();
+
+				// render header for new sort column
+				var j = getColumnIndex(sortedColumnName);
+				if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 			}
 		};
 

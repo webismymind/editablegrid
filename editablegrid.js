@@ -824,11 +824,11 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
  */
 EditableGrid.prototype._renderHeaders = function() 
 {
-    with (this) {
-	var cols = tHead.rows[0].cells;
-	for (var j = 0; j < cols.length && j < columns.length; j++) 
-	    columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
-    }
+	with (this) {
+		var cols = tHead.rows[0].cells;
+		for (var j = 0; j < cols.length && j < columns.length; j++) 
+			columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+	}
 };
 
 /**
