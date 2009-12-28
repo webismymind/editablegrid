@@ -213,10 +213,8 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 
 		// add an arrow to indicate if sort is ascending or descending
 		if (this.editablegrid.sortedColumnName == this.columnName) {
-			var img = document.createElement("img");
-			img.src = this.editablegrid.baseUrl + "/images/bullet_arrow_" +  (this.editablegrid.sortDescending ? "down" : "up") + ".png";
 			cell.appendChild(document.createTextNode("\u00a0"));
-			cell.appendChild(img);
+			cell.appendChild(this.editablegrid.sortDescending ? this.editablegrid.sortDownImage: this.editablegrid.sortUpImage);
 		}
 
 		// call user renderer if any
