@@ -70,3 +70,8 @@ Bugfixes:
    - the checkboxes in boolean columns are now centered (ie. the css style named 'boolean' is applied)
    - an error message is displayed if the XML cannot be loaded
    - fixed error occuring when an editable grid was itself in a table
+   
+ [?] EditableGrid v1.0.5
+ =======================
+ 
+- The renderers are called on the value after replacing the HTML special characters.
