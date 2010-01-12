@@ -71,7 +71,8 @@ Bugfixes:
    - an error message is displayed if the XML cannot be loaded
    - fixed error occuring when an editable grid was itself in a table
    
- [?] EditableGrid v1.0.5
+ [12/01/2010] EditableGrid v1.0.5
  =======================
  
-- The renderers are called on the value after replacing the HTML special characters.
+- Fatser sorting: images used to indicate the sorting order are preloaded + only impacted colum headers are refreshed
+- Replacing HTML special characters is not done when generating the XML, but before calling the renderers
