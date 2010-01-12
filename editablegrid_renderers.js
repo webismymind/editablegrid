@@ -27,7 +27,7 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 
 	// call the specialized render method
-	return this.render(element, htmlentities(value));
+	return this.render(element, typeof value == 'string' ? htmlentities(value) : value);
 };
 
 CellRenderer.prototype.render = function(element, value) 
