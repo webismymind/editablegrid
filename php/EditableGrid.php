@@ -19,7 +19,7 @@ class EditableGrid {
 		return is_array($row) ? $row[$field] : $row->$field;
 	}
 	
-	public function renderXML($rows, $customRowAttributes=array()) 
+	public function renderXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
 	{
 		header('Content-Type: text/xml');
 		echo '<?xml version="1.0" encoding="utf-8"?>';
@@ -42,7 +42,7 @@ class EditableGrid {
 		foreach ($rows as $row) { 
 	
 			echo "<row id='" . $this->_getRowField($row, 'id') . "'";
-			foreach ($customRowAttributes as $name => $field) echo " {$name}='" . $this->_getRowField($row, $field) . "'";
+			foreach ($customRowAttributes as $name => $field) echo " {$name}='" . ($encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field)) . "'";
 			echo ">\n";
 			
 			foreach ($this->columns as $name => $info) {
