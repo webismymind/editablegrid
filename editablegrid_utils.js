@@ -483,33 +483,21 @@ function get_html_translation_table (table, quote_style) {
     return hash_map;
 }
 
-function htmlentities (string, quote_style) {
-    // http://kevin.vanzonneveld.net
-    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +   improved by: nobbler
-    // +    tweaked by: Jack
-    // +   bugfixed by: Onno Marsman
-    // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +    bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: Ratheous
-    // -    depends on: get_html_translation_table
-    // *     example 1: htmlentities('Kevin & van Zonneveld');
-    // *     returns 1: 'Kevin &amp; van Zonneveld'
-    // *     example 2: htmlentities("foo'bar","ENT_QUOTES");
-    // *     returns 2: 'foo&#039;bar'
-
-    var hash_map = {}, symbol = '', tmp_str = '', entity = '';
+function htmlentities(string, quote_style) 
+{
+    var hash_map = {}, symbol = '', tmp_str = '';
     tmp_str = string.toString();
-    
-    if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) {
-        return false;
-    }
+    if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
     hash_map["'"] = '&#039;';
-    for (symbol in hash_map) {
-        entity = hash_map[symbol];
-        tmp_str = tmp_str.split(symbol).join(entity);
-    }
-    
+    for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
+    return tmp_str;
+}
+
+function htmlspecialchars(string, quote_style) 
+{
+    var hash_map = {}, symbol = '', tmp_str = '';
+    tmp_str = string.toString();
+    if (false === (hash_map = this.get_html_translation_table('HTML_SPECIALCHARS', quote_style))) return false;
+    for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
     return tmp_str;
 }
