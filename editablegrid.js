@@ -171,7 +171,7 @@ EditableGrid.prototype.loadXML = function(url)
            	xmlDoc.onreadystatechange = function () {
            		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
-       				if (!xmlDoc) { alert("Could not load XML from url '" + orig_url + "'"); return false; }
+       				if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
        				processXML();
        				tableLoaded();
        			}
