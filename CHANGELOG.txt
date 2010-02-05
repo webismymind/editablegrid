@@ -76,3 +76,11 @@ Bugfixes:
  
 - Replacing HTML special characters is not done when generating the XML, but before calling the cell renderers
 - Removed annoying effect when sorting: images used to indicate the sorting order are preloaded + only impacted colum headers are refreshed
+
+ [05/02/2010] EditableGrid v1.0.6
+ ================================
+
+- Error message "Could not load XML" is not displayed anymore because it can happen normally when leaving a page too quickly
+- We use htmlspecialchars instead of htmlentities for rendering string cells, it's sufficient
+- Fixed display of "&quot;" on Google Chrome
+- Custom XML attributes can be encoded in base64 by EditableGrid.php

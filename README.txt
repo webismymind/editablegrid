@@ -1,5 +1,5 @@
 =======================
-= EditableGrid v1.0.4 =
+= EditableGrid v1.0.6 =
 =======================
 
 Introduction
