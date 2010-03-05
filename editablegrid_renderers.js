@@ -100,7 +100,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	cellEditor.editablegrid = this.editablegrid;
 	cellEditor.column = this.column;
 	htmlInput.onclick = function(event) { 
-		element.rowIndex = element.parentNode.rowIndex - 1; // in case it has changed due to sorting or remove
+		element.rowIndex = element.parentNode.rowIndex - this.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
 		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
 		element.originalValue = htmlInput.checked ? true : false; 
 	};

@@ -130,7 +130,8 @@ function EditableGrid(name, config)
     this.sortedColumnName = -1;
     this.sortDescending = false;
     this.baseUrl = this.detectDir();
-
+    this.nbHeaderRows = 1;
+    
     if (this.enableSort) {
     	this.sortUpImage = new Image();
     	this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
@@ -359,10 +360,11 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
         	tHead.appendChild(tBody.rows[0]);
 
         // check that header has exactly one row
-        if (tHead.rows.length != 1) {
+        this.nbHeaderRows = tHead.rows.length;
+        /*if (tHead.rows.length != 1) {
         	alert("You table header must have exactly row!");
         	return false;
-        }
+        }*/
 
         // load header labels
        	var rows = tHead.rows;
@@ -552,7 +554,7 @@ EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
 EditableGrid.prototype.removeRow = function(rowId)
 {
 	var tr = _$(this.name + "_" + rowId);
-	var rowIndex = tr.rowIndex - 1; // remove 1 for the header
+	var rowIndex = tr.rowIndex - this.nbHeaderRows; // remove header rows
 	this.tBody.removeChild(tr);
 	this.data.splice(rowIndex, 1);
 };
@@ -564,7 +566,7 @@ EditableGrid.prototype.removeRow = function(rowId)
 EditableGrid.prototype.getRowIndex = function(rowId) 
 {
 	var tr = _$(this.name + "_" + rowId);
-	return tr.rowIndex - 1; // remove 1 for the header
+	return tr.rowIndex - this.nbHeaderRows; // remove header rows
 };
 
 /**
@@ -833,7 +835,7 @@ EditableGrid.prototype._renderHeaders = function()
 {
 	with (this) {
 		var rows = tHead.rows;
-		for (var i = 0; i < rows.length; i++) {
+		for (var i = 0; i < 1 /*rows.length*/; i++) {
 			var rowData = [];
 			var cols = rows[i].cells;
 			for (var j = 0; j < cols.length && j < columns.length; j++)
@@ -863,7 +865,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		if (!target || target.tagName != "TD" || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
 		
 		// get cell position in table
-		var rowIndex = target.parentNode.rowIndex - 1; // remove 1 for the header
+		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
 		var columnIndex = target.cellIndex;
 
 		// edit current cell value
