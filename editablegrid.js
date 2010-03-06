@@ -59,13 +59,11 @@ Column.prototype.isValid = function(value) {
 function EnumProvider(config)
 {
 	// default properties
-    var props = {
-        getOptionValuesForRender: function(grid, column, rowIndex) { return null; },
-        getOptionValuesForEdit: function(grid, column, rowIndex) { return null; }
-    };
+    this.getOptionValuesForRender = function(grid, column, rowIndex) { return null; },
+    this.getOptionValuesForEdit = function(grid, column, rowIndex) { return null; }
 
     // override default properties with the ones given
-    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+    for (var p in config) this[p] = config[p];
 }
 
 /**
