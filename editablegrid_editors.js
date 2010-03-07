@@ -78,8 +78,8 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 	if (this.editablegrid.editmode == "absolute") {
 		element.appendChild(editorInput);
 		editorInput.style.position = "absolute";
-		editorInput.style.left = (this.editablegrid.getCellX(element) + 1) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) + 2) + "px";
+		editorInput.style.left = (this.editablegrid.getCellX(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0) + 1) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0) + 2) + "px";
 	}
 
 	// fixed mode: don't show input field in the cell 
