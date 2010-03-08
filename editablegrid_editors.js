@@ -5,7 +5,16 @@
  * @class Base class for all cell editors
  */
 
-function CellEditor() {}
+function CellEditor(config) { this.init(config); }
+
+CellEditor.prototype.init = function(config) 
+{
+	// default properties
+    var props = { getEditor: null };
+
+    // override default properties with the ones given
+    for (var p in props) if (typeof config != 'undefined' && typeof config[p] != 'undefined') this[p] = config[p];
+};
 
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
 {

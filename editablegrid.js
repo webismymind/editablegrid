@@ -645,6 +645,27 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 };
 
 /**
+ * Sets the cell editor for the specified column index
+ * @param {Integer} columnIndex
+ * @param {CellEditor} cellEditor
+ */
+EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
+{
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("[setCellEditor] Invalid column: " + columnIndexOrName);
+	else {
+		var column = this.columns[columnIndex];
+		column.cellEditor = cellEditor;
+	
+		// give access to the column from the cell editor
+		if (cellEditor) {
+			cellEditor.editablegrid = this;
+			cellEditor.column = column;
+		}
+	}
+};
+
+/**
  * Sets the enum provider for the specified column index
  * @param {Integer} columnIndex
  * @param {EnumProvider} enumProvider
