@@ -9,11 +9,8 @@ function CellEditor(config) { this.init(config); }
 
 CellEditor.prototype.init = function(config) 
 {
-	// default properties
-    var props = { getEditor: null };
-
-    // override default properties with the ones given
-    for (var p in props) if (typeof config != 'undefined' && typeof config[p] != 'undefined') this[p] = config[p];
+	// override default properties with the ones given
+	for (var p in config) this[p] = config[p];
 };
 
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
@@ -119,7 +116,8 @@ CellEditor.prototype.cancelEditing = function(element)
 		if (element && element.isEditing) {
 
 			// render value before editon
-			column.cellRenderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
+			var renderer = this == column.headerEditor ? column.headerRenderer : column.cellRenderer;
+			renderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
 		
 			_clearEditor(element);
 		}
@@ -140,7 +138,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
 
 		// let the user handle the model change
-		editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, this.editablegrid.tBody.rows[element.rowIndex]);
+		editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, this.editablegrid.getRow(element.rowIndex));
 		
 		_clearEditor(element);	
 	}
@@ -152,7 +150,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
  * @class Class to edit a cell with an HTML text input 
  */
 
-function TextCellEditor(size) { this.fieldSize = size || 12; };
+function TextCellEditor(size, maxlen) { this.fieldSize = size || -1; this.maxLength = maxlen || -1; };
 TextCellEditor.prototype = new CellEditor();
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
@@ -167,7 +165,10 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	// create and initialize text field
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "text");
-	htmlInput.setAttribute("size", this.fieldSize);
+	if (this.maxLength > 0) htmlInput.setAttribute("maxlength", this.maxLength);
+	if (this.fieldSize > 0) htmlInput.setAttribute("size", this.fieldSize);
+	else htmlInput.style.width = (element.offsetWidth - 10) + 'px'; // auto-adapt width to cell, if no length specified 
+	htmlInput.style.height = (element.offsetHeight - 10) + 'px'; // auto-adapt height to cell, always
 	htmlInput.value = value;
 
 	// listen to keyup to check validity and update style of input field 

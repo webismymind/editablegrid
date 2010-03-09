@@ -10,11 +10,8 @@ function CellRenderer(config) { this.init(config); }
 
 CellRenderer.prototype.init = function(config) 
 {
-	// default properties
-    var props = { render: null };
-
-    // override default properties with the ones given
-    for (var p in props) if (typeof config != 'undefined' && typeof config[p] != 'undefined') this[p] = config[p];
+	// override default properties with the ones given
+	for (var p in config) this[p] = config[p];
 };
 
 CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value) 

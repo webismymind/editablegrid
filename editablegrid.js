@@ -23,6 +23,7 @@ function Column(config)
 		renderable: true,
         datatype: "string",
         headerRenderer: null,
+        headerEditor: null,
         cellRenderer: null,
 		cellEditor: null,
 		cellValidators: [],
@@ -59,8 +60,8 @@ Column.prototype.isValid = function(value) {
 function EnumProvider(config)
 {
 	// default properties
-    this.getOptionValuesForRender = function(grid, column, rowIndex) { return null; },
-    this.getOptionValuesForEdit = function(grid, column, rowIndex) { return null; }
+    this.getOptionValuesForRender = function(grid, column, rowIndex) { return null; };
+    this.getOptionValuesForEdit = function(grid, column, rowIndex) { return null; };
 
     // override default properties with the ones given
     for (var p in config) this[p] = config[p];
@@ -107,7 +108,7 @@ function EditableGrid(name, config)
         // callback functions
         tableLoaded: function() {},
         modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
-		isEditable: function(rowIndex, columnIndex) { return true; }
+		isEditable: function(rowIndex, columnIndex) { return rowIndex >= 0; }
     };
     
 	// override default properties with the ones given
@@ -252,6 +253,7 @@ EditableGrid.prototype.processXML = function()
 			
 			// create suited cell editor
             _createCellEditor(column);  
+			_createHeaderEditor(column);
 
 			// add default cell validators based on the column type
 			_addDefaultCellValidators(column);
@@ -332,6 +334,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
             if (!column.cellRenderer) _createCellRenderer(column);
             if (!column.headerRenderer) _createHeaderRenderer(column);
             if (!column.cellEditor) _createCellEditor(column);  
+            if (!column.headerEditor) _createHeaderEditor(column);
 
 			// add default cell validators based on the column type
 			_addDefaultCellValidators(column);
@@ -437,15 +440,30 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
-		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : 32) :
-		column.datatype.startsWith("website") ? new TextCellEditor(length ? length : 32) :
-		column.datatype.startsWith("date") ? new TextCellEditor(length ? length : 11) :
+		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : -1) :
+		column.datatype.startsWith("website") ? new TextCellEditor(length ? length : -1) :
+		column.datatype.startsWith("date") ? new TextCellEditor(length ? length : -1, 10) :
 		new TextCellEditor(length);  
 		
 	// give access to the column from the cell editor
 	if (column.cellEditor) {
 		column.cellEditor.editablegrid = this;
 		column.cellEditor.column = column;
+	}
+};
+
+/**
+ * Creates a suitable header cell editor for the column
+ * @private
+ */
+EditableGrid.prototype._createHeaderEditor = function(column)
+{
+	column.headerEditor =  new TextCellEditor();  
+		
+	// give access to the column from the cell editor
+	if (column.headerEditor) {
+		column.headerEditor.editablegrid = this;
+		column.headerEditor.column = column;
 	}
 };
 
@@ -504,15 +522,22 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, render)
 {
 	if (typeof render == "undefined") render = true;
+
+	// check and get column
+	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("[setValueAt] Invalid column index " + columnIndex);
+	var column = this.columns[columnIndex];
 	
 	// set new value in model
-	var rowData = this.data[rowIndex]['columns'];
-	if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, value);
+	if (rowIndex < 0) column.label = value;
+	else {
+		var rowData = this.data[rowIndex]['columns'];
+		if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, value);
+	}
 	
 	// render new value
 	if (render) {
-		if (columnIndex < 0 || columnIndex >= this.columns.length) alert("[setValueAt] Invalid column index " + columnIndex);
-		this.columns[columnIndex].cellRenderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
+		var renderer = rowIndex < 0 ? column.headerRenderer : column.cellRenderer;  
+		renderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
 	}
 };
 
@@ -534,6 +559,7 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
  */
 EditableGrid.prototype.getRow = function(rowIndex)
 {
+	if (rowIndex < 0) return this.tHead.rows[rowIndex + this.nbHeaderRows];
 	return this.tBody.rows[rowIndex];
 };
 
@@ -543,7 +569,7 @@ EditableGrid.prototype.getRow = function(rowIndex)
  */
 EditableGrid.prototype.getRowId = function(rowIndex)
 {
-	return this.data[rowIndex]['id'];
+	return (rowIndex < 0 || rowIndex >= this.data.length) ? null : this.data[rowIndex]['id'];
 };
 
 /**
@@ -676,6 +702,27 @@ EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
 };
 
 /**
+ * Sets the header cell editor for the specified column index
+ * @param {Integer} columnIndex
+ * @param {CellEditor} cellEditor
+ */
+EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
+{
+	var columnIndex = this.getColumnIndex(columnIndexOrName);
+	if (columnIndex < 0) alert("[setHeaderEditor] Invalid column: " + columnIndexOrName);
+	else {
+		var column = this.columns[columnIndex];
+		column.headerEditor = cellEditor;
+	
+		// give access to the column from the cell editor
+		if (cellEditor) {
+			cellEditor.editablegrid = this;
+			cellEditor.column = column;
+		}
+	}
+};
+
+/**
  * Sets the enum provider for the specified column index
  * @param {Integer} columnIndex
  * @param {EnumProvider} enumProvider
@@ -742,7 +789,7 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
  */
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
-	var row = this.tBody.rows[rowIndex];
+	var row = this.getRow(rowIndex);
 	return row.cells[columnIndex];
 };
 
@@ -891,7 +938,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		
 		// go up parents to find a cell under the clicked position
 		while (target) if (target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
-		if (!target || target.tagName != "TD" || !target.parentNode || !target.parentNode.parentNode || target.parentNode.parentNode.tagName != "TBODY" || target.isEditing) return;
+		if (!target || !target.parentNode || !target.parentNode.parentNode || (target.parentNode.parentNode.tagName != "TBODY" && target.parentNode.parentNode.tagName != "THEAD") || target.isEditing) return;
 		
 		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
@@ -901,8 +948,14 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else if (column.cellEditor && isEditable(rowIndex, columnIndex))
-				column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else {
+				if (rowIndex < 0) { 
+					if (column.headerEditor && isEditable(rowIndex, columnIndex)) 
+						column.headerEditor.edit(rowIndex, columnIndex, target, column.label);
+				}
+				else if (column.cellEditor && isEditable(rowIndex, columnIndex))
+					column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			}
 		}
 	}
 };
