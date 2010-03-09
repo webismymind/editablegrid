@@ -547,7 +547,7 @@ EditableGrid.prototype.getRowId = function(rowIndex)
 };
 
 /**
- * Get custom row attribute specified in XML or HTML
+ * Get custom row attribute specified in XML
  * @param {Integer} index of the row
  */
 EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
