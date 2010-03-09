@@ -106,7 +106,8 @@ function EditableGrid(name, config)
 
         // callback functions
         tableLoaded: function() {},
-        modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {}
+        modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
+		isEditable: function(rowIndex, columnIndex) { return true; }
     };
     
 	// override default properties with the ones given
@@ -528,6 +529,15 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 };
 
 /**
+ * Get row object at given index
+ * @param {Integer} index of the row
+ */
+EditableGrid.prototype.getRow = function(rowIndex)
+{
+	return this.tBody.rows[rowIndex];
+};
+
+/**
  * Get row id specified in XML or HTML
  * @param {Integer} index of the row
  */
@@ -891,7 +901,8 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var column = columns[columnIndex];
 		if (column) {
 			if (!column.editable) { /* alert("Column " + columnIndex + " is not editable"); */ }
-			else if (column.cellEditor) column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
+			else if (column.cellEditor && isEditable(rowIndex, columnIndex))
+				column.cellEditor.edit(rowIndex, columnIndex, target, getValueAt(rowIndex, columnIndex));
 		}
 	}
 };
