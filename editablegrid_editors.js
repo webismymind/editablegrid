@@ -86,6 +86,12 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		editorInput.style.position = "absolute";
 		editorInput.style.left = (this.editablegrid.getCellX(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0) + 1) + "px";
 		editorInput.style.top = (this.editablegrid.getCellY(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0) + 2) + "px";
+
+		// if number type: align field and its content to the right
+		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
+			editorInput.style.left = (parseInt(editorInput.style.left) + element.offsetWidth - editorInput.offsetWidth) + "px";
+			editorInput.style.textAlign = "right";
+		}
 	}
 
 	// fixed mode: don't show input field in the cell 
@@ -150,7 +156,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
  * @class Class to edit a cell with an HTML text input 
  */
 
-function TextCellEditor(size, maxlen) { this.fieldSize = size || -1; this.maxLength = maxlen || -1; };
+function TextCellEditor(size, maxlen) { this.fieldSize = size || -1; this.maxLength = maxlen || 255; };
 TextCellEditor.prototype = new CellEditor();
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
@@ -196,16 +202,7 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
  */
 
 function NumberCellEditor(type) { this.type = type; }
-NumberCellEditor.prototype = new TextCellEditor(6);
-
-NumberCellEditor.prototype.displayEditor = function(element, editorInput) 
-{
-	// call base method
-	TextCellEditor.prototype.displayEditor.call(this, element, editorInput);
-
-	// align field to the right (in case of absolute positioning)
-	editorInput.style.left = (parseInt(editorInput.style.left) + element.offsetWidth - editorInput.offsetWidth) + "px";	
-};
+NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
 NumberCellEditor.prototype.formatValue = function(value)
 {
@@ -226,6 +223,10 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 {
 	// create select list
 	var htmlInput = document.createElement("select");
+
+	// auto adapt dimensions to cell, with a min width
+	htmlInput.style.width = Math.max(100, (element.offsetWidth - 6)) + 'px'; 
+	htmlInput.style.height = (element.offsetHeight - 2) + 'px';
 
 	// get column option values for this row 
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
