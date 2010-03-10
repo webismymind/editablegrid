@@ -83,7 +83,9 @@ function EnumProvider(config)
  * </ul>
  * </li>
  * <li>editorzoneid: used only when editmode is set to fixed, it is the id of the div to use for cell editors</li>
- * <li>allowSimultaneousEdition: tells if several cells can be edited at the same time (default=false)</li>
+ * <li>allowSimultaneousEdition: tells if several cells can be edited at the same time (default=false)<br/>
+ * Warning: on some Linux browsers (Google Chrome Linux and Epiphany), a blur event is sent when the user clicks on a 'select' input to expand it.
+ * So practically, in these browsers you should set allowSimultaneousEdition to true if you want to use columns with option values and/or enum providers.</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
  * </ul>
  * @constructor
