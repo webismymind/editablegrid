@@ -310,6 +310,7 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
 	if (colType == 'integer') { cellValue = parseInt(cellValue); if (isNaN(cellValue)) cellValue = ""; } 
 	if (colType == 'double') { cellValue = parseFloat(cellValue); if (isNaN(cellValue)) cellValue = ""; }
+	if (colType == 'string') { cellValue = "" + cellValue; }
 	return cellValue;
 };
 
