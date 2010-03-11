@@ -174,7 +174,7 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	if (this.maxLength > 0) htmlInput.setAttribute("maxlength", this.maxLength);
 	if (this.fieldSize > 0) htmlInput.setAttribute("size", this.fieldSize);
 	else htmlInput.style.width = (element.offsetWidth - 10) + 'px'; // auto-adapt width to cell, if no length specified 
-	htmlInput.style.height = (element.offsetHeight - 10) + 'px'; // auto-adapt height to cell, always
+	if (element.offsetHeight > 24) htmlInput.style.height = (element.offsetHeight - 10) + 'px'; // auto-adapt height to cell
 	htmlInput.value = value;
 
 	// listen to keyup to check validity and update style of input field 
