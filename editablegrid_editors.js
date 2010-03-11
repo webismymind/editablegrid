@@ -216,7 +216,7 @@ NumberCellEditor.prototype.formatValue = function(value)
  * @class Class to edit a cell with an HTML select input 
  */
 
-function SelectCellEditor() { this.minWidth = 100; }
+function SelectCellEditor() { this.minWidth = 100; this.adaptHeight = true; this.adaptWidth = true;}
 SelectCellEditor.prototype = new CellEditor();
 
 SelectCellEditor.prototype.getEditor = function(element, value)
@@ -225,8 +225,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("select");
 
 	// auto adapt dimensions to cell, with a min width
-	htmlInput.style.width = Math.max(this.minWidth, (element.offsetWidth - 6)) + 'px'; 
-	htmlInput.style.height = (element.offsetHeight - 2) + 'px';
+	if (this.adaptWidth) htmlInput.style.width = Math.max(this.minWidth, (element.offsetWidth - 6)) + 'px'; 
+	if (this.adaptHeight) htmlInput.style.height = (element.offsetHeight - 2) + 'px';
 
 	// get column option values for this row 
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
