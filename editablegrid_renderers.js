@@ -93,23 +93,23 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	htmlInput.setAttribute("type", "checkbox");
 	element.originalValue = (value && value != 0 && value != "false") ? true : false;
 
+	// give access to the cell editor and element from the editor field
+	htmlInput.element = element;
+	htmlInput.cellrenderer = this;
+
 	// this renderer is a little special because it allows direct edition
 	var cellEditor = new CellEditor();
 	cellEditor.editablegrid = this.editablegrid;
 	cellEditor.column = this.column;
 	htmlInput.onclick = function(event) { 
-		element.rowIndex = element.parentNode.rowIndex - this.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
+		element.rowIndex = element.parentNode.rowIndex - this.cellrenderer.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
 		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
 		element.originalValue = htmlInput.checked ? true : false; 
 	};
 
-	// give access to the cell editor and element from the editor field
-	htmlInput.element = element;
-	htmlInput.cellrenderer = this;
-
 	element.appendChild(htmlInput);
 	htmlInput.checked = element.originalValue;
-	htmlInput.disabled = !this.column.editable;
+	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.rowIndex, element.columnIndex));
 
 	element.className = "boolean";
 };

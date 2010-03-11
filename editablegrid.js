@@ -487,27 +487,38 @@ EditableGrid.prototype.getColumnCount = function()
 };
 
 /**
- * Returns the name of a column
- * @param {Integer} columnIndex
+ * Returns the column
+ * @param {Object} columnIndexOrName index or name of the column
  */
-EditableGrid.prototype.getColumnName = function(columnIndex)
+EditableGrid.prototype.getColumn = function(columnIndexOrName)
 {
-	return this.columns[columnIndex].name;
+	var colIndex = this.getColumnIndex(columnIndexOrName);
+	if (colIndex < 0) { alert("[getColumn] Column not found with index or name " + columnIndexOrName); return null; }
+	return this.columns[colIndex];
+};
+
+/**
+ * Returns the name of a column
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.getColumnName = function(columnIndexOrName)
+{
+	return this.getColumn(columnIndexOrName).name;
 };
 
 /**
  * Returns the type of a column
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  */
-EditableGrid.prototype.getColumnType = function(columnIndex)
+EditableGrid.prototype.getColumnType = function(columnIndexOrName)
 {
-	return this.columns[columnIndex].datatype;
+	return this.getColumn(columnIndexOrName).datatype;
 };
 
 /**
  * Returns the value at the specified index
- * @param {Object} rowIndex
- * @param {Object} columnIndex
+ * @param {Integer} rowIndex
+ * @param {Integer} columnIndex
  */
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
@@ -546,7 +557,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 
 /**
  * Find column index from its name
- * @param {Object} name or index of the column
+ * @param {Object} columnIndexOrName index or name of the column
  */
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
@@ -639,7 +650,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 
 /**
  * Sets the column header cell renderer for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {CellRenderer} cellRenderer
  */
 EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRenderer)
@@ -664,7 +675,7 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 
 /**
  * Sets the cell renderer for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {CellRenderer} cellRenderer
  */
 EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRenderer)
@@ -685,7 +696,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 
 /**
  * Sets the cell editor for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {CellEditor} cellEditor
  */
 EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
@@ -706,7 +717,7 @@ EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
 
 /**
  * Sets the header cell editor for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {CellEditor} cellEditor
  */
 EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
@@ -727,7 +738,7 @@ EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
 
 /**
  * Sets the enum provider for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {EnumProvider} enumProvider
  */
 EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvider)
@@ -743,7 +754,7 @@ EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvide
 
 /**
  * Clear all cell validators for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  */
 EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 {
@@ -754,7 +765,7 @@ EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 
 /**
  * Adds default cell validators for the specified column index (according to the column type)
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  */
 EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 {
@@ -777,7 +788,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 
 /**
  * Adds a cell validator for the specified column index
- * @param {Integer} columnIndex
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {CellValidator} cellValidator
  */
 EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValidator)
@@ -965,7 +976,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 
 /**
  * Sort on a column
- * @param {Object} columnIndexOrName
+ * @param {Object} columnIndexOrName index or name of the column
  * @param {Boolean} descending
  */
 EditableGrid.prototype.sort = function(columnIndexOrName, descending)
