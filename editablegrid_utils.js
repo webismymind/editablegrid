@@ -207,7 +207,8 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	// return formatted date
 	return { 
 		formattedDate: (strDatestyle == "US" ? strMonthArray[intMonth-1] + " " + intday+" " + strYear : intday + " " + strMonthArray[intMonth-1]/*.toLowerCase()*/ + " " + strYear),
-		sortDate: Date.parse(intMonth + "/" + intday + "/" + intYear)
+		sortDate: Date.parse(intMonth + "/" + intday + "/" + intYear),
+		dbDate: intYear + "-" + intMonth + "-" + intday 
 	};
 };
 
