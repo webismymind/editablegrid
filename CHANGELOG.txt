@@ -71,16 +71,47 @@ Bugfixes:
    - an error message is displayed if the XML cannot be loaded
    - fixed error occuring when an editable grid was itself in a table
    
- [12/01/2010] EditableGrid v1.0.5
- ================================
+[12/01/2010] EditableGrid v1.0.5
+================================
  
 - Replacing HTML special characters is not done when generating the XML, but before calling the cell renderers
 - Removed annoying effect when sorting: images used to indicate the sorting order are preloaded + only impacted colum headers are refreshed
 
- [05/02/2010] EditableGrid v1.0.6
- ================================
+[05/02/2010] EditableGrid v1.0.6
+================================
 
 - Error message "Could not load XML" is not displayed anymore because it can happen normally when leaving a page too quickly
 - We use htmlspecialchars instead of htmlentities for rendering string cells, it's sufficient
 - Fixed display of "&quot;" on Google Chrome
 - Custom XML attributes can be encoded in base64 by EditableGrid.php
+
+[01/04/2010] EditableGrid v1.0.7
+================================
+
+Bugfixes:
+- fixed the display of the cell editor when the table was in a div with overflow (ie. with scrollbars)
+- the "number" class (ie. bold and right-aligned) is applied to all numeric cells (ie. including the ones having enumerated values)
+- all editors of numeric cells are aligned to the right, as well as their content (ie. including the ones having enumerated values)
+- getTypedValue casts the value as a string if this is a string column: not doing so could lead to problems on Google Chrome (because "" == 0 returns true in Chrome)
+- fixed some incorrect parameter descriptions and comments in the generated html documentation
+- the bug in Google Chrome Linux that caused html select input to disappear when cliking on them (if allowSimultaneouEdition was false) has been fixed (I mean fixed in last version of Google!) 
+
+Features:
+- you can now redefine a cell editor like this: setCellEditor(new CellEditor({ getEditor: .... }));
+- added callback method isEditable(rowIndex, columnIndex) to dynamically control cell editability
+- it is now possible to have cell editors for the column headers: to achieve this, you have to redefine isEditable and return true when rowIndex < 0, then use setHeaderEditor
+- you can now set adaptHeight and/or adaptWidth booleans on SelectCellEditor to auto-adapt input to the cell dimensions (default is true)
+- you can set minWidth on SelectCellEditor to impose a minimal width (expressed in px, default is 100)
+- the table headers can now contain several rows (but still only the first one will be rendered using defined HeaderCellRenderer)
+- if no length is given in the datatype (eg. string(24)), text input fields will auto adapt their width to the table cell
+- numeric cells (NumbercellEditor) will also by default auto-adapt themselves to the cell width
+- text and numeric input fields will auto adapt their-height to the table cell (but only if this cell has a height > 24)
+- added parameter maxlen (default: 10 for dates, 32 for numeric values, 255 otherwise)
+
+Advanced:
+- added method getRow(rowIndex) that returns the HTML row object
+- added method getColumn(columnIndexOrName)
+- getColumnName and getColumnType also accept a column name as input
+- when an error "Invalid column" is displayed, the name of the calling method is given
+- the checkDate function also give a MySQL ready date yyyy-mm-dd ('dbDate' attribute)
+- you can now easily specify custom attributes in the constructor of CellRenderer, CellEditor and EnumProvider, eg. new CellRenderer { myAttribute: ..., render: ... } 
