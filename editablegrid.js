@@ -615,6 +615,7 @@ EditableGrid.prototype.removeRow = function(rowId)
 EditableGrid.prototype.getRowIndex = function(rowId) 
 {
 	var tr = _$(this.name + "_" + rowId);
+	if (!tr) { alert("Unknown row " + this.name + "_" + rowId); return -1; }
 	return tr.rowIndex - this.nbHeaderRows; // remove header rows
 };
 
