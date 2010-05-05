@@ -84,8 +84,12 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 	if (this.editablegrid.editmode == "absolute") {
 		element.appendChild(editorInput);
 		editorInput.style.position = "absolute";
-		editorInput.style.left = (this.editablegrid.getCellX(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0) + 1) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0) + 2) + "px";
+
+		// position editor input on the cell with the same padding as the actual cell content
+		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
+		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top"));
+		editorInput.style.left = (this.editablegrid.getCellX(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0) + paddingLeft) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0) + paddingTop) + "px";
 
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {

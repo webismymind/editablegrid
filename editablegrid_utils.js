@@ -39,11 +39,12 @@ EditableGrid.prototype.sort_date = function(a,b)
  * Returns computed style property for element
  * @private
  */
-EditableGrid.prototype.getStyle = function(element, styleProp)
+EditableGrid.prototype.getStyle = function(element, stylePropCamelStyle, stylePropCSSStyle)
 {
-	if (element.currentStyle) return element.currentStyle[styleProp];
-	else if (window.getComputedStyle) return document.defaultView.getComputedStyle(element,null).getPropertyValue(styleProp);
-	return element.style[styleProp];
+	stylePropCSSStyle = stylePropCSSStyle || stylePropCamelStyle;
+	if (element.currentStyle) return element.currentStyle[stylePropCamelStyle];
+	else if (window.getComputedStyle) return document.defaultView.getComputedStyle(element,null).getPropertyValue(stylePropCSSStyle);
+	return element.style[stylePropCamelStyle];
 };
 
 /**
