@@ -74,6 +74,10 @@ CellEditor.prototype.formatValue = function(value) {
 
 CellEditor.prototype.displayEditor = function(element, editorInput) 
 {
+	// use same font in input as in cell content
+	editorInput.style.fontFamily = this.editablegrid.getStyle(element, "fontFamily", "font-family"); 
+	editorInput.style.fontSize = this.editablegrid.getStyle(element, "fontSize", "font-size"); 
+	
 	// static mode: add input field in the table cell
 	if (this.editablegrid.editmode == "static") {
 		while (element.hasChildNodes()) element.removeChild(element.firstChild);
@@ -93,7 +97,8 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
-			editorInput.style.left = (parseInt(editorInput.style.left) + element.offsetWidth - editorInput.offsetWidth) + "px";
+			var rightPadding = this.editablegrid.getCellX(element) + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
+			editorInput.style.left = (parseInt(editorInput.style.left) + rightPadding) + "px";
 			editorInput.style.textAlign = "right";
 		}
 	}
