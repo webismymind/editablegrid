@@ -177,8 +177,8 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	htmlInput.setAttribute("type", "text");
 	if (this.maxLength > 0) htmlInput.setAttribute("maxlength", this.maxLength);
 	if (this.fieldSize > 0) htmlInput.setAttribute("size", this.fieldSize);
-	else htmlInput.style.width = (element.offsetWidth - 10) + 'px'; // auto-adapt width to cell, if no length specified 
-	if (element.offsetHeight > 24) htmlInput.style.height = (element.offsetHeight - 10) + 'px'; // auto-adapt height to cell
+	else htmlInput.style.width = this.editablegrid.autoWidth(element) + 'px'; // auto-adapt width to cell, if no length specified 
+	if (element.offsetHeight > 24) htmlInput.style.height = this.editablegrid.autoHeight(element) + 'px'; // auto-adapt height to cell
 	htmlInput.value = value;
 
 	// listen to keyup to check validity and update style of input field 
@@ -229,8 +229,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("select");
 
 	// auto adapt dimensions to cell, with a min width
-	if (this.adaptWidth) htmlInput.style.width = Math.max(this.minWidth, (element.offsetWidth - 6)) + 'px'; 
-	if (this.adaptHeight) htmlInput.style.height = (element.offsetHeight - 2) + 'px';
+	if (this.adaptWidth) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
+	if (this.adaptHeight) htmlInput.style.height = this.editablegrid.autoHeight(element) + 'px';
 
 	// get column option values for this row 
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);

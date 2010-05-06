@@ -58,6 +58,34 @@ EditableGrid.prototype.isStatic = function (element)
 };
 
 /**
+ * Returns auto width for editor
+ * @private
+ */
+EditableGrid.prototype.autoWidth = function (element) 
+{
+	var paddingLeft = parseInt(this.getStyle(element, "paddingLeft", "padding-left"));
+	var paddingRight = parseInt(this.getStyle(element, "paddingRight", "padding-right"));
+	var borderLeft = parseInt(this.getStyle(element, "borderLeftWidth", "border-left-width"));
+	var borderRight = parseInt(this.getStyle(element, "borderRightWidth", "border-right-width"));
+	if (this.Browser.Gecko) paddingLeft += 2; // Firefox: input larger then given size in px!
+	return element.offsetWidth - paddingLeft - paddingRight - borderLeft - borderRight;
+};
+
+/**
+ * Returns auto height for editor
+ * @private
+ */
+EditableGrid.prototype.autoHeight = function (element) 
+{
+	var paddingTop = parseInt(this.getStyle(element, "paddingTop", "padding-top"));
+	var paddingBottom = parseInt(this.getStyle(element, "paddingBottom", "padding-bottom"));
+	var borderTop = parseInt(this.getStyle(element, "borderTopWidth", "border-top-width"));
+	var borderBottom = parseInt(this.getStyle(element, "borderBottomWidth", "border-bottom-width"));
+	if (this.Browser.Gecko) paddingTop += 2; // Firefox: input higher then given size in px!
+	return element.offsetHeight - paddingTop - paddingBottom - borderTop - borderBottom;
+};
+
+/**
  * Detects the directory when the js sources can be found
  * @private
  */
