@@ -508,6 +508,15 @@ EditableGrid.prototype.getColumnName = function(columnIndexOrName)
 };
 
 /**
+ * Returns the label of a column
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.getColumnLabel = function(columnIndexOrName)
+{
+	return this.getColumn(columnIndexOrName).label;
+};
+
+/**
  * Returns the type of a column
  * @param {Object} columnIndexOrName index or name of the column
  */
