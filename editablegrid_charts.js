@@ -30,7 +30,7 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 			bar.alpha = 0.9;
 			bar.colour = smartColors1[chart.elements.length % smartColors1.length];
 			bar.fill = "transparent";
-			bar.set_key(getColumnLabel(c), 10);
+			bar.text = getColumnLabel(c);
 			for (var r = 0; r < rowCount; r++) bar.values.push(getValueAt(r,c));
 			chart.add_element(bar);
 		}
