@@ -110,6 +110,7 @@ function EditableGrid(name, config)
 
         // callback functions
         tableLoaded: function() {},
+        tableSorted: function() {},
         modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
 		isEditable: function(rowIndex, columnIndex) { return rowIndex >= 0; }
     };
@@ -1020,5 +1021,8 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			tBody.appendChild(row_array[i][2]);
 		}
 		delete row_array;
+		
+		// callback
+		tableSorted();
 	}
 };
