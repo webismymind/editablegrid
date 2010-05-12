@@ -2,9 +2,7 @@ var EditableGrid_pending_chart;
 
 function EditableGrid_get_chart_data() 
 {
-	var data = JSON.stringify(EditableGrid_pending_chart);
-	//alert(data);
-	return data;
+	return JSON.stringify(EditableGrid_pending_chart);
 }
 
 var smartColors1 = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
@@ -23,6 +21,7 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 		var columnCount = getColumnCount();
 		var rowCount = getRowCount();
 	
+		var maxvalue = 0;
 		for (var c = 0; c < columnCount; c++) {
 			var type = getColumnType(c);
 			if (type != "double" && type != "integer") continue;
@@ -31,7 +30,11 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 			bar.colour = smartColors1[chart.elements.length % smartColors1.length];
 			bar.fill = "transparent";
 			bar.text = getColumnLabel(c);
-			for (var r = 0; r < rowCount; r++) bar.values.push(getValueAt(r,c));
+			for (var r = 0; r < rowCount; r++) {
+				var value = getValueAt(r,c);
+				if (value > maxvalue) maxvalue = value; 
+				bar.values.push(value);
+			}
 			chart.add_element(bar);
 		}
 		
@@ -54,7 +57,7 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 			 colour: "#428BC7",
 			 "grid-colour": "#E2E2E2",
 			 offset: 0,
-			 max: 200000000
+			 max: maxvalue * 1.1
 	};
 	
 	chart.x_legend = {
