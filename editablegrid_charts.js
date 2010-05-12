@@ -72,7 +72,7 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 
 	// reload or create new swf chart
 	var swf = findSWF(divId);
-	if (swf) swf.load(JSON.stringify(chart));
+	if (swf && typeof swf.load == "function") swf.load(JSON.stringify(chart));
 	else {
 		EditableGrid_pending_chart = chart;
 		swfobject.embedSWF("openflashchart/open-flash-chart.swf", 
