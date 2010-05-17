@@ -60,37 +60,37 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		
 		var xLabels = [];
 		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,cLabel));
-	}
 	
-	chart.x_axis = {
+		chart.x_axis = {
 		    stroke: 1,
 		    tick_height:  10,
 			 colour: "#E2E2E2",
 			 "grid-colour": "#E2E2E2",
 		    labels: { labels: xLabels },
 		    "3d": 5
-	};
+		};
 
-	chart.y_axis = {
+		chart.y_axis = {
 			 stroke: 4,
 			 tick_length: 3,
 			 colour: "#428BC7",
 			 "grid-colour": "#E2E2E2",
 			 offset: 0,
 			 max: maxvalue * 1.1
-	};
+		};
 	
-	chart.x_legend = {
-	    text: "Country",
-	    style: "{font-size: 11px; color: #000033}"
-	 };
+		chart.x_legend = {
+			text: getColumnLabel(labelColumnIndexOrName),
+			style: "{font-size: 11px; color: #000033}"
+		};
 
-	chart.y_legend = {
-		text: "Value",
-		style: "{font-size: 11px; color: #000033}"
-	};
+		chart.y_legend = {
+			text: "",
+			style: "{font-size: 11px; color: #000033}"
+		};
 
-	this.updateChart(divId, chart);
+		updateChart(divId, chart);
+	}
 };
 
 /**
@@ -134,7 +134,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		}
 		chart.add_element(pie);
 		
-		this.updateChart(divId, chart);
+		updateChart(divId, chart);
 	}
 };
 
