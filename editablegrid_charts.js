@@ -8,6 +8,15 @@ function EditableGrid_get_chart_data()
 var smartColors1 = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
 var smartColors2 = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
 
+EditableGrid.prototype.checkChartLib = function()
+{
+	if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
+	else if (typeof findSWF == 'undefined') { alert('This method needs the open flash chart javascript library (findSWF)'); return false; }
+	else if (typeof ofc_chart == 'undefined') { alert('This method needs the open flash chart javascript library (ofc_chart)'); return false; }
+	else if (typeof swfobject == 'undefined') { alert('This method needs the swfobject javascript library'); return false; }
+	else return true;
+};
+
 /**
  * renderBarChart
  * Render open flash bar chart for the data contained in the table model
@@ -17,6 +26,8 @@ var smartColors2 = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF",
 EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName)
 {
 	with (this) {
+
+		if (!checkChartLib()) return false;
 
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -89,6 +100,8 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
 {
 	with (this) {
+
+		if (!checkChartLib()) return false;
 
 		var type = getColumnType(valueColumnIndexOrName);
 		if (type != "double" && type != "integer") return;
