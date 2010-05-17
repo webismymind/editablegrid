@@ -81,7 +81,6 @@ EditableGrid.prototype.autoHeight = function (element)
 	var paddingBottom = parseInt(this.getStyle(element, "paddingBottom", "padding-bottom"));
 	var borderTop = parseInt(this.getStyle(element, "borderTopWidth", "border-top-width"));
 	var borderBottom = parseInt(this.getStyle(element, "borderBottomWidth", "border-bottom-width"));
-	if (this.Browser.Gecko) paddingTop += 2; // Firefox: input higher then given size in px!
 	return element.offsetHeight - paddingTop - paddingBottom - borderTop - borderBottom;
 };
 
