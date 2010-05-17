@@ -1,4 +1,5 @@
 var EditableGrid_pending_chart;
+var EditableGrid_check_lib = true;
 
 function EditableGrid_get_chart_data() 
 {
@@ -10,6 +11,7 @@ var smartColors2 = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF",
 
 EditableGrid.prototype.checkChartLib = function()
 {
+	EditableGrid_check_lib = false;
 	if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
 	else if (typeof findSWF == 'undefined') { alert('This method needs the open flash chart javascript library (findSWF)'); return false; }
 	else if (typeof ofc_chart == 'undefined') { alert('This method needs the open flash chart javascript library (ofc_chart)'); return false; }
@@ -27,7 +29,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 {
 	with (this) {
 
-		if (!checkChartLib()) return false;
+		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -101,7 +103,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 {
 	with (this) {
 
-		if (!checkChartLib()) return false;
+		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
 		var type = getColumnType(valueColumnIndexOrName);
 		if (type != "double" && type != "integer") return;
