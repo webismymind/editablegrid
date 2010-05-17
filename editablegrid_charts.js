@@ -6,17 +6,24 @@ function EditableGrid_get_chart_data()
 }
 
 var smartColors1 = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
+var smartColors2 = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
 
 /**
- * Render open flash chart for the data contained in the table model
+ * renderBarChart
+ * Render open flash bar chart for the data contained in the table model
+ * @param divId
+ * @return
  */
-EditableGrid.prototype.renderChart = function(divId, chartType) 
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName)
 {
 	with (this) {
 
+		labelColumnIndexOrName = labelColumnIndexOrName || 0;
+		var cLabel = getColumnIndex(labelColumnIndexOrName);
+
 		var chart = new ofc_chart();
 		chart.bg_colour = "#ffffff";
-		chart.set_title({text: "Report", style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
+		chart.set_title({text: title, style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
 	
 		var columnCount = getColumnCount();
 		var rowCount = getRowCount();
@@ -39,7 +46,7 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 		}
 		
 		var xLabels = [];
-		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,0));
+		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,cLabel));
 	}
 	
 	chart.x_axis = {
@@ -70,15 +77,85 @@ EditableGrid.prototype.renderChart = function(divId, chartType)
 		style: "{font-size: 11px; color: #000033}"
 	};
 
-	// reload or create new swf chart
-	var swf = findSWF(divId);
-	if (swf && typeof swf.load == "function") swf.load(JSON.stringify(chart));
-	else {
-		EditableGrid_pending_chart = chart;
-		swfobject.embedSWF("openflashchart/open-flash-chart.swf", 
-			divId, "900", "300", 
-			"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data" }, null, 
-			{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
-		);
+	this.updateChart(divId, chart);
+};
+
+/**
+ * renderPieChart
+ * @param columnIndexOrName
+ * @param divId
+ * @return
+ */
+EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
+{
+	with (this) {
+
+		var type = getColumnType(valueColumnIndexOrName);
+		if (type != "double" && type != "integer") return;
+
+		labelColumnIndexOrName = labelColumnIndexOrName || 0;
+		title = title || getColumnLabel(valueColumnIndexOrName);
+		
+		var cValue = getColumnIndex(valueColumnIndexOrName);
+		var cLabel = getColumnIndex(labelColumnIndexOrName);
+		
+		var chart = new ofc_chart();
+		chart.bg_colour = "#ffffff";
+		chart.set_title({text: title, style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
+	
+		var rowCount = getRowCount();
+	
+		var pie = new ofc_element("pie");
+		pie.alpha = 0.9;
+		pie.colours = smartColors2;
+		pie.fill = "transparent";
+		pie['gradient-fill'] = true;
+		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
+
+		for (var r = 0; r < rowCount; r++) {
+			var value = getValueAt(r,cValue);
+			var label = getValueAt(r,cLabel);
+			pie.values.push({value : value, label: label + ' (' + value + ')'});
+		}
+		chart.add_element(pie);
+		
+		this.updateChart(divId, chart);
 	}
+};
+
+/**
+ * updateChart
+ * @param divId
+ * @param chart
+ * @return
+ */
+EditableGrid.prototype.updateChart = function(divId, chart) 
+{
+	with(this) {
+
+		// reload or create new swf chart
+		var swf = findSWF(divId);
+		if (swf && typeof swf.load == "function") swf.load(JSON.stringify(chart));
+		else {
+			var div = _$(divId);
+			EditableGrid_pending_chart = chart;
+			swfobject.embedSWF("openflashchart/open-flash-chart.swf", 
+					divId, 
+					"" + Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth), 
+					"" + Math.max(parseInt(getStyle(div, 'height')), div.offsetHeight), 
+					"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data" }, null, 
+					{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
+			);
+		}
+	}
+};
+
+/**
+ * clearChart
+ * @param divId
+ * @return
+ */
+EditableGrid.prototype.clearChart = function(divId) 
+{
+	// how ?
 };
