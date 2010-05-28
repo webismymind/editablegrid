@@ -84,7 +84,7 @@ function initializeGrid()
 							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 		}})); 
 
-		// render the grid (the two parameters will be ignored if we have attached to an existing HTML table)
+		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
 		renderGrid("tablecontent", "testgrid", "tableid");	
 	}
 }
