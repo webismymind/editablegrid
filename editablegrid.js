@@ -852,10 +852,12 @@ EditableGrid.prototype.getCellY = function(oElement)
  * id of the div in which you wish to render the HTML table (this parameter is ignored if you used attachToHTMLTable)
  * @param {String} className 
  * CSS class name to be applied to the table (this parameter is ignored if you used attachToHTMLTable)
+ * @param {String} idTable
+ * ID to give to the table
  * @see EditableGrid#attachToHTMLTable
  * @see EditableGrid#loadXML
  */
-EditableGrid.prototype.renderGrid = function(containerid, className)
+EditableGrid.prototype.renderGrid = function(containerid, className, idTable)
 {
     with (this) {
 
@@ -864,7 +866,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
     		
     		// render headers
     		_renderHeaders();
-    		
+    		                      
+
+			   
     		// render content
             var rows = tBody.rows;
             for (var i = 0; i < rows.length; i++) {
@@ -887,7 +891,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className)
 
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
-    		table.className = className || "editablegrid";
+    		table.className = className || "editablegrid";          
+			if (typeof idTable != "undefined" )
+				table.id = idTable;
     		while (_$(containerid).hasChildNodes()) _$(containerid).removeChild(_$(containerid).firstChild);
     		_$(containerid).appendChild(table);
         

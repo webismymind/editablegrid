@@ -85,7 +85,7 @@ function initializeGrid()
 		}})); 
 
 		// render the grid (the two parameters will be ignored if we have attached to an existing HTML table)
-		renderGrid("tablecontent", "testgrid");	
+		renderGrid("tablecontent", "testgrid", "tableid");	
 	}
 }
 
