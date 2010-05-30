@@ -110,7 +110,8 @@ function EditableGrid(name, config)
 
         // callback functions
         tableLoaded: function() {},
-        tableSorted: function() {},
+        tableSorted: function() {}, 
+		tableFiltered: function() {}, 
         modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
 		isEditable: function(rowIndex, columnIndex) { return rowIndex >= 0; }
     };
@@ -1027,5 +1028,34 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		
 		// callback
 		tableSorted();
+	}
+};
+
+
+/**
+ * Filter the content of the table
+ * @param {Element} filter Element input element used to filter
+ */
+EditableGrid.prototype.filter = function(str)
+{
+	with (this) {
+    	var words = str.toLowerCase().split(" ");
+		var ele;
+		for (var r = 1; r < table.rows.length; r++){
+			ele = table.rows[r].innerHTML.replace(/<[^>]+>/g,"");
+		    var displayStyle = 'none';
+	        for (var i = 0; i < words.length; i++) {
+		    	if (ele.toLowerCase().indexOf(words[i])>=0)
+						displayStyle = '';
+		    	 else {
+					displayStyle = 'none';
+					break;
+			    }
+	        }   
+			table.rows[r].style.display = displayStyle;
+		}
+   		// callback
+		tableFiltered();  
+		
 	}
 };
