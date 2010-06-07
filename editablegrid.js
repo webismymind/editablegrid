@@ -106,6 +106,7 @@ function EditableGrid(name, config)
         editmode: "absolute",
         editorzoneid: "",
 		allowSimultaneousEdition: false,
+		saveOnBlur: true,
    		invalidClassName: "invalid",
 
         // callback functions

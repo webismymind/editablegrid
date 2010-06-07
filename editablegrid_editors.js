@@ -57,7 +57,9 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	editorInput.focus();
 
 	// is simultaneous edition is not allowed, we cancel edition when focus is lost
-	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = function(event) { this.celleditor.cancelEditing(this.element); };
+	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
+			function(event) { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
+			function(event) { this.celleditor.cancelEditing(this.element); };
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
