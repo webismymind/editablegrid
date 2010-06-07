@@ -150,12 +150,15 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 
 		// format the value before applying
 		var formattedValue = formatValue(newValue);
-		
-		// update model
+
+		// update model and render cell (keeping previous value)
+		var currentValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
 
-		// let the user handle the model change
-		editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, this.editablegrid.getRow(element.rowIndex));
+		// if the new value is different than the previous one, let the user handle the model change
+		if (editablegrid.getValueAt(element.rowIndex, element.columnIndex) !== currentValue) {
+			editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, editablegrid.getRow(element.rowIndex));
+		}
 		
 		_clearEditor(element);	
 	}
