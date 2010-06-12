@@ -146,7 +146,18 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
  */
 EditableGrid.prototype.updateChart = function(divId, chart) 
 {
-	with(this) {
+	// detect openflashchart swf location
+	var ofcSwf = 'open-flash-chart.swf'; // defaults to current directory
+	var e = document.getElementsByTagName('script');
+	for (var i = 0; i < e.length; i++) {
+		var index = e[i].src.indexOf('openflashchart');
+		if (index != -1) {
+			ofcSwf = e[i].src.substr(0, index + 15) + ofcSwf;
+			break;
+		}
+	};
+
+	with (this) {
 
 		// reload or create new swf chart
 		var swf = findSWF(divId);
@@ -154,7 +165,7 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 		else {
 			var div = _$(divId);
 			EditableGrid_pending_chart = chart;
-			swfobject.embedSWF("openflashchart/open-flash-chart.swf", 
+			swfobject.embedSWF(ofcSwf, 
 					divId, 
 					"" + Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth), 
 					"" + Math.max(parseInt(getStyle(div, 'height')), div.offsetHeight), 
