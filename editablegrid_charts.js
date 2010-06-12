@@ -58,6 +58,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			chart.add_element(bar);
 		}
 		
+		// round the y max value
+		var ymax = 10;
+		while (ymax < maxvalue) ymax *= 10;
+		if (ymax / 2 > maxvalue) ymax /= 2;
+		
 		var xLabels = [];
 		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,cLabel));
 	
@@ -76,9 +81,12 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			 colour: "#428BC7",
 			 "grid-colour": "#E2E2E2",
 			 offset: 0,
-			 max: maxvalue * 1.1
+			 max: ymax,
+			 steps: ymax / 10
 		};
 	
+		// chart.num_decimals = 0;
+		
 		chart.x_legend = {
 			text: getColumnLabel(labelColumnIndexOrName),
 			style: "{font-size: 11px; color: #000033}"

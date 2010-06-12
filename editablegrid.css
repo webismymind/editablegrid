@@ -1,7 +1,8 @@
 
-.number {
+td.number {
 	text-align: right;
 	font-weight: bold;
+	padding-right: 5px;
 }
 
 .boolean {
