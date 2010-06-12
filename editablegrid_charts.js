@@ -36,7 +36,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 		var chart = new ofc_chart();
 		chart.bg_colour = "#ffffff";
-		chart.set_title({text: title, style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
+		chart.set_title({text: title || '', style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
 	
 		var columnCount = getColumnCount();
 		var rowCount = getRowCount();
@@ -168,10 +168,15 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 		else {
 			var div = _$(divId);
 			EditableGrid_pending_chart = chart;
+			
+			// get chart dimensions
+			var w = Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth);
+			var h = Math.max(parseInt(getStyle(div, 'height')), div.offsetHeight);
+
 			swfobject.embedSWF(this.ofcSwf, 
 					divId, 
-					"" + Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth), 
-					"" + Math.max(parseInt(getStyle(div, 'height')), div.offsetHeight), 
+					"" + (w || 500), 
+					"" + (h || 200), 
 					"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data" }, null, 
 					{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
 			);
