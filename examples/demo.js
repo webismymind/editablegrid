@@ -105,13 +105,13 @@ function onloadHTML()
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
-		[ new Column({ name: "name", datatype: "string(24)" }),
+		[ new Column({ name: "name", datatype: "string", precision: 24 }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
 		  new Column({ name: "height", datatype: "double" }),
 		  new Column({ name: "continent", datatype: "string", optionValues: {"eu": "Europa", "am": "America", "af": "Africa" }}),
 		  new Column({ name: "country", datatype: "string" }),
-		  new Column({ name: "email", datatype: "email(26)" }),
+		  new Column({ name: "email", datatype: "email", precision: 26 }),
 		  new Column({ name: "freelance", datatype: "boolean" }),
 		  new Column({ name: "action", datatype: "html", editable: false }) ]);
 

@@ -22,6 +22,8 @@ function Column(config)
 		editable: true,
 		renderable: true,
         datatype: "string",
+        unit: null,
+        precision: null,
         headerRenderer: null,
         headerEditor: null,
         cellRenderer: null,
@@ -248,11 +250,18 @@ EditableGrid.prototype.processXML = function()
             	name: col.getAttribute("name"),
             	label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
             	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
+                unit: col.getAttribute("unit") ? col.getAttribute("unit") : "",
             	editable : col.getAttribute("editable") == "true",
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
             });
+
+            // extract precision from type if any given
+            if (column.datatype.match(/(.*)\((.*)\)$/)) {
+            	column.datatype = RegExp.$1;
+            	column.precision = RegExp.$2;
+            }
 
 			// create suited cell renderer
             _createCellRenderer(column);
@@ -407,9 +416,9 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.enumProvider ? new EnumCellRenderer() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
-    	column.datatype.startsWith("email") ? new EmailCellRenderer() : 
-        column.datatype.startsWith("website") ? new WebsiteCellRenderer() : 
-        column.datatype.startsWith("date") ? new DateCellRenderer() : 
+    	column.datatype == "email" ? new EmailCellRenderer() : 
+        column.datatype == "website" ? new WebsiteCellRenderer() : 
+        column.datatype == "date" ? new DateCellRenderer() : 
     	new CellRenderer();
 
 	// give access to the column from the cell renderer
@@ -440,18 +449,14 @@ EditableGrid.prototype._createHeaderRenderer = function(column)
  */
 EditableGrid.prototype._createCellEditor = function(column)
 {
-	var length = column.datatype.startsWith("string") ? column.datatype.substr(7, column.datatype.length - 8) : 
-				 column.datatype.startsWith("email") ? column.datatype.substr(6, column.datatype.length - 7) :
-				 column.datatype.startsWith("website") ? column.datatype.substr(8, column.datatype.length - 9) : null;
-	
 	column.cellEditor = 
 		column.enumProvider ? new SelectCellEditor() :
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
-		column.datatype.startsWith("email") ? new TextCellEditor(length ? length : -1) :
-		column.datatype.startsWith("website") ? new TextCellEditor(length ? length : -1) :
-		column.datatype.startsWith("date") ? new TextCellEditor(length ? length : -1, 10) :
-		new TextCellEditor(length);  
+		column.datatype == "email" ? new TextCellEditor(column.precision) :
+		column.datatype == "website" ? new TextCellEditor(column.precision) :
+		column.datatype == "date" ? new TextCellEditor(column.precision, 10) :
+		new TextCellEditor(column.precision);  
 		
 	// give access to the column from the cell editor
 	if (column.cellEditor) {
@@ -527,6 +532,15 @@ EditableGrid.prototype.getColumnLabel = function(columnIndexOrName)
 EditableGrid.prototype.getColumnType = function(columnIndexOrName)
 {
 	return this.getColumn(columnIndexOrName).datatype;
+};
+
+/**
+ * Returns the unit of a column
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.getColumnUnit = function(columnIndexOrName)
+{
+	return this.getColumn(columnIndexOrName).unit;
 };
 
 /**
@@ -795,9 +809,9 @@ EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
-	else if (column.datatype.startsWith("email")) column.cellValidators.push(new EmailCellValidator());
-	else if (column.datatype.startsWith("website")) column.cellValidators.push(new WebsiteCellValidator());
-	else if (column.datatype.startsWith("date")) column.cellValidators.push(new DateCellValidator(this));
+	else if (column.datatype == "email") column.cellValidators.push(new EmailCellValidator());
+	else if (column.datatype == "website") column.cellValidators.push(new WebsiteCellValidator());
+	else if (column.datatype == "date") column.cellValidators.push(new DateCellValidator(this));
 };
 
 /**
@@ -1016,7 +1030,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		row_array.sort(columnIndex < 0 ? unsort :
 					   type == "integer" || type == "double" ? sort_numeric :
 					   type == "boolean" ? sort_boolean :
-					   type.startsWith("date") ? sort_date :
+					   type == "date" ? sort_date :
 					   sort_alpha);
 		
 		var _data = data;

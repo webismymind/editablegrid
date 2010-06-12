@@ -9,9 +9,9 @@ class EditableGrid {
 		$this->columns = array();
 	}
 	
-	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL) 
+	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $unit = NULL) 
 	{
-		$this->columns[$name] = array( "field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "values" => $values );
+		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "unit" => $unit, "editable" => $editable, "values" => $values );
 	}
 	
 	private function _getRowField($row, $field) 
@@ -27,7 +27,7 @@ class EditableGrid {
 		echo "<table><metadata>\n";
 
 		foreach ($this->columns as $name => $info) {
-			echo "<column name='$name' label='". $info['label'] . "' datatype='{$info['type']}' editable='". ($info['editable'] ? "true" : "false") . "'>\n";
+			echo "<column name='$name' label='". $info['label'] . "' datatype='{$info['type']}' unit='{$info['unit']}' editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				echo "<values>\n";
 				foreach ($info['values'] as $key => $value) echo "<value value='{$key}'><![CDATA[{$value}]]></value>\n"; 

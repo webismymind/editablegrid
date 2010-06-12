@@ -57,7 +57,10 @@ function NumberCellRenderer(config) { this.init(config); }
 NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
-	element.innerHTML = value ? value : "";
+	var displayValue = value;
+	if (displayValue && this.column.precision !== null) displayValue = displayValue.toFixed(this.column.precision);
+	if (displayValue && this.column.unit && this.column.unit.length > 0) displayValue += ' ' + this.column.unit;
+	element.innerHTML = displayValue ? displayValue : "";
 	element.className = "number";
 };
 
