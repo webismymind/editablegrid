@@ -5,10 +5,10 @@
 
 	<metadata>
 
-		<column name="name" label="NAME" datatype="string" editable="true"/> <!-- if you wish you can specify the desired length of the text edition field like this: string(24) -->
+		<column name="name" label="NAME" datatype="string" editable="true"/> <!-- If you wish you can specify the desired length of the text edition field like this: string(24). -->
 		<column name="firstname" label="FIRSTNAME" datatype="string" editable="true"/>
 		<column name="age" label="AGE" datatype="integer" editable="true"/>
-		<column name="height" label="HEIGHT" datatype="double" editable="true"/>
+		<column name="height" label="HEIGHT" datatype="double(m, 2)" editable="true"/> <!-- You can specifiy unit: double(m), precision: double(2), or both: double(m,2). These will be used in the default renderer NumberCellRenderer. -->
 
 		<column name="continent" label="CONTINENT" datatype="string" editable="true">
 			<values>
@@ -53,7 +53,7 @@
 			<column name="age">33</column>
 			<column name="name">Duke</column>
 			<column name="firstname">Patience</column>
-			<column name="height">1.84</column>
+			<column name="height">1.842</column>
 			<column name="email">patience.duke@gmail.com</column>
 			<column name="lastvisit">11/12/2002</column>
 			<column name="action">1</column>
@@ -66,7 +66,7 @@
 			<column>Rogers</column>		
 			<column>Denise</column>		
 			<column>59</column>		
-			<column>1.62</column>
+			<column>1.627</column>
 			<column>am</column>
 			<column>us</column>
 			<column>rogers.d@gmail.com</column>

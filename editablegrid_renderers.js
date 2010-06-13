@@ -58,8 +58,10 @@ NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
 	var displayValue = value;
-	if (displayValue && this.column.precision !== null) displayValue = displayValue.toFixed(this.column.precision);
-	if (displayValue && this.column.unit && this.column.unit.length > 0) displayValue += ' ' + this.column.unit;
+	if (typeof this.column == 'object') {
+		if (displayValue && this.column.precision !== null) displayValue = displayValue.toFixed(this.column.precision);
+		if (displayValue && this.column.unit !== null) displayValue += ' ' + this.column.unit;
+	}
 	element.innerHTML = displayValue ? displayValue : "";
 	element.className = "number";
 };

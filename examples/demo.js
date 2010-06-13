@@ -42,10 +42,10 @@ function initializeGrid()
 		setHeaderRenderer("email", new InfoHeaderRenderer("Note the validator used automatically when you specify your column as being of type email"));
 		setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
 		
-		// show unit when rendering the height
-		setCellRenderer("height", new CellRenderer({ 
-			render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); } 
-		})); 
+		// show unit when rendering the height: not needed anymore, unit and precision can be specified in the type
+		// setCellRenderer("height", new CellRenderer({ 
+		//	render: function(cell, value) { new NumberCellRenderer().render.call(this, cell, value ? value + " m" : ""); } 
+		// })); 
 
 		// the list of allowed countries depend on the selected continent
 		setEnumProvider("country", new EnumProvider({ 
@@ -105,13 +105,13 @@ function onloadHTML()
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
-		[ new Column({ name: "name", datatype: "string", precision: 24 }),
+		[ new Column({ name: "name", datatype: "string(24)" }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
-		  new Column({ name: "height", datatype: "double" }),
+		  new Column({ name: "height", datatype: "double(m, 2)" }),
 		  new Column({ name: "continent", datatype: "string", optionValues: {"eu": "Europa", "am": "America", "af": "Africa" }}),
 		  new Column({ name: "country", datatype: "string" }),
-		  new Column({ name: "email", datatype: "email", precision: 26 }),
+		  new Column({ name: "email", datatype: "email(26)" }),
 		  new Column({ name: "freelance", datatype: "boolean" }),
 		  new Column({ name: "action", datatype: "html", editable: false }) ]);
 

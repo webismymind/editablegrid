@@ -250,18 +250,14 @@ EditableGrid.prototype.processXML = function()
             	name: col.getAttribute("name"),
             	label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
             	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
-                unit: col.getAttribute("unit") ? col.getAttribute("unit") : "",
-            	editable : col.getAttribute("editable") == "true",
+                editable : col.getAttribute("editable") == "true",
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
             });
 
-            // extract precision from type if any given
-            if (column.datatype.match(/(.*)\((.*)\)$/)) {
-            	column.datatype = RegExp.$1;
-            	column.precision = RegExp.$2;
-            }
+            // parse column type
+            parseColumnType(column);
 
 			// create suited cell renderer
             _createCellRenderer(column);
@@ -320,6 +316,29 @@ EditableGrid.prototype.processXML = function()
  * @private
  */
 
+EditableGrid.prototype.parseColumnType = function(column)
+{
+    // extract precision and unit from type if both given
+    if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
+    	column.datatype = RegExp.$1;
+    	column.unit = RegExp.$2;
+    	column.precision = parseInt(RegExp.$3);
+    }
+
+    // extract precision or unit from type if any given
+    if (column.datatype.match(/(.*)\((.*)\)$/)) {
+    	column.datatype = RegExp.$1;
+    	var unit_or_precision = RegExp.$2;
+    	if (unit_or_precision.match(/^[0-9]*$/)) column.precision = parseInt(unit_or_precision);
+    	else column.unit = unit_or_precision;
+    }
+};
+
+/**
+ * Get typed value
+ * @private
+ */
+
 EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue) 
 {
 	var colType = this.getColumnType(columnIndex);
@@ -345,6 +364,9 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
         	var column = columns[c];
 			column.editablegrid = this;
         	column.columnIndex = c;
+
+            // parse column type
+            parseColumnType(column);
 
 			// create suited enum provider, renderer and editor if none given
         	if (!column.enumProvider) column.enumProvider = column.optionValues ? new EnumProvider() : null;
@@ -541,6 +563,15 @@ EditableGrid.prototype.getColumnType = function(columnIndexOrName)
 EditableGrid.prototype.getColumnUnit = function(columnIndexOrName)
 {
 	return this.getColumn(columnIndexOrName).unit;
+};
+
+/**
+ * Returns the precision of a column
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.getColumnPrecision = function(columnIndexOrName)
+{
+	return this.getColumn(columnIndexOrName).precision;
 };
 
 /**
