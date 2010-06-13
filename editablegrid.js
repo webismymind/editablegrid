@@ -312,7 +312,7 @@ EditableGrid.prototype.processXML = function()
 };
 
 /**
- * Get typed value
+ * Parse column type
  * @private
  */
 
