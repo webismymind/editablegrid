@@ -156,8 +156,9 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
 
 		// if the new value is different than the previous one, let the user handle the model change
-		if (editablegrid.getValueAt(element.rowIndex, element.columnIndex) !== currentValue) {
-			editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, formattedValue, editablegrid.getRow(element.rowIndex));
+		var newValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
+		if (!this.editablegrid.isSame(newValue, currentValue)) {
+			editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, newValue, editablegrid.getRow(element.rowIndex));
 		}
 		
 		_clearEditor(element);	
@@ -172,6 +173,10 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 
 function TextCellEditor(size, maxlen, config) { this.fieldSize = size || -1; this.maxLength = maxlen || 255; if (config) this.init(config); };
 TextCellEditor.prototype = new CellEditor();
+
+TextCellEditor.prototype.editorValue = function(value) {
+	return value;
+};
 
 TextCellEditor.prototype.updateStyle = function(htmlInput)
 {
@@ -191,7 +196,7 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	var autoHeight = this.editablegrid.autoHeight(element);
 	if (this.editablegrid.Browser.Gecko) autoHeight -= 2; // Firefox: input higher then given size in px!
 	htmlInput.style.height = autoHeight + 'px'; // auto-adapt height to cell
-	htmlInput.value = value;
+	htmlInput.value = this.editorValue(value);
 
 	// listen to keyup to check validity and update style of input field 
 	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
@@ -220,9 +225,12 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 function NumberCellEditor(type) { this.type = type; }
 NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
+NumberCellEditor.prototype.editorValue = function(value) {
+	return isNaN(value) ? "" : value;
+};
+
 NumberCellEditor.prototype.formatValue = function(value)
 {
-	if (value == "") return "";
 	return this.type == 'integer' ? parseInt(value) : parseFloat(value);
 };
 

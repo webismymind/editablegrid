@@ -57,13 +57,18 @@ function NumberCellRenderer(config) { this.init(config); }
 NumberCellRenderer.prototype = new CellRenderer();
 NumberCellRenderer.prototype.render = function(element, value)
 {
-	var displayValue = value;
-	if (typeof this.column == 'object') {
-		if (displayValue && this.column.precision !== null) displayValue = displayValue.toFixed(this.column.precision);
-		if (displayValue && this.column.unit !== null) displayValue += ' ' + this.column.unit;
+	var column = this.column || {}; // in case somebody calls new NumberCellRenderer().render(..)
+
+	var isNAN = typeof value == 'number' && isNaN(value);
+	var displayValue = isNAN ? (column.nansymbol || "") : value;
+	if (typeof displayValue == 'number') {
+		if (column.precision !== null) displayValue = displayValue.toFixed(column.precision);
+		if (column.unit !== null) displayValue += ' ' + column.unit;
 	}
-	element.innerHTML = displayValue ? displayValue : "";
+	
+	element.innerHTML = displayValue;
 	element.className = "number";
+	element.style.fontWeight = isNAN ? "normal" : null;
 };
 
 /**

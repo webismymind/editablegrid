@@ -61,7 +61,8 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// round the y max value
 		var ymax = 10;
 		while (ymax < maxvalue) ymax *= 10;
-		if (ymax / 2 > maxvalue) ymax /= 2;
+		var step = ymax / 10;
+		while (ymax - step > maxvalue) ymax -= step;
 		
 		var xLabels = [];
 		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,cLabel));

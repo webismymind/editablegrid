@@ -107,13 +107,26 @@ EditableGrid.prototype.detectDir = function()
 	}
 	
 	return false;
-},
+};
+
+/**
+ * Detect is 2 values are exactly the same (type and value). Numeric NaN are considered the same.
+ * @param v1
+ * @param v2
+ * @return boolean
+ */
+EditableGrid.prototype.isSame = function(v1, v2) 
+{ 
+	if (v1 === v2) return true;
+	if (typeof v1 == 'number' && isNaN(v1) && typeof v2 == 'number' && isNaN(v2)) return true;
+	return false;
+};
 
 /**
  * class name manipulation
  * @private
  */
-EditableGrid.prototype.strip = function(str) { return str.replace(/^\s+/, '').replace(/\s+$/, ''); },
+EditableGrid.prototype.strip = function(str) { return str.replace(/^\s+/, '').replace(/\s+$/, ''); };
 EditableGrid.prototype.hasClassName = function(element, className) { return (element.className.length > 0 && (element.className == className || new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className))); };
 EditableGrid.prototype.addClassName = function(element, className) { if (!this.hasClassName(element, className)) element.className += (element.className ? ' ' : '') + className; };
 EditableGrid.prototype.removeClassName = function(element, className) { element.className = this.strip(element.className.replace(new RegExp("(^|\\s+)" + className + "(\\s+|$)"), ' ')); };

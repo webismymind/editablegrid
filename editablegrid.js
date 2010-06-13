@@ -24,6 +24,7 @@ function Column(config)
         datatype: "string",
         unit: null,
         precision: null,
+        nansymbol: '',
         headerRenderer: null,
         headerEditor: null,
         cellRenderer: null,
@@ -318,20 +319,33 @@ EditableGrid.prototype.processXML = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-    // extract precision and unit from type if both given
-    if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
+
+    // extract precision, unit and nansymbol from type if two given
+    if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
     	column.datatype = RegExp.$1;
-    	column.unit = RegExp.$2;
+    	column.unit = RegExp.$2.trim();
+    	column.precision = parseInt(RegExp.$3);
+    	column.nansymbol = RegExp.$4.trim();
+    }
+
+    // extract precision and unit from type if two given
+    if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
+    	column.datatype = RegExp.$1.trim();
+    	column.unit = RegExp.$2.trim();
     	column.precision = parseInt(RegExp.$3);
     }
 
     // extract precision or unit from type if any given
     if (column.datatype.match(/(.*)\((.*)\)$/)) {
-    	column.datatype = RegExp.$1;
-    	var unit_or_precision = RegExp.$2;
+    	column.datatype = RegExp.$1.trim();
+    	var unit_or_precision = RegExp.$2.trim();
     	if (unit_or_precision.match(/^[0-9]*$/)) column.precision = parseInt(unit_or_precision);
     	else column.unit = unit_or_precision;
     }
+    
+    if (isNaN(column.precision)) column.precision = null;
+    if (column.unit == '') column.unit = null;
+    if (column.nansymbol == '') column.nansymbol = null;
 };
 
 /**
@@ -343,8 +357,8 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 {
 	var colType = this.getColumnType(columnIndex);
 	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
-	if (colType == 'integer') { cellValue = parseInt(cellValue); if (isNaN(cellValue)) cellValue = ""; } 
-	if (colType == 'double') { cellValue = parseFloat(cellValue); if (isNaN(cellValue)) cellValue = ""; }
+	if (colType == 'integer') { cellValue = parseInt(cellValue); } 
+	if (colType == 'double') { cellValue = parseFloat(cellValue); }
 	if (colType == 'string') { cellValue = "" + cellValue; }
 	return cellValue;
 };
@@ -1009,12 +1023,12 @@ EditableGrid.prototype.mouseClicked = function(e)
 		// get row and column index from the clicked cell
 		var target = e.target || e.srcElement;
 		
-		// don't handle clicks on links and images
-		if (target.tagName == "A" || target.tagName == "IMG") return;
-		
-		// go up parents to find a cell under the clicked position
-		while (target) if (target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
+		// go up parents to find a cell or a link under the clicked position
+		while (target) if (target.tagName == "A" || target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
 		if (!target || !target.parentNode || !target.parentNode.parentNode || (target.parentNode.parentNode.tagName != "TBODY" && target.parentNode.parentNode.tagName != "THEAD") || target.isEditing) return;
+		
+		// don't handle clicks on links
+		if (target.tagName == "A") return;
 		
 		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
