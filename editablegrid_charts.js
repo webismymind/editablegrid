@@ -43,8 +43,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 	
 		var maxvalue = 0;
 		for (var c = 0; c < columnCount; c++) {
-			var type = getColumnType(c);
-			if (type != "double" && type != "integer") continue;
+			if (!isColumnBar(c)) continue;
 			var bar = new ofc_element("bar_3d");
 			bar.alpha = 0.9;
 			bar.colour = smartColors1[chart.elements.length % smartColors1.length];

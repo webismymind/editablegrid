@@ -25,6 +25,7 @@ function Column(config)
         unit: null,
         precision: null,
         nansymbol: '',
+        bar: true, // is the column to be displayed in a bar chart ? relevant only for numerical columns 
         headerRenderer: null,
         headerEditor: null,
         cellRenderer: null,
@@ -252,6 +253,7 @@ EditableGrid.prototype.processXML = function()
             	label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
             	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
                 editable : col.getAttribute("editable") == "true",
+                bar : col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true,
             	optionValues: optionValues,
             	enumProvider: (optionValues ? new EnumProvider() : null),
             	columnIndex: i
@@ -586,6 +588,16 @@ EditableGrid.prototype.getColumnUnit = function(columnIndexOrName)
 EditableGrid.prototype.getColumnPrecision = function(columnIndexOrName)
 {
 	return this.getColumn(columnIndexOrName).precision;
+};
+
+/**
+ * Returns true if the column is to be displayed in a bar chart
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.isColumnBar = function(columnIndexOrName)
+{
+	var column = this.getColumn(columnIndexOrName);
+	return (column.bar && (column.datatype == "double" || column.datatype == "integer"));
 };
 
 /**
