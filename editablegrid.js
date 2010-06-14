@@ -113,7 +113,8 @@ function EditableGrid(name, config)
 		saveOnBlur: true,
    		invalidClassName: "invalid",
    		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
-
+   		caption: null,
+    
         // callback functions
         tableLoaded: function() {},
         tableSorted: function() {}, 
@@ -896,6 +897,17 @@ EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValida
 };
 
 /**
+ * Sets the table caption: set as null to remove
+ * @param columnIndexOrName
+ * @param caption
+ * @return
+ */
+EditableGrid.prototype.setCaption = function(caption)
+{
+	this.caption = caption;
+};
+
+/**
  * Get cell element at given row and column
  */
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
@@ -981,6 +993,12 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     		_$(containerid).appendChild(table);
         
     		// create header
+    		if (caption) {
+    			var captionElement = document.createElement("CAPTION");
+    			captionElement.innerHTML = this.caption;
+    			table.appendChild(captionElement);
+    		}
+    		
     		this.tHead = document.createElement("THEAD");
     		table.appendChild(tHead);
     		var trHeader = tHead.insertRow(0);

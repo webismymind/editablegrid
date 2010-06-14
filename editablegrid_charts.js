@@ -25,7 +25,7 @@ EditableGrid.prototype.checkChartLib = function()
  * @param divId
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName)
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend)
 {
 	with (this) {
 
@@ -88,7 +88,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// chart.num_decimals = 0;
 		
 		chart.x_legend = {
-			text: getColumnLabel(labelColumnIndexOrName),
+			text: legend || getColumnLabel(labelColumnIndexOrName),
 			style: "{font-size: 11px; color: #000033}"
 		};
 
