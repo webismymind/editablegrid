@@ -138,7 +138,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
 			var value = getValueAt(r,cValue);
 			var label = getValueAt(r,cLabel);
-			pie.values.push({value : value, label: label + ' (' + value + ')'});
+			if (!isNaN(value)) pie.values.push({value : value, label: label + ' (' + value + ')'});
 		}
 		chart.add_element(pie);
 		
