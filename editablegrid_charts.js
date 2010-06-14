@@ -1,9 +1,9 @@
-var EditableGrid_pending_chart;
+var EditableGrid_pending_charts = {};
 var EditableGrid_check_lib = true;
 
-function EditableGrid_get_chart_data() 
+function EditableGrid_get_chart_data(divId) 
 {
-	return JSON.stringify(EditableGrid_pending_chart);
+	return JSON.stringify(EditableGrid_pending_charts[divId]);
 }
 
 var smartColors1 = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
@@ -49,7 +49,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			bar.colour = smartColors1[chart.elements.length % smartColors1.length];
 			bar.fill = "transparent";
 			bar.text = getColumnLabel(c);
-			for (var r = 0; r < rowCount; r++) {
+			for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
 				var value = getValueAt(r,c);
 				if (value > maxvalue) maxvalue = value; 
 				bar.values.push(value);
@@ -60,17 +60,17 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// round the y max value
 		var ymax = 10;
 		while (ymax < maxvalue) ymax *= 10;
-		var step = ymax / 10;
-		while (ymax - step > maxvalue) ymax -= step;
+		var dec_step = ymax / 10;
+		while (ymax - dec_step > maxvalue) ymax -= dec_step;
 		
 		var xLabels = [];
-		for (var r = 0; r < rowCount; r++) xLabels.push(getValueAt(r,cLabel));
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) xLabels.push(getValueAt(r,cLabel));
 	
 		chart.x_axis = {
 		    stroke: 1,
 		    tick_height:  10,
-			 colour: "#E2E2E2",
-			 "grid-colour": "#E2E2E2",
+			colour: "#E2E2E2",
+			"grid-colour": "#E2E2E2",
 		    labels: { labels: xLabels },
 		    "3d": 5
 		};
@@ -81,10 +81,10 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			 colour: "#428BC7",
 			 "grid-colour": "#E2E2E2",
 			 offset: 0,
-			 max: ymax,
-			 steps: ymax / 10
+			 steps: ymax / 10.0,
+			 max: ymax
 		};
-	
+			
 		// chart.num_decimals = 0;
 		
 		chart.x_legend = {
@@ -129,13 +129,13 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		var rowCount = getRowCount();
 	
 		var pie = new ofc_element("pie");
-		pie.alpha = 0.9;
 		pie.colours = smartColors2;
-		pie.fill = "transparent";
+		pie.alpha = 0.5;
 		pie['gradient-fill'] = true;
+		
 		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
 
-		for (var r = 0; r < rowCount; r++) {
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
 			var value = getValueAt(r,cValue);
 			var label = getValueAt(r,cLabel);
 			pie.values.push({value : value, label: label + ' (' + value + ')'});
@@ -175,7 +175,7 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 		if (swf && typeof swf.load == "function") swf.load(JSON.stringify(chart));
 		else {
 			var div = _$(divId);
-			EditableGrid_pending_chart = chart;
+			EditableGrid_pending_charts[divId] = chart;
 			
 			// get chart dimensions
 			var w = Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth);
@@ -185,7 +185,7 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 					divId, 
 					"" + (w || 500), 
 					"" + (h || 200), 
-					"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data" }, null, 
+					"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data", "id": divId }, null, 
 					{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
 			);
 		}

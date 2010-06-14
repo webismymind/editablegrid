@@ -67,7 +67,7 @@ NumberCellRenderer.prototype.render = function(element, value)
 	}
 	
 	element.innerHTML = displayValue;
-	element.className = "number";
+	EditableGrid.prototype.addClassName(element, "number");
 	element.style.fontWeight = isNAN ? "normal" : null;
 };
 

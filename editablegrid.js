@@ -112,6 +112,7 @@ function EditableGrid(name, config)
 		allowSimultaneousEdition: false,
 		saveOnBlur: true,
    		invalidClassName: "invalid",
+   		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
 
         // callback functions
         tableLoaded: function() {},
@@ -123,7 +124,8 @@ function EditableGrid(name, config)
     };
     
 	// override default properties with the ones given
-    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+	for (var p in props) this[p] = props[p];
+	for (var p in config) this[p] = config[p];
     
     this.Browser = {
     		IE:  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
@@ -597,7 +599,17 @@ EditableGrid.prototype.getColumnPrecision = function(columnIndexOrName)
 EditableGrid.prototype.isColumnBar = function(columnIndexOrName)
 {
 	var column = this.getColumn(columnIndexOrName);
-	return (column.bar && (column.datatype == "double" || column.datatype == "integer"));
+	return (column.bar && this.isColumnNumerical(columnIndexOrName));
+};
+
+/**
+ * Returns true if the column is numerical (double or integer)
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.isColumnNumerical = function(columnIndexOrName)
+{
+	var column = this.getColumn(columnIndexOrName);
+	return column.datatype =='double' || column.datatype =='integer';
 };
 
 /**
@@ -1083,16 +1095,18 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
 		var rows = tBody.rows;
-		for (var i = 0; i < rows.length; i++) row_array.push([getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
+		for (var i = 0; i < rows.length - (ignoreLastRow ? 1 : 0); i++) row_array.push([getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
 		row_array.sort(columnIndex < 0 ? unsort :
 					   type == "integer" || type == "double" ? sort_numeric :
 					   type == "boolean" ? sort_boolean :
 					   type == "date" ? sort_date :
 					   sort_alpha);
 		
+		if (descending) row_array = row_array.reverse();
+		if (ignoreLastRow) row_array.push([getValueAt(rows.length - 1, columnIndex), rows.length - 1, rows[rows.length - 1], data[rows.length - 1].originalIndex]);
+		
 		var _data = data;
 		data = [];
-		if (descending) row_array = row_array.reverse();
 		for (var i = 0; i < row_array.length; i++) {
 			data.push(_data[row_array[i][1]]);
 			tBody.appendChild(row_array[i][2]);
