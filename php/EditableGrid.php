@@ -59,6 +59,6 @@ class EditableGrid {
 	public function renderXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
 	{
 		header('Content-Type: text/xml');
-		echo $this->getXML($rows, $customRowAttributes=array(), $encodeCustomAttributes);
+		echo $this->getXML($rows, $customRowAttributes, $encodeCustomAttributes);
 	} 
 }
