@@ -142,7 +142,8 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		}
 		chart.add_element(pie);
 		
-		updateChart(divId, chart);
+		if (pie.values.length > 0) updateChart(divId, chart);
+		return pie.values.length;
 	}
 };
 
