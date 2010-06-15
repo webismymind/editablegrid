@@ -117,7 +117,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		if (type != "double" && type != "integer") return;
 
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
-		title = title || getColumnLabel(valueColumnIndexOrName);
+		title = (typeof title == 'undefined' || title === null) ? getColumnLabel(valueColumnIndexOrName) : title;
 		
 		var cValue = getColumnIndex(valueColumnIndexOrName);
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
