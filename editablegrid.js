@@ -742,7 +742,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		}
 
 		// resort table
-		sort(sortedColumnName, sortDescending);
+		sort();
 	}
 };
 
@@ -1031,7 +1031,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     	}
     	
 		// resort table
-		sort(sortedColumnName, sortDescending);
+		sort();
     }
 };
 
@@ -1100,6 +1100,9 @@ EditableGrid.prototype.mouseClicked = function(e)
 EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 {
 	with (this) {
+		
+		if (typeof columnIndexOrName  == 'undefined') columnIndexOrName = sortedColumnName;
+		if (typeof descending  == 'undefined') descending = sortDescending;
 
 		var columnIndex = columnIndexOrName;
 		if (columnIndex !== -1) {
