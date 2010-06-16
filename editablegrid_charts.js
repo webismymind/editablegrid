@@ -135,10 +135,13 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		
 		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
 
+		var total = 0; 
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) total += getValueAt(r,cValue);
+		
 		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
 			var value = getValueAt(r,cValue);
 			var label = getValueAt(r,cLabel);
-			if (!isNaN(value)) pie.values.push({value : value, label: label + ' (' + value + ')'});
+			if (!isNaN(value)) pie.values.push({value : value, label: label + ' (' + (100 * (value / total)).toFixed(1) + '%)'});
 		}
 		chart.add_element(pie);
 		
