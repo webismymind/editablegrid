@@ -96,12 +96,15 @@ CheckboxCellRenderer.prototype._render = function(rowIndex, columnIndex, element
 
 CheckboxCellRenderer.prototype.render = function(element, value)
 {
-	if (element.firstChild) return;
+	// convert value to boolean just in case
+	value = (value && value != 0 && value != "false") ? true : false;
+
+	// if check box already created, just update its state
+	if (element.firstChild) { element.firstChild.checked = value; return; }
 	
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
-	element.originalValue = (value && value != 0 && value != "false") ? true : false;
 
 	// give access to the cell editor and element from the editor field
 	htmlInput.element = element;
@@ -114,11 +117,10 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	htmlInput.onclick = function(event) { 
 		element.rowIndex = element.parentNode.rowIndex - this.cellrenderer.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
 		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
-		element.originalValue = htmlInput.checked ? true : false; 
 	};
 
 	element.appendChild(htmlInput);
-	htmlInput.checked = element.originalValue;
+	htmlInput.checked = value;
 	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.rowIndex, element.columnIndex));
 
 	element.className = "boolean";

@@ -620,6 +620,13 @@ EditableGrid.prototype.isColumnNumerical = function(columnIndexOrName)
  */
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
+	// check and get column
+	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[getValueAt] Invalid column index " + columnIndex); return null; }
+	var column = this.columns[columnIndex];
+	
+	// get value in model
+	if (rowIndex < 0) return column.label;
+	
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
 };
@@ -634,15 +641,20 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, render)
 {
 	if (typeof render == "undefined") render = true;
-
+	var previousValue = null;;
+	
 	// check and get column
-	if (columnIndex < 0 || columnIndex >= this.columns.length) alert("[setValueAt] Invalid column index " + columnIndex);
+	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[setValueAt] Invalid column index " + columnIndex); return null; }
 	var column = this.columns[columnIndex];
 	
 	// set new value in model
-	if (rowIndex < 0) column.label = value;
+	if (rowIndex < 0) {
+		previousValue = column.label;
+		column.label = value;
+	}
 	else {
 		var rowData = this.data[rowIndex]['columns'];
+		previousValue = rowData[columnIndex];
 		if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, value);
 	}
 	
@@ -651,6 +663,8 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 		var renderer = rowIndex < 0 ? column.headerRenderer : column.cellRenderer;  
 		renderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
 	}
+	
+	return previousValue;
 };
 
 /**
@@ -1116,7 +1130,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
 		var rows = tBody.rows;
-		for (var i = 0; i < rows.length - (ignoreLastRow ? 1 : 0); i++) row_array.push([getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
+		for (var i = 0; i < rows.length - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
 		row_array.sort(columnIndex < 0 ? unsort :
 					   type == "integer" || type == "double" ? sort_numeric :
 					   type == "boolean" ? sort_boolean :
@@ -1124,7 +1138,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 					   sort_alpha);
 		
 		if (descending) row_array = row_array.reverse();
-		if (ignoreLastRow) row_array.push([getValueAt(rows.length - 1, columnIndex), rows.length - 1, rows[rows.length - 1], data[rows.length - 1].originalIndex]);
+		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getValueAt(rows.length - 1, columnIndex), rows.length - 1, rows[rows.length - 1], data[rows.length - 1].originalIndex]);
 		
 		var _data = data;
 		data = [];

@@ -17,7 +17,6 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 {
 	// tag element and remember all the things we need to apply/cancel edition
 	element.isEditing = true;
-	element.originalValue = value;
 	element.rowIndex = rowIndex; 
 	element.columnIndex = columnIndex;
 	
@@ -134,7 +133,7 @@ CellEditor.prototype.cancelEditing = function(element)
 
 			// render value before editon
 			var renderer = this == column.headerEditor ? column.headerRenderer : column.cellRenderer;
-			renderer._render(element.rowIndex, element.columnIndex, element, element.originalValue);
+			renderer._render(element.rowIndex, element.columnIndex, element, editablegrid.getValueAt(element.rowIndex, element.columnIndex));
 		
 			_clearEditor(element);
 		}
@@ -152,13 +151,12 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 		var formattedValue = formatValue(newValue);
 
 		// update model and render cell (keeping previous value)
-		var currentValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
-		editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
+		var previousValue = editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
 
 		// if the new value is different than the previous one, let the user handle the model change
 		var newValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
-		if (!this.editablegrid.isSame(newValue, currentValue)) {
-			editablegrid.modelChanged(element.rowIndex, element.columnIndex, element.originalValue, newValue, editablegrid.getRow(element.rowIndex));
+		if (!this.editablegrid.isSame(newValue, previousValue)) {
+			editablegrid.modelChanged(element.rowIndex, element.columnIndex, previousValue, newValue, editablegrid.getRow(element.rowIndex));
 		}
 		
 		_clearEditor(element);	
