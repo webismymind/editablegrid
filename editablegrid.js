@@ -55,6 +55,10 @@ Column.prototype.isValid = function(value) {
 	return true;
 };
 
+Column.prototype.isNumerical = function() {
+	return this.datatype =='double' || this.datatype =='integer';
+};
+
 /**
  * Creates a new enumeration provider 
  * @constructor
@@ -600,7 +604,7 @@ EditableGrid.prototype.getColumnPrecision = function(columnIndexOrName)
 EditableGrid.prototype.isColumnBar = function(columnIndexOrName)
 {
 	var column = this.getColumn(columnIndexOrName);
-	return (column.bar && this.isColumnNumerical(columnIndexOrName));
+	return (column.bar && column.isNumerical());
 };
 
 /**
@@ -610,7 +614,7 @@ EditableGrid.prototype.isColumnBar = function(columnIndexOrName)
 EditableGrid.prototype.isColumnNumerical = function(columnIndexOrName)
 {
 	var column = this.getColumn(columnIndexOrName);
-	return column.datatype =='double' || column.datatype =='integer';
+	return column.isNumerical();;
 };
 
 /**
