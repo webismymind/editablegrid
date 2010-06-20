@@ -124,7 +124,8 @@ function EditableGrid(name, config)
         tableSorted: function() {}, 
 		tableFiltered: function() {}, 
         modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
-		isEditable: function(rowIndex, columnIndex) { return rowIndex >= 0; },
+		isHeaderEditable: function(rowIndex, columnIndex) { return false; },
+		isEditable: function(rowIndex, columnIndex) { return true; },
 		readonlyWarning: function() {}
     };
     
@@ -1100,7 +1101,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 			if (!column.editable) { readonlyWarning(column); }
 			else {
 				if (rowIndex < 0) { 
-					if (column.headerEditor && isEditable(rowIndex, columnIndex)) 
+					if (column.headerEditor && isHeaderEditable(rowIndex, columnIndex)) 
 						column.headerEditor.edit(rowIndex, columnIndex, target, column.label);
 				}
 				else if (column.cellEditor && isEditable(rowIndex, columnIndex))
