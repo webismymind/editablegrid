@@ -679,8 +679,8 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
 	if (typeof columnIndexOrName == "undefined" || columnIndexOrName === "") return -1;
-	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
+	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
 	return -1;
 };
 
