@@ -38,12 +38,14 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		
 		// ENTER or TAB: apply value
 		if (event.keyCode == 13 || event.keyCode == 9) {
+			this.onblur = null; 
 			this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
 			return false;
 		}
 		
 		// ESC: cancel editing
 		if (event.keyCode == 27) { 
+			this.onblur = null; 
 			this.celleditor.cancelEditing(this.element); 
 			return false; 
 		}
@@ -57,8 +59,8 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 
 	// is simultaneous edition is not allowed, we cancel edition when focus is lost
 	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
-			function(event) { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
-			function(event) { this.celleditor.cancelEditing(this.element); };
+			function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
+			function(event) { this.onblur = null; this.celleditor.cancelEditing(this.element); };
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
@@ -143,23 +145,27 @@ CellEditor.prototype.cancelEditing = function(element)
 CellEditor.prototype.applyEditing = function(element, newValue) 
 {
 	with (this) {
+
+		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
+		if (element && element.isEditing) {
+
+			// do nothing if the value is rejected by at least one validator
+			if (!column.isValid(newValue)) return false;
+
+			// format the value before applying
+			var formattedValue = formatValue(newValue);
+
+			// update model and render cell (keeping previous value)
+			var previousValue = editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
+
+			// if the new value is different than the previous one, let the user handle the model change
+			var newValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
+			if (!this.editablegrid.isSame(newValue, previousValue)) {
+				editablegrid.modelChanged(element.rowIndex, element.columnIndex, previousValue, newValue, editablegrid.getRow(element.rowIndex));
+			}
 		
-		// do nothing if the value is rejected by at least one validator
-		if (!column.isValid(newValue)) return false;
-
-		// format the value before applying
-		var formattedValue = formatValue(newValue);
-
-		// update model and render cell (keeping previous value)
-		var previousValue = editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
-
-		// if the new value is different than the previous one, let the user handle the model change
-		var newValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
-		if (!this.editablegrid.isSame(newValue, previousValue)) {
-			editablegrid.modelChanged(element.rowIndex, element.columnIndex, previousValue, newValue, editablegrid.getRow(element.rowIndex));
+			_clearEditor(element);	
 		}
-		
-		_clearEditor(element);	
 	}
 };
 
@@ -276,7 +282,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	}
 	                  
 	// when a new value is selected we apply it
-	htmlInput.onchange = function(event) { this.celleditor.applyEditing(this.element, this.value); };
+	htmlInput.onchange = function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.value); };
 	
 	return htmlInput; 
 };
