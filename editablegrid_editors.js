@@ -96,9 +96,6 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
 		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top")) - 2;
 		
-		alert("SCROLLX: " + this.editablegrid.table.parentNode.id + " => " + this.editablegrid.table.parentNode.scrollLeft);
-		alert("SCROLLX2: " + this.editablegrid.table.parentNode.id + " => " + this.editablegrid.table.parentNode.scrollRight);
-		
 		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
 		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
 		
