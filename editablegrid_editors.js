@@ -102,12 +102,16 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		editorInput.style.left = (this.editablegrid.getCellX(element) - scrollX + paddingLeft) + "px";
 		editorInput.style.top = (this.editablegrid.getCellY(element) - scrollY + paddingTop) + "px";
 
+		alert(editorInput.style.left + ',' + editorInput.style.top);
+		
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
 			var rightPadding = this.editablegrid.getCellX(element) - scrollX + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
 			alert(rightPadding);
 			editorInput.style.left = (parseInt(editorInput.style.left) + rightPadding) + "px";
 			editorInput.style.textAlign = "right";
+			
+			alert(editorInput.style.left + ',' + editorInput.style.top);			
 		}
 	}
 
