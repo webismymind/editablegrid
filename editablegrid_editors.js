@@ -96,27 +96,19 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
 		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top")) - 2;
 		
-		alert(this.editablegrid);
-		alert(this.editablegrid.table);
+		alert("SCROLLX: " + this.editablegrid.table.parentNode.scrollLeft);
 		
 		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
 		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
 		
-		alert(offsetScrollX + ',' + offsetScrollY);
-
 		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + paddingLeft) + "px";
 		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + paddingTop) + "px";
 
-		alert(editorInput.style.left + ',' + editorInput.style.top);
-		
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
 			var rightPadding = this.editablegrid.getCellX(element) - offsetScrollX + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
-			alert(rightPadding);
 			editorInput.style.left = (parseInt(editorInput.style.left) + rightPadding) + "px";
 			editorInput.style.textAlign = "right";
-			
-			alert(editorInput.style.left + ',' + editorInput.style.top);			
 		}
 	}
 
