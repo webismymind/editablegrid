@@ -95,12 +95,16 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		// position editor input on the cell with the same padding as the actual cell content
 		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
 		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top")) - 2;
-		editorInput.style.left = (this.editablegrid.getCellX(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0) + paddingLeft) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) - (this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0) + paddingTop) + "px";
+		
+		var scrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
+		var scrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
+		
+		editorInput.style.left = (this.editablegrid.getCellX(element) - scrollX + paddingLeft) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) - scrollY + paddingTop) + "px";
 
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
-			var rightPadding = this.editablegrid.getCellX(element) + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
+			var rightPadding = this.editablegrid.getCellX(element) - scrollX + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
 			editorInput.style.left = (parseInt(editorInput.style.left) + rightPadding) + "px";
 			editorInput.style.textAlign = "right";
 		}
