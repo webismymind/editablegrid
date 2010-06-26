@@ -1,8 +1,16 @@
 var EditableGrid_pending_charts = {};
 var EditableGrid_check_lib = true;
 
+function EditableGrid_loadChart(divId)
+{
+	var swf = findSWF(divId);
+	if (swf && typeof swf.load == "function") swf.load(JSON.stringify(EditableGrid_pending_charts[divId]));
+	else setTimeout("EditableGrid_loadChart('"+divId+"');", 10);
+}
+
 function EditableGrid_get_chart_data(divId) 
 {
+	setTimeout("EditableGrid_loadChart('"+divId+"');", 10);
 	return JSON.stringify(EditableGrid_pending_charts[divId]);
 }
 
