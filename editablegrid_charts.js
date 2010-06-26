@@ -182,9 +182,11 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 			EditableGrid_pending_charts[divId] = chart;
 			
 			// get chart dimensions
-			var w = Math.max(parseInt(getStyle(div, 'width')), div.offsetWidth);
-			var h = Math.max(parseInt(getStyle(div, 'height')), div.offsetHeight);
-
+			var w = parseInt(getStyle(div, 'width'));
+			var h = parseInt(getStyle(div, 'height'));
+			w = Math.max(isNaN(w)?0:w, div.offsetWidth);
+			h = Math.max(isNaN(h)?0:h, div.offsetHeight);
+			
 			swfobject.embedSWF(this.ofcSwf, 
 					divId, 
 					"" + (w || 500), 
