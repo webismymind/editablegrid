@@ -67,6 +67,12 @@ EditableGrid.prototype.autoWidth = function (element)
 	var paddingRight = parseInt(this.getStyle(element, "paddingRight", "padding-right"));
 	var borderLeft = parseInt(this.getStyle(element, "borderLeftWidth", "border-left-width"));
 	var borderRight = parseInt(this.getStyle(element, "borderRightWidth", "border-right-width"));
+
+	paddingLeft = isNaN(paddingLeft) ? 0 : paddingLeft;
+	paddingRight = isNaN(paddingRight) ? 0 : paddingRight;
+	borderLeft = isNaN(borderLeft) ? 0 : borderLeft;
+	borderRight = isNaN(borderRight) ? 0 : borderRight;
+	
 	if (this.Browser.Gecko) paddingLeft += 2; // Firefox: input larger then given size in px!
 	return element.offsetWidth - paddingLeft - paddingRight - borderLeft - borderRight;
 };
@@ -81,6 +87,12 @@ EditableGrid.prototype.autoHeight = function (element)
 	var paddingBottom = parseInt(this.getStyle(element, "paddingBottom", "padding-bottom"));
 	var borderTop = parseInt(this.getStyle(element, "borderTopWidth", "border-top-width"));
 	var borderBottom = parseInt(this.getStyle(element, "borderBottomWidth", "border-bottom-width"));
+	
+	paddingTop = isNaN(paddingTop) ? 0 : paddingTop;
+	paddingBottom = isNaN(paddingBottom) ? 0 : paddingBottom;
+	borderTop = isNaN(borderTop) ? 0 : borderTop;
+	borderBottom = isNaN(borderBottom) ? 0 : borderBottom;
+
 	return element.offsetHeight - paddingTop - paddingBottom - borderTop - borderBottom;
 };
 
