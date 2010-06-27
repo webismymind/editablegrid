@@ -73,7 +73,7 @@ EditableGrid.prototype.autoWidth = function (element)
 	borderLeft = isNaN(borderLeft) ? 0 : borderLeft;
 	borderRight = isNaN(borderRight) ? 0 : borderRight;
 	
-	if (this.Browser.Gecko) paddingLeft += 2; // Firefox: input larger then given size in px!
+	if (this.Browser.Gecko) paddingLeft += 3; // Firefox: input larger then given size in px!
 	return element.offsetWidth - paddingLeft - paddingRight - borderLeft - borderRight;
 };
 

@@ -94,7 +94,9 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 
 		// position editor input on the cell with the same padding as the actual cell content
 		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
-		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top")) - 2;
+		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top"));
+		if (isNaN(paddingLeft)) paddingLeft = 0; else paddingLeft -= 3;
+		if (isNaN(paddingTop)) paddingTop = 0; else paddingTop -= 3;
 		
 		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
 		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
