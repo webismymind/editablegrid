@@ -3,9 +3,11 @@
 class EditableGrid {
 	
 	protected $columns;
+	protected $encoding;
 	
-	function __construct() 
+	function __construct($encoding = "utf-8") 
 	{
+		$this->encoding = $encoding;
 		$this->columns = array();
 	}
 	
@@ -21,7 +23,7 @@ class EditableGrid {
 	
 	public function getXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
 	{
-		$xml = '<?xml version="1.0" encoding="utf-8"?>';
+		$xml = '<?xml version="1.0" encoding="'. $this->encoding . '" ?>';
 		
 		$xml.= "<table><metadata>\n";
 
