@@ -144,7 +144,10 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
 
 		var total = 0; 
-		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) total += getValueAt(r,cValue);
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
+			var rowValue = getValueAt(r,cValue);
+			total += isNaN(rowValue) ? 0 : rowValue;
+		}
 		
 		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
 			var value = getValueAt(r,cValue);
