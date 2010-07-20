@@ -28,7 +28,10 @@ class EditableGrid {
 		$xml.= "<table><metadata>\n";
 
 		foreach ($this->columns as $name => $info) {
-			$xml.= "<column name='$name' label='". $info['label'] . "' datatype='{$info['type']}'". ($info['bar'] ? "" : " bar='false'") . " editable='". ($info['editable'] ? "true" : "false") . "'>\n";
+			$label = $info['label'];
+			$label = str_replace('"', "&quot;", $label);
+			$label = str_replace("'", "&apos;", $label);
+			$xml.= "<column name='$name' label='$label' datatype='{$info['type']}'". ($info['bar'] ? "" : " bar='false'") . " editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				$xml.= "<values>\n";
 				foreach ($info['values'] as $key => $value) $xml.= "<value value='{$key}'><![CDATA[{$value}]]></value>\n"; 
