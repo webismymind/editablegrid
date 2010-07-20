@@ -329,7 +329,6 @@ EditableGrid.prototype.processXML = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-
     // extract precision, unit and nansymbol from type if two given
     if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
     	column.datatype = RegExp.$1;
