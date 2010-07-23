@@ -114,4 +114,103 @@ Advanced:
 - getColumnName and getColumnType also accept a column name as input
 - when an error "Invalid column" is displayed, the name of the calling method is given
 - the checkDate function also give a MySQL ready date yyyy-mm-dd ('dbDate' attribute)
-- you can now easily specify custom attributes in the constructor of CellRenderer, CellEditor and EnumProvider, eg. new CellRenderer { myAttribute: ..., render: ... } 
+- you can now easily specify custom attributes in the constructor of CellRenderer, CellEditor and EnumProvider, eg. new CellRenderer { myAttribute: ..., render: ... }
+
+[23/07/2010] EditableGrid v1.0.8
+================================
+
+Charts
+------
+
+Corrigé affichage du pourcentage des les pie charts si valeurs NAN dans le tas
+Workaround un peu strange mais qui marche pour le probleme de l'echelle Y pas correcte au 1er affichage (se produisait aussi sur IE8).
+Corrigé la détection de la largeur du chart sur IE8 (car getStyle('width') renvoyait 'auto')
+Dans un pie chart on affiche le pourcentage entre parenthèses
+Si on passe un titre vide à renderPieChart il est utilisé
+renderPieChart ne fait rien et renvoie 0 si aucune valeur à afficher
+Ajouté param legend à renderBarChart (def = label de la colonne)
+Pie chart ignore les valeurs NaN
+ajouté une option ignoreLastRow pour le tri et les charts (pie et bar)
+Ajouté atrribut bar à Column, défaut true, lu du xml, méthode isColumnBar utilisée dans renderBarChart. 
+Amélioré l'auto-détection de ymax pour l'axis y.
+si la largeur ou hauteur du chart est 0, on utilise des dimensions par défaut pour éviter que le gars pense que ça ne marche pas.
+autodetect openflashchart swf location, only once
+le texte de la légende est le label de la colonne qui sert à avoir les labels de l'axe X
+renderBar/PieChart vérifient que les librairies nécessaires sont bien là...uniquement la 1ere fois.
+renderBar/PieChart vérifient que les librairies nécessaires sont bien là
+renommé renderChart en renderBarChart: ne prend plus le type mais prend par contre le titre et l'index de la colonne qui sert de label (defaut = 0)
+ajouté méthode renderPieChart(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) (factorisé mise à jour du swf dans méthode updateChart)
+ajouté méthode clearChart, à implémenter
+renderChart détermine la valeur max pour Y
+renderChart does not force element key font size
+méthode renderChart en travaux mais fonctionnelle (bar3d uniquement)
+
+Types
+-----
+
+Meilleure gestion des NaN pour les double et integer: la valeur stockée dans le modèle est toujours un number, qui peut être NaN. 
+Dans ce cas, on affichera un string vide dans le renderer, ou le symbôle specifié dans le type via eg. double(€, 2, -) en non bold. 
+Pour compatibilité, NumberCellRenderer respected les éventuelles valeurs non number qui lui seraient passées. 
+Dans l'éditeur on affichera un string vide (via méthode abstraite TextCellEditor.editorValue). 
+NumberCellRenderer affiche bien les valeurs 0, avec unité et précision (et non un string vide).
+
+L'unité n'est plus spécifiée via un attribut spécifique, mais dans le type comme la précision: double(m), double(2) ou double(m, 2). 
+Le type est 'parsé' aussi bien en mode HTML qu'en mode XML. 
+Protégé NumberCellRenderer si jamais on l'appelle avec le mauvais this (ie. si on fait render(...) au lieu de render.call(this, ...). 
+Commenté dans la démo le renderer qui ne servait qu'à afficher l'unité: remplacé par un type double(m, 2).
+
+Ajouté les attributs 'unit' et 'precision' à Column.
+- unit et precision sont utilisés dans NumberCellRenderer pour arrondir et suffixer la valeur réelle avec l'unite
+- precision est utilisée pour passer à TextCellEditor: elle donne la longeur forcée du champ texte
+En mode XML, unit est donné via l'attribut 'unit' et precision est donné via 'datatype', eg. 'double(2)' ou 'string(24)'. 
+On extrait la précision au moment de la lecture du XML, et non plus dans createCellEditor comme avant. 
+Plus besoin donc de tester le type avec startsWith, '==' suffit. 
+En mode HTML, on donne directement 'unit' et 'precision': eg. string('24') n'est donc plus accepté.
+
+Other
+-----
+
+Escape les labels de colonnes
+EditableGrid.php takes encoding as a parameter.
+Fixes on IE8 (editors etc)
+corrigé adjust au scroll pour cellules de type number
+CheckBoxCellRenderer set isEditing = true avant d'appeler applyEditing
+Avant un apply/cancelEditing on supprime le onblur sinon il est appelé en boucle car render provoque une suppression du htmlinput qui appelle onblur
+Fixed getColumnIndex for column names which are numbers
+Ajouté isHeaderEditable pour que les gens ne doivent pas mettre rowIndex >= 0 dans leur isEditable
+Ajouté column.isNumerical utilisé à 3 endroits
+getValueAt: check colonne + si row < 0 renvoie le column label 
+sort n'appelle plus getValueAt avec rowIndex = -1 quand on "unsort"
+setValueAt renvoie la valeur précédente
+plus besoin de element.originalValue: on utilise getValueAt quand on annule une édition et la previous value renvoyée par setValueAt pour passer à modelChanged
+corrigé CheckboxCellRenderer pour changer l'étau de la checkbox quand il est appelé (eg. après un updatecellvalue qui s'est mal passé)
+Corrigé passage de custom attributes
+Only replace double spaces by &nbsp;
+Added sort()
+dans le constructeur on peut passer ses propres attributs
+ajouté méthode isColumnNumerical + NumberCellRenderer utilise addClass pour conserver les classes existantes
+ajouté méthode setCaption (caption utilisée dans renderGrid XML)
+CellRenderer remplace les espaces en nbsp;
+Dissocié méthode getXML et renderXML dans wrapper PHP.
+Amélioré la détection de changement de valeur via isSame (NaN===NaN). De plus, c'est la véritable valeur typée du modèle qui est passée à modelChanged
+Les cellules number ont le style nowrap
+don't handle click on images
+=> Corrigé l'édition dans user/tracker ou customer (colonne country) car j'ignorais les clics sur les images. 
+   A la place je remonte jusqu'à rencontrer un link ou une cellule. 
+   Si c'est un link je ne fais rien (les images à ignorer, eg. collapse/expand doivent donc être mises dans un link).
+padding de 5px pour cellules 'number' + 'smart' max value pour y axis (10 steps) 
+Ajouté callback readonlyWarning pour les colonnes non éditables.
+TextCellEditor peut prendre une config
+modelChanged called only when needed (ie. when value changed)
+Ajouté option saveOnBlur par défaut true (nb: cette option n'a de sens que si allowSimultaneousEdition vaut false).
+getRowIndex accepte un objet row
+Modification de la méthode renderGrid afin de pouvoir donner un ID à la table. 
+Fix in EnumCellRenderer:; value 0 or null can be valid!
+corrigé autoHeight pour select: on ajuste -=2 que pour les text + impose une minHeight de 22
+callback tableSorted
+on utilise la même fonte dans les input que pour le contenu de la cellule + corrigé l'alignement à droite des input numériques au cas où on a un padding-left
+amélioré la détection automatique de la largeur et de la hauteur des input dans les cellules.
+Position editor inputs on the cells with the same padding as the actual cell content.
+This prevents an unwanted left padding when editing costs in user_tracker in Timetrack.
+getRowIndex silently returns -1 if null row (ie. rows with this id does not exist)
+Error message in getRowIndex if null row

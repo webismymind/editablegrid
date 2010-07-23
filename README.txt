@@ -59,6 +59,8 @@ Let's analyze each file in more details:
       For string and email columns, you can also specify the desired length of the text field used when editing these values, like this: string(40) or email(24).
       The default length is 12 for string and 32 for email and website. 
 
+      <TODO>: explain unit, precision, NaN symbols
+
       A specific style will be applied to numeric columns (bold and aligned to the right).
       Also, when a numeric cell is edited, the user won't be able to apply its changes until he enters a valid numeric value.
       For emails and dates also, we check that the entered value is a valid email address, resp. date.
@@ -188,3 +190,8 @@ Let's see how each feature has been implemented in our example:
  ----------------
  
  If you work with PHP on the server side, you can make use of the simple class EditableGrid.php to ease the creation and rendering of the XML data.
+ 
+ Charts
+ ------
+ 
+ <TODO>
