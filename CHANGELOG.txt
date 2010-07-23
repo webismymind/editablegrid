@@ -116,7 +116,7 @@ Advanced:
 - the checkDate function also give a MySQL ready date yyyy-mm-dd ('dbDate' attribute)
 - you can now easily specify custom attributes in the constructor of CellRenderer, CellEditor and EnumProvider, eg. new CellRenderer { myAttribute: ..., render: ... }
 
-[23/07/2010] EditableGrid v1.0.8
+[26/07/2010] EditableGrid v1.0.8
 ================================
 
 Charts
