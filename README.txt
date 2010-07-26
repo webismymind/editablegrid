@@ -55,11 +55,16 @@ Let's analyze each file in more details:
       - label: this label will be used in the table header (if no label is given, the name is used) 
       - type: type can be one of the following: string, integer, double, boolean, date, email, website, html (if not given, "string" is assumed)
       - editable: is the column editable or not (if not specified, it won't be editable)
-
-      For string and email columns, you can also specify the desired length of the text field used when editing these values, like this: string(40) or email(24).
+      
+      For double and integer columns, the type can also provide additional information, such as the unit, the precision, and/or the symbol to use for NaN, e.g.:
+      - double(m): unit is 'm'
+      - double(1): precision is 1 (and unit is not specified)
+      - double(m, 1): unit is 'm' and precision is 1
+      - double(m, 1, n/a): unit is 'm', precision is 1 and symbol for NaN is 'n/a'
+      - double(€, 2, -): unit is '€', precision is 2 and symbol for NaN is '-'
+ 
+      For string and email columns, you can specify the desired length of the text field used when editing these values, like this: string(40) or email(24).
       The default length is 12 for string and 32 for email and website. 
-
-      <TODO>: explain unit, precision, NaN symbols
 
       A specific style will be applied to numeric columns (bold and aligned to the right).
       Also, when a numeric cell is edited, the user won't be able to apply its changes until he enters a valid numeric value.
@@ -194,9 +199,9 @@ Let's see how each feature has been implemented in our example:
  Charts
  ------
  
- EditableGrid allows you to create bar and pie charts from the grid data (since version 1.0.7).
+ EditableGrid allows you to create bar and pie charts from the grid data.
 
- This makes use of OpenFlashCharts 2.0 which you should include by yourself in your client application.
+ This makes use of OpenFlashCharts 2.0, which you should include by yourself in your client application.
  The following javascript files must be included (all can be found in the official OpenFlashChart 2.0 download):
  - openflashchart/js-ofc-library/open_flash_chart.min.js
  - openflashchart/js-ofc-library/ofc.js
@@ -215,12 +220,13 @@ Let's see how each feature has been implemented in our example:
  
  1) renderBarChart(divId, title, labelColumnIndexOrName, legend)
  
- This method will create a bar chart: labelColumnIndexOrName is the name or index of the column that will be used as the chart categories. 
- For each category you will have one bar per numerical column having the "bar" attribute set to true (which is the default).
- The 'legend' parameter is optional: by default the label of the column given by "labelColumnIndexOrName" will be used.
- You don't have to care about the chart's scale: it will be computed automtically from the data.
+    This method will create a bar chart: labelColumnIndexOrName is the name or index of the column that will be used as the chart categories. 
+    For each category you will have one bar per numerical column having the "bar" attribute set to true (which is the default).
+    The 'bar' attribute can be set in the grid XML metadata when declaring a column.
+    The 'legend' parameter is optional: by default the label of the column given by "labelColumnIndexOrName" will be used.
+    You don't have to care about the chart's scale: it will be computed automatically to best fit the data.
  
- Example: imagine you have the following data giving the number of km done by person and by year 
+    Example: imagine you have the following data giving the number of km done by person and by year 
  
  	name    2009   2010
  	--------------------
@@ -228,28 +234,33 @@ Let's see how each feature has been implemented in our example:
  	Jack    60000  20000
  	Paul    20000  50000
  	
- Calling renderBarChart(myDivId, "Kilometers", "name") will produce the following chart:
+    Calling renderBarChart(myDivId, "Kilometers", "name") will produce the following chart:
  
-          # 2009  * 2010
-  60,000           #
-  50,000           #          *
-  40,000  #        #          *
-  30,000  # *      #          *
-  20,000  # *      # *      # *
-  10,000  # *      # *      # *
-       0  John     Jack     Paul
-                Person	   
+             # 2009  * 2010
+     60,000           #
+     50,000           #          *
+     40,000  #        #          *
+     30,000  # *      #          *
+     20,000  # *      # *      # *
+     10,000  # *      # *      # *
+          0  John     Jack     Paul
+                   Person	   
  
  2) renderPieChart(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
 
- This method will create a pie chart: 
- - valueColumnIndexOrName is the name or index of the column that will be used as the value for each pie part
- - labelColumnIndexOrName is the name or index of the column that will be used as the label for each pie part
+    This method will create a pie chart: 
+    - valueColumnIndexOrName is the name or index of the column that will be used as the value for each pie part
+    - labelColumnIndexOrName is the name or index of the column that will be used as the label for each pie part
  
- In other words, you can display the distribution of the values of "valueColumnIndexOrName" as a pie, using "labelColumnIndexOrName" to label each value.
- The percentage of each value wrt the column's total will also be displayed in the label.
- The startAngle parameter is optional: it gives the angle of the first pie part (default is 0).
+    In other words, you can display the distribution of the values of "valueColumnIndexOrName" as a pie, using "labelColumnIndexOrName" to label each value.
+    The percentage of each value wrt the column's total will also be displayed in the label.
+    The startAngle parameter is optional: it gives the angle of the first pie part (default is 0).
+    If no title is given (null) the label of the column given by "valueColumnIndexOrName" will be used.
  
  Both methods renderPieChart and renderBarChart can be called any number of times: if the chart already exists it will be updated (ie. not rebuilt).
  For example, you can call one of these methods each time the table is sorted (tableSorted) or edited (modelChanged), in order to update the chart to match the new data.
- Updating a chart is very fast which gives a very nice effect: when sorting or editing the grid, the chart just "follows" beautifully.
+ Updating a chart is very fast which gives a very nice effect: when sorting or editing the grid, the chart "follows" beautifully.
+ 
+ If your grid has e.g. a row displaying the total, you can ignore it in the charts by setting EditableGrid.ignoreLastRow to true.
+ In this case, this last row will also be ignored when sorting the grid data.
+ 
