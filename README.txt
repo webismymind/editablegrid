@@ -213,20 +213,20 @@ Let's see how each feature has been implemented in our example:
  
  Creating charts with EditableGrid is very easy.
  The first thing to do is to have some empty DIV in your page that will be used as a container for the chart. 
- You can control the chart dimensions by setting the "width" and "height" attributes, inline or through a css stylesheet.
- Otherwise some default dimensions will be used (500px * 200px).
+ You can control the chart dimensions by setting the "width" and "height" attributes, inline or through a CSS stylesheet.
+ Otherwise some default dimensions will be used (500*200px).
  
  Then according to the type of chart you want, you just have to call one of the following methods:
  
  1) renderBarChart(divId, title, labelColumnIndexOrName, legend)
  
-    This method will create a bar chart: labelColumnIndexOrName is the name or index of the column that will be used as the chart categories. 
-    For each category you will have one bar per numerical column having the "bar" attribute set to true (which is the default).
+    This method will create a bar chart: labelColumnIndexOrName is the name or index of the column that will be used for the chart categories.
+    For each category, you will have one bar per numerical column having the "bar" attribute set to true (which is the default).
     The 'bar' attribute can be set in the grid XML metadata when declaring a column.
     The 'legend' parameter is optional: by default the label of the column given by "labelColumnIndexOrName" will be used.
     You don't have to care about the chart's scale: it will be computed automatically to best fit the data.
  
-    Example: imagine you have the following data giving the number of km done by person and by year 
+    Example: Imagine you have the following data giving the number of kilometers done by person and by year
  
  	name    2009   2010
  	--------------------
@@ -234,16 +234,19 @@ Let's see how each feature has been implemented in our example:
  	Jack    60000  20000
  	Paul    20000  50000
  	
-    Calling renderBarChart(myDivId, "Kilometers", "name") will produce the following chart:
+    Calling renderBarChart(divId, "Kilometers", "name") will produce the following chart:
  
              # 2009  * 2010
+             
      60,000           #
      50,000           #          *
      40,000  #        #          *
      30,000  # *      #          *
      20,000  # *      # *      # *
      10,000  # *      # *      # *
+     
           0  John     Jack     Paul
+          
                    Person	   
  
  2) renderPieChart(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
@@ -253,14 +256,13 @@ Let's see how each feature has been implemented in our example:
     - labelColumnIndexOrName is the name or index of the column that will be used as the label for each pie part
  
     In other words, you can display the distribution of the values of "valueColumnIndexOrName" as a pie, using "labelColumnIndexOrName" to label each value.
-    The percentage of each value wrt the column's total will also be displayed in the label.
+    The percentage of each value w.r.t. the column's total will also be displayed in the label.
     The startAngle parameter is optional: it gives the angle of the first pie part (default is 0).
-    If no title is given (null) the label of the column given by "valueColumnIndexOrName" will be used.
+    If no title is given (i.e. title is null) the label of the column given by "valueColumnIndexOrName" will be used.
  
  Both methods renderPieChart and renderBarChart can be called any number of times: if the chart already exists it will be updated (ie. not rebuilt).
  For example, you can call one of these methods each time the table is sorted (tableSorted) or edited (modelChanged), in order to update the chart to match the new data.
- Updating a chart is very fast which gives a very nice effect: when sorting or editing the grid, the chart "follows" beautifully.
+ Updating a chart is very fast, which gives a very nice effect: when sorting or editing the grid, the chart "follows" beautifully.
  
- If your grid has e.g. a row displaying the total, you can ignore it in the charts by setting EditableGrid.ignoreLastRow to true.
+ If your grid has a row displaying e.g. the total, you can ignore it in the charts by setting EditableGrid.ignoreLastRow to true.
  In this case, this last row will also be ignored when sorting the grid data.
- 
