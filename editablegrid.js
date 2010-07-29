@@ -678,8 +678,15 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
 	if (typeof columnIndexOrName == "undefined" || columnIndexOrName === "") return -1;
+	
+	// TODO: problem beacuse the name of a column could be a valid index, and we cannot make the distinction here!
+		
+	// if columnIndexOrName is a number which is a valid index return it
+	if (!isNaN(columnIndexOrName) && columnIndexOrName >= 0 && columnIndexOrName < this.columns.length) return columnIndexOrName;
+	
+	// otherwise search for the name
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
-	if (!isNaN(columnIndexOrName)) return (columnIndexOrName < 0 || columnIndexOrName >= this.columns.length) ? -1 : columnIndexOrName;
+
 	return -1;
 };
 

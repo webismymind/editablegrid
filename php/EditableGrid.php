@@ -11,6 +11,16 @@ class EditableGrid {
 		$this->columns = array();
 	}
 	
+	public static function escapeXML($str) 
+	{
+		$str = str_replace('"', "&quot;", $str);
+		$str = str_replace("'", "&apos;", $str);
+		$str = str_replace("&", "&amp;", $str);
+		$str = str_replace("<", "&lt;", $str);
+		$str = str_replace(">", "&gt;", $str);
+		return $str;
+	}
+	
 	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $bar = true) 
 	{
 		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "bar" => $bar, "values" => $values );
@@ -28,9 +38,7 @@ class EditableGrid {
 		$xml.= "<table><metadata>\n";
 
 		foreach ($this->columns as $name => $info) {
-			$label = $info['label'];
-			$label = str_replace('"', "&quot;", $label);
-			$label = str_replace("'", "&apos;", $label);
+			$label = self::escapeXML($info['label']);
 			$xml.= "<column name='$name' label='$label' datatype='{$info['type']}'". ($info['bar'] ? "" : " bar='false'") . " editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				$xml.= "<values>\n";
@@ -51,7 +59,7 @@ class EditableGrid {
 			
 			foreach ($this->columns as $name => $info) {
 				$field = $info['field'];
-				$xml.= "<column name='{$name}'><![CDATA[" . /*htmlspecialchars(*/$this->_getRowField($row, $field)/*)*/ . "]]></column>\n";
+				$xml.= "<column name='{$name}'><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
 			}
 			$xml.= "</row>\n";
 		}
