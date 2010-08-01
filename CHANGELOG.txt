@@ -172,9 +172,9 @@ Advanced:
    - method setValueAt returns the previous value
    - TextCellEditor accepts a configuration object
    
-[29/07/2010] EditableGrid v1.0.9
+[01/08/2010] EditableGrid v1.0.9
 ================================
 
 Bugfixes:
 - the PHP wrapper replaces all special XML characters in column labels by the corresponding XML code (&, ', ", <, >)
-- getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority
+- getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority)
