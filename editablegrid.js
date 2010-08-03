@@ -679,8 +679,8 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
 	if (typeof columnIndexOrName == "undefined" || columnIndexOrName === "") return -1;
 	
-	// TODO: problem beacuse the name of a column could be a valid index, and we cannot make the distinction here!
-		
+	// TODO: problem because the name of a column could be a valid index, and we cannot make the distinction here!
+	
 	// if columnIndexOrName is a number which is a valid index return it
 	if (!isNaN(columnIndexOrName) && columnIndexOrName >= 0 && columnIndexOrName < this.columns.length) return columnIndexOrName;
 	
