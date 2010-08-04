@@ -33,13 +33,14 @@ EditableGrid.prototype.checkChartLib = function()
  * @param divId
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor)
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha)
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
 		if (typeof bgColor == 'undefined') bgColor = "#ffffff";
+		if (typeof alpha == 'undefined') alpha = 0.9;
 
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -55,7 +56,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
 			var bar = new ofc_element("bar_3d");
-			bar.alpha = 0.9;
+			bar.alpha = alpha;
 			bar.colour = smartColors1[chart.elements.length % smartColors1.length];
 			bar.fill = "transparent";
 			bar.text = getColumnLabel(c);
@@ -117,7 +118,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param divId
  * @return
  */
-EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle, bgColor, gradientFill) 
+EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle, bgColor, alpha, gradientFill) 
 {
 	with (this) {
 
@@ -125,6 +126,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 
 		if (typeof gradientFill == 'undefined') gradientFill = true;
 		if (typeof bgColor == 'undefined') bgColor = "#ffffff";
+		if (typeof alpha == 'undefined') alpha = 0.5;
 
 		var type = getColumnType(valueColumnIndexOrName);
 		if (type != "double" && type != "integer") return;
@@ -143,7 +145,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 	
 		var pie = new ofc_element("pie");
 		pie.colours = smartColors2;
-		pie.alpha = 0.5;
+		pie.alpha = alpha;
 		pie['gradient-fill'] = gradientFill;
 		
 		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
