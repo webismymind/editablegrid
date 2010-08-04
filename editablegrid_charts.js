@@ -33,17 +33,19 @@ EditableGrid.prototype.checkChartLib = function()
  * @param divId
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend)
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor)
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
+		if (typeof bgColor == 'undefined') bgColor = "#ffffff";
+
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
 
 		var chart = new ofc_chart();
-		chart.bg_colour = "#ffffff";
+		chart.bg_colour = bgColor;
 		chart.set_title({text: title || '', style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
 	
 		var columnCount = getColumnCount();
@@ -115,11 +117,14 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param divId
  * @return
  */
-EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
+EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle, bgColor, gradientFill) 
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
+
+		if (typeof gradientFill == 'undefined') gradientFill = true;
+		if (typeof bgColor == 'undefined') bgColor = "#ffffff";
 
 		var type = getColumnType(valueColumnIndexOrName);
 		if (type != "double" && type != "integer") return;
@@ -131,7 +136,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
 		
 		var chart = new ofc_chart();
-		chart.bg_colour = "#ffffff";
+		chart.bg_colour = bgColor;
 		chart.set_title({text: title, style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
 	
 		var rowCount = getRowCount();
@@ -139,7 +144,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		var pie = new ofc_element("pie");
 		pie.colours = smartColors2;
 		pie.alpha = 0.5;
-		pie['gradient-fill'] = true;
+		pie['gradient-fill'] = gradientFill;
 		
 		if (typeof startAngle != 'undefined') pie['start-angle'] = startAngle;
 
