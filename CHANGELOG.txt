@@ -188,3 +188,4 @@ API:
 
 Bugfixes:
 - avoid negative padding when displaying an editor inside a cell
+- always apply the "number" class to numerical cells, but also to column headers

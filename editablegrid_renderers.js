@@ -23,6 +23,9 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	// remove existing content	
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 
+	// always apply the number style to numerical cells and column headers
+	if (this.column.isNumerical()) EditableGrid.prototype.addClassName(element, "number");
+
 	// call the specialized render method
 	return this.render(element, typeof value == 'string' ? htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : value);
 };
@@ -44,7 +47,6 @@ EnumCellRenderer.prototype.render = function(element, value)
 {
 	var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
 	element.innerHTML = (typeof value != 'undefined' ? (value in optionValues ? optionValues[value] : value) : "");
-	if (this.column.isNumerical()) EditableGrid.prototype.addClassName(element, "number");
 };
 
 /**
@@ -67,7 +69,6 @@ NumberCellRenderer.prototype.render = function(element, value)
 	}
 	
 	element.innerHTML = displayValue;
-	EditableGrid.prototype.addClassName(element, "number");
 	element.style.fontWeight = isNAN ? "normal" : "";
 };
 
