@@ -28,7 +28,7 @@ class EditableGrid {
 	
 	private function _getRowField($row, $field) 
 	{
-		return is_array($row) ? $row[$field] : $row->$field;
+		return is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
 	}
 	
 	public function getXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
@@ -50,24 +50,29 @@ class EditableGrid {
 
   
 		$xml.= "</metadata><data>\n";
-	
-		foreach ($rows as $row) { 
-	
-			$xml.= "<row id='" . $this->_getRowField($row, 'id') . "'";
-			foreach ($customRowAttributes as $name => $field) $xml.= " {$name}='" . ($encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field)) . "'";
-			$xml.= ">\n";
-			
-			foreach ($this->columns as $name => $info) {
-				$field = $info['field'];
-				$xml.= "<column name='{$name}'><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
-			}
-			$xml.= "</row>\n";
-		}
 		
-		$xml.= "</data></table>\n";
+		$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : NULL);
+		if (!$fetchMethod) foreach ($rows as $row) $xml.= $this->getRowXML($row, $customRowAttributes, $encodeCustomAttributes);
+		else while ($row = call_user_func(array($rows, $fetchMethod))) $xml.= $this->getRowXML($row, $customRowAttributes, $encodeCustomAttributes);
 
+		$xml.= "</data></table>\n";
 		return $xml;
 	} 
+	
+	private function getRowXML($row, $customRowAttributes, $encodeCustomAttributes)
+	{
+		$xml = "<row id='" . $this->_getRowField($row, 'id') . "'";
+		foreach ($customRowAttributes as $name => $field) $xml.= " {$name}='" . ($encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field)) . "'";
+		$xml.= ">\n";
+			
+		foreach ($this->columns as $name => $info) {
+			$field = $info['field'];
+			$xml.= "<column name='{$name}'><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
+		}
+
+		$xml.= "</row>\n";
+		return $xml;
+	}
 	
 	public function renderXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
 	{

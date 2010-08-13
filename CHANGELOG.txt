@@ -188,6 +188,10 @@ API:
 - added callback functions "tableRendered" and "chartRendered" called after a table or chart has been rendered
 - callback functions can now also be set globally by updating EditableGrid.prototype
 
+PHP wrapper:
+- get/renderXML is now able to handle any source of data: array, DB result set, Zend paginator (the row itself can be an array or an object)
+- does not output errors if there are some missing fields in the row (eg. 'id')
+
 Bugfixes:
 - avoid negative padding when displaying an editor inside a cell
 - always apply the "number" class to numerical cells, but also to column headers
