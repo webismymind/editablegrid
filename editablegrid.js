@@ -117,16 +117,7 @@ function EditableGrid(name, config)
 		saveOnBlur: true,
    		invalidClassName: "invalid",
    		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
-   		caption: null,
-    
-        // callback functions
-        tableLoaded: function() {},
-        tableSorted: function() {}, 
-		tableFiltered: function() {}, 
-        modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {},
-		isHeaderEditable: function(rowIndex, columnIndex) { return false; },
-		isEditable: function(rowIndex, columnIndex) { return true; },
-		readonlyWarning: function() {}
+   		caption: null    
     };
     
 	// override default properties with the ones given
@@ -158,6 +149,19 @@ function EditableGrid(name, config)
     	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
     }
 }
+
+/**
+ * Callback functions
+ */
+
+EditableGrid.prototype.tableLoaded = function() {};
+EditableGrid.prototype.tableRendered = function(containerid, className, tableid) {};
+EditableGrid.prototype.tableSorted = function() {};
+EditableGrid.prototype.tableFiltered = function() {};
+EditableGrid.prototype.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {};
+EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };
+EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true; };
+EditableGrid.prototype.readonlyWarning = function() {};
 
 /**
  * Load metadata and data from an XML url
@@ -1060,6 +1064,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     	
 		// resort table
 		sort();
+		
+		// callback
+		tableRendered(containerid, className, tableid);
     }
 };
 
