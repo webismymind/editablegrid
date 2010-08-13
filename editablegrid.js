@@ -434,8 +434,11 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
        	var rows = tHead.rows;
        	for (var i = 0; i < rows.length; i++) {
        		var cols = rows[i].cells;
-       		for (var j = 0; j < cols.length && j < columns.length; j++) {
-       			if (!columns[j].label) columns[j].label = cols[j].innerHTML;
+       		var columnIndexInModel = 0;
+       		for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
+       			if (!columns[columnIndexInModel].label) columns[columnIndexInModel].label = cols[j].innerHTML;
+       			var colspan = parseInt(cols[j].getAttribute("colspan"));
+       			columnIndexInModel += colspan > 1 ? colspan : 1;
        		}
        	}
 
@@ -1071,8 +1074,12 @@ EditableGrid.prototype._renderHeaders = function()
 		for (var i = 0; i < 1 /*rows.length*/; i++) {
 			var rowData = [];
 			var cols = rows[i].cells;
-			for (var j = 0; j < cols.length && j < columns.length; j++)
-				columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+       		var columnIndexInModel = 0;
+       		for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
+				columns[columnIndexInModel].headerRenderer._render(-1, columnIndexInModel, cols[j], columns[columnIndexInModel].label);
+       			var colspan = parseInt(cols[j].getAttribute("colspan"));
+       			columnIndexInModel += colspan > 1 ? colspan : 1;
+       		}
 		}
 	}
 };
