@@ -155,6 +155,7 @@ function EditableGrid(name, config)
  */
 
 EditableGrid.prototype.tableLoaded = function() {};
+EditableGrid.prototype.chartRendered = function() {};
 EditableGrid.prototype.tableRendered = function(containerid, className, tableid) {};
 EditableGrid.prototype.tableSorted = function() {};
 EditableGrid.prototype.tableFiltered = function() {};

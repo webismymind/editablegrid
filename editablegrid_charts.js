@@ -213,6 +213,8 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 					{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
 			);
 		}
+		
+		chartRendered();
 	}
 };
 

@@ -185,7 +185,7 @@ Bugfixes:
 API:
 - added optional parameters "bgColor", "alpha" and "gradientFill" to renderPieChart (defaults are: white / 0.5 / true)
 - added optional parameters "bgColor" and "alpha" renderBarChart (defaults are: white / 0.9)
-- added callback function "tableRendered" called after a table has been rendered
+- added callback functions "tableRendered" and "chartRendered" called after a table or chart has been rendered
 - callback functions can now also be set globally by updating EditableGrid.prototype
 
 Bugfixes:
