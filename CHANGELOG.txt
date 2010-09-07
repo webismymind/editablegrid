@@ -195,3 +195,4 @@ PHP wrapper:
 Bugfixes:
 - avoid negative padding when displaying an editor inside a cell
 - always apply the "number" class to numerical cells, but also to column headers
+- takes "colspan" attributes on column headers into account when using attachToTable (this way the header will be rendered using the correct column type).
