@@ -179,7 +179,7 @@ Bugfixes:
 - the PHP wrapper replaces all special XML characters in column labels by the corresponding XML code (&, ', ", <, >)
 - getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority)
 
-[07/09/2010] EditableGrid v1.0.10
+[07/09/2010] EditableGrid v1.0.10 - RELEASED UNDER THE GNU GPL
 =================================
 
 API:
