@@ -2,7 +2,7 @@
  * EditableGrid_validators.js
  * 
  * Copyright 2010 Webismymind SPRL
-
+ *
  * This file is part of EditableGrid.
  * 
  * EditableGrid is free software: you can redistribute it and/or modify
