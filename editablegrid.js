@@ -487,7 +487,7 @@ EditableGrid.prototype._createCellRenderer = function(column)
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
     	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
     	column.datatype == "email" ? new EmailCellRenderer() : 
-        column.datatype == "website" ? new WebsiteCellRenderer() : 
+        column.datatype == "website" || column.datatype == "url" ? new WebsiteCellRenderer() : 
         column.datatype == "date" ? new DateCellRenderer() : 
     	new CellRenderer();
 
@@ -524,7 +524,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
 		column.datatype == "boolean" ? null :
 		column.datatype == "email" ? new TextCellEditor(column.precision) :
-		column.datatype == "website" ? new TextCellEditor(column.precision) :
+		column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
 		column.datatype == "date" ? new TextCellEditor(column.precision, 10) :
 		new TextCellEditor(column.precision);  
 		
@@ -930,7 +930,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 {
 	if (column.datatype == "integer" || column.datatype == "double") column.cellValidators.push(new NumberCellValidator(column.datatype));
 	else if (column.datatype == "email") column.cellValidators.push(new EmailCellValidator());
-	else if (column.datatype == "website") column.cellValidators.push(new WebsiteCellValidator());
+	else if (column.datatype == "website" || column.datatype == "url") column.cellValidators.push(new WebsiteCellValidator());
 	else if (column.datatype == "date") column.cellValidators.push(new DateCellValidator(this));
 };
 
