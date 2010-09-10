@@ -59,7 +59,7 @@
 		</column>
 				
 		<column name="email" label="EMAIL" datatype="email" editable="true"/>
-		<!--column name="website" label="WEBSITE" datatype="website" editable="true"/-->
+		<!--column name="website" label="WEBSITE" datatype="url" editable="true"/-->
 		<column name="freelance" label="FREELANCE" datatype="boolean" editable="true"/>
 		<column name="lastvisit" label="LAST VISIT" datatype="date" editable="true"/>
 		<column name="action" label="" datatype="html"/>
