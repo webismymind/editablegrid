@@ -737,10 +737,22 @@ EditableGrid.prototype.getRowId = function(rowIndex)
 /**
  * Get custom row attribute specified in XML
  * @param {Integer} index of the row
+ * @param {String} name of the attribute
  */
 EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
 {
 	return this.data[rowIndex][attributeName];
+};
+
+/**
+ * Set custom row attribute
+ * @param {Integer} index of the row
+ * @param {String} name of the attribute
+ * @param value of the attribute
+ */
+EditableGrid.prototype.setRowAttribute = function(rowIndex, attributeName, attributeValue)
+{
+	this.data[rowIndex][attributeName] = attributeValue;
 };
 
 /**
@@ -757,7 +769,7 @@ EditableGrid.prototype.removeRow = function(rowId)
 
 /**
  * Get index of row with given id
- * @param {Integer} rowId
+ * @param {Integer} rowId or row object
  */
 EditableGrid.prototype.getRowIndex = function(rowId) 
 {
