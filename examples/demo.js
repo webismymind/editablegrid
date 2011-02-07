@@ -100,8 +100,10 @@ function initializeGrid()
 		};
 		
 		// render for the action column
-		setCellRenderer("action", new CellRenderer({render: function(cell, value) { 
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + value + ");\" style=\"cursor:pointer\"" +
+		setCellRenderer("action", new CellRenderer({render: function(cell, value) {
+			// this action will remove the row, so first find the ID of the row containing this cell 
+			var rowId = editableGrid.getRowId(cell.rowIndex);
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow('" + rowId + "');\" style=\"cursor:pointer\"" +
 							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 		}})); 
 
