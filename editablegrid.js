@@ -781,8 +781,9 @@ EditableGrid.prototype.getRowIndex = function(rowId)
  * Add row with given id and data
  * @param {Integer} rowId
  * @param {Integer} columns
+ * @param {Boolean} dontSort
  */
-EditableGrid.prototype.addRow = function(rowId, cellValues)
+EditableGrid.prototype.addRow = function(rowId, cellValues, dontSort)
 {
 	with (this) {
 		
@@ -804,7 +805,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues)
 		}
 
 		// resort table
-		sort();
+		if (!dontSort) sort();
 	}
 };
 
