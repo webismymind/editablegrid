@@ -177,6 +177,7 @@ EditableGrid.prototype.tableRendered = function(containerid, className, tableid)
 EditableGrid.prototype.tableSorted = function() {};
 EditableGrid.prototype.tableFiltered = function() {};
 EditableGrid.prototype.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {};
+EditableGrid.prototype.rowChanged = function(oldRow, newRow) {};
 EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };
 EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true; };
 EditableGrid.prototype.readonlyWarning = function() {};
@@ -1149,6 +1150,11 @@ EditableGrid.prototype.mouseClicked = function(e)
 		// edit current cell value
 		var column = columns[columnIndex];
 		if (column) {
+			if(rowIndex>-1 && rowIndex!=mouseClicked.lastRow) {
+				// callback
+				rowChanged(mouseClicked.lastRow,rowIndex);				
+				mouseClicked.lastRow=rowIndex;
+			}
 			if (!column.editable) { readonlyWarning(column); }
 			else {
 				if (rowIndex < 0) { 
