@@ -113,6 +113,8 @@ function EnumProvider(config)
  * So practically, in these browsers you should set allowSimultaneousEdition to true if you want to use columns with option values and/or enum providers.
  * This also used to happen in older versions of Google Chrome Linux but it has been fixed, so upgrade if needed.</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
+ * <li>ignoreLastRow: ignore last row when sorting and charting the data (typically for a 'total' row)</li>
+ * <li>caption: text to use as the grid's caption</li>
  * </ul>
  * @constructor
  * @class EditableGrid
@@ -158,6 +160,7 @@ function EditableGrid(name, config)
     this.sortDescending = false;
     this.baseUrl = this.detectDir();
     this.nbHeaderRows = 1;
+    this.lastSelectedRowIndex = -1;
     
     if (this.enableSort) {
     	this.sortUpImage = new Image();
@@ -177,7 +180,7 @@ EditableGrid.prototype.tableRendered = function(containerid, className, tableid)
 EditableGrid.prototype.tableSorted = function() {};
 EditableGrid.prototype.tableFiltered = function() {};
 EditableGrid.prototype.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {};
-EditableGrid.prototype.rowChanged = function(oldRow, newRow) {};
+EditableGrid.prototype.rowSelected = function(oldRowIndex, newRowIndex) {};
 EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };
 EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true; };
 EditableGrid.prototype.readonlyWarning = function() {};
@@ -1147,14 +1150,16 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
 		var columnIndex = target.cellIndex;
 
-		// edit current cell value
 		var column = columns[columnIndex];
 		if (column) {
-			if(rowIndex>-1 && rowIndex!=mouseClicked.lastRow) {
-				// callback
-				rowChanged(mouseClicked.lastRow,rowIndex);				
-				mouseClicked.lastRow=rowIndex;
+			
+			// if another row has been selected: callback
+			if (rowIndex > -1 && rowIndex != lastSelectedRowIndex) {
+				rowSelected(lastSelectedRowIndex, rowIndex);				
+				lastSelectedRowIndex = rowIndex;
 			}
+			
+			// edit current cell value
 			if (!column.editable) { readonlyWarning(column); }
 			else {
 				if (rowIndex < 0) { 
