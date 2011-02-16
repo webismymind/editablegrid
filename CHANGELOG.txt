@@ -196,3 +196,22 @@ Bugfixes:
 - avoid negative padding when displaying an editor inside a cell
 - always apply the "number" class to numerical cells, but also to column headers
 - takes "colspan" attributes on column headers into account when using attachToTable (this way the header will be rendered using the correct column type).
+
+[17/02/2011] EditableGrid v1.0.11
+=================================
+
+1) A new directory "extensions" has been created.
+   This directory will contain some interesting cell editors, renderers and validators.
+   It contains a subdirectory "jquery" with the jQuery library v1.4.2.
+   Extensions may indeed be based on jQuery, unlike the core library which stays jQuery-independent.
+
+2) Added two variants of an "AutocompleteCellEditor", each based on a different autocomplete jQuery plugin.
+   The model is updated (and the modelChanged event fired) when a suggestion is selected either by clicking or by pressing ENTER on it.
+   The demo uses AutocompleteCellEditor to add auto completion on column "FIRSTNAME".
+   For testing purposes, demo.html uses the first variant, and demo_attach.html the second one.
+   NB: This is based on an original idea by Jasper Visser.
+
+3) API:
+   - added function setRowAttribute
+   - added rowSelected callback
+   - some fixes in jsdoc comments
