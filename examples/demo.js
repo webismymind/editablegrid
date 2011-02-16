@@ -88,6 +88,11 @@ function initializeGrid()
 			render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
 		})); 
 
+		// use autocomplete on firstname
+		setCellEditor("firstname", new AutocompleteCellEditor({
+			suggestions: ['Mark', 'Paul', 'Jackie', 'Greg', 'Matthew', 'Anthony', 'Claude', 'Louis', 'Marcello', 'Bernard', 'Betrand', 'Jessica', 'Patrick', 'Robert', 'John', 'Jack', 'Duke', 'Denise', 'Antoine', 'Coby', 'Rana', 'Jasmine', 'André', 'Martin', 'Amédé', 'Wanthus']
+		}));
+
 		// add a cell validator to check that the age is in [16, 100[
 		addCellValidator("age", new CellValidator({ 
 			isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }

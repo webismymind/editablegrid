@@ -31,7 +31,7 @@ function CellEditor(config) { this.init(config); }
 CellEditor.prototype.init = function(config) 
 {
 	// override default properties with the ones given
-	for (var p in config) this[p] = config[p];
+	if (config) for (var p in config) this[p] = config[p];
 };
 
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
@@ -72,16 +72,16 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		}
 	};
 
-	// and display the resulting editor widget
+	// if simultaneous edition is not allowed, we cancel edition when focus is lost
+	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
+			function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
+			function(event) { this.onblur = null; this.celleditor.cancelEditing(this.element); };
+
+	// display the resulting editor widget
 	this.displayEditor(element, editorInput);
 	
 	// give focus to the created editor
 	editorInput.focus();
-
-	// is simultaneous edition is not allowed, we cancel edition when focus is lost
-	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
-			function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
-			function(event) { this.onblur = null; this.celleditor.cancelEditing(this.element); };
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
