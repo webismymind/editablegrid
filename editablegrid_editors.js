@@ -37,45 +37,59 @@ CellEditor.prototype.init = function(config)
 CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
 {
 	// tag element and remember all the things we need to apply/cancel edition
-	element.isEditing = true;
-	element.rowIndex = rowIndex; 
-	element.columnIndex = columnIndex;
+	element.setAttribute('isEditing','true');
 	
 	// call the specialized getEditor method
 	var editorInput = this.getEditor(element, value);
+	this.editorInput=editorInput;
 	if (!editorInput) return false;
 	
-	// give access to the cell editor and element from the editor widget
-	editorInput.element = element;
-	editorInput.celleditor = this;
-
+	var _this=this;
+	
 	// listen to pressed keys
 	// - tab does not work with onkeyup (it's too late)
 	// - on Safari escape does not work with onkeypress
 	// - with onkeydown everything is fine (but don't forget to return false)
-	editorInput.onkeydown = function(event) {
+	var keydownListener = function(event) {
 
 		event = event || window.event;
 		
 		// ENTER or TAB: apply value
 		if (event.keyCode == 13 || event.keyCode == 9) {
-			this.onblur = null; 
-			this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
-			return false;
+			if(blurListener) editorInput.removeEventListener('blur',blurListener,false);
+			editorInput.removeEventListener('keydown',keydownListener,false);
+			_this.applyEditing(element, _this.getEditorValue(editorInput));
+			event.preventDefault();
 		}
 		
 		// ESC: cancel editing
 		if (event.keyCode == 27) { 
-			this.onblur = null; 
-			this.celleditor.cancelEditing(this.element); 
-			return false; 
+			if(blurListener) editorInput.removeEventListener('blur',blurListener,false);
+			editorInput.removeEventListener('keydown',keydownListener,false);
+			_this.cancelEditing(element); 
+			event.preventDefault();
 		}
 	};
+	editorInput.addEventListener('keydown',keydownListener,false);
 
 	// if simultaneous edition is not allowed, we cancel edition when focus is lost
-	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
-			function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
-			function(event) { this.onblur = null; this.celleditor.cancelEditing(this.element); };
+	var blurListener = null;
+	
+	if (!this.editablegrid.allowSimultaneousEdition) {
+		if (this.editablegrid.saveOnBlur) {
+			blurListener=function(event) {
+				editorInput.removeEventListener('blur',blurListener,false);
+				_this.applyEditing(element, _this.getEditorValue(editorInput));
+			}
+		}else{
+			blurListener=function(event) {
+				editorInput.removeEventListener('blur',blurListener,false);
+				_this.cancelEditing(element);
+			}
+		}
+		editorInput.addEventListener('blur',blurListener,false);
+	}
+	this.blurListener=blurListener;
 
 	// display the resulting editor widget
 	this.displayEditor(element, editorInput);
@@ -144,7 +158,7 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 CellEditor.prototype._clearEditor = function(element) 
 {
 	// untag element
-	element.isEditing = false;
+	element.removeAttribute('isEditing');
 
 	// clear fixed editor zone if any
 	if (this.editablegrid.editmode == "fixed") {
@@ -158,11 +172,13 @@ CellEditor.prototype.cancelEditing = function(element)
 	with (this) {
 		
 		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
-		if (element && element.isEditing) {
+		if (element && element.hasAttribute('isEditing')) {
 
 			// render value before editon
 			var renderer = this == column.headerEditor ? column.headerRenderer : column.cellRenderer;
-			renderer._render(element.rowIndex, element.columnIndex, element, editablegrid.getValueAt(element.rowIndex, element.columnIndex));
+			var rowIndex=element.parentNode.rowIndex - this.editableGrid.nbHeaderRows;
+			var columnIndex=element.cellIndex;
+			renderer._render(rowIndex, columnIndex, element, editablegrid.getValueAt(rowIndex, columnIndex));
 		
 			_clearEditor(element);
 		}
@@ -174,7 +190,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 	with (this) {
 
 		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
-		if (element && element.isEditing) {
+		if (element && element.hasAttribute('isEditing')) {
 
 			// do nothing if the value is rejected by at least one validator
 			if (!column.isValid(newValue)) return false;
@@ -182,13 +198,16 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 			// format the value before applying
 			var formattedValue = formatValue(newValue);
 
+			var rowIndex=element.parentNode.rowIndex - this.editablegrid.nbHeaderRows;
+			var columnIndex=element.cellIndex;
+			
 			// update model and render cell (keeping previous value)
-			var previousValue = editablegrid.setValueAt(element.rowIndex, element.columnIndex, formattedValue);
+			var previousValue = editablegrid.setValueAt(rowIndex, columnIndex, formattedValue);
 
 			// if the new value is different than the previous one, let the user handle the model change
-			var newValue = editablegrid.getValueAt(element.rowIndex, element.columnIndex);
+			var newValue = editablegrid.getValueAt(rowIndex, columnIndex);
 			if (!this.editablegrid.isSame(newValue, previousValue)) {
-				editablegrid.modelChanged(element.rowIndex, element.columnIndex, previousValue, newValue, editablegrid.getRow(element.rowIndex));
+				editablegrid.modelChanged(rowIndex, columnIndex, previousValue, newValue, editablegrid.getRow(rowIndex));
 			}
 		
 			_clearEditor(element);	
@@ -230,8 +249,13 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	htmlInput.value = this.editorValue(value);
 
 	// listen to keyup to check validity and update style of input field 
-	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
-
+	var _this=this;
+	this.keyUpListener=function(event) {
+		_this.updateStyle(this);
+	};
+	htmlInput.addEventListener('keyup',this.keyUpListener,false);
+	
+	this.htmlInput=htmlInput;
 	return htmlInput; 
 };
 
@@ -245,6 +269,19 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 	
 	// select text
 	htmlInput.select();
+};
+
+TextCellEditor.prototype._cancelEditing=TextCellEditor.prototype.cancelEditing;
+TextCellEditor.prototype._applyEditing=TextCellEditor.prototype.applyEditing;
+
+TextCellEditor.prototype.cancelEditing = function() {
+	this.htmlInput.removeEventListener('keyup',this.keyUpListener,false);
+	this._cancelEditing.apply(this,arguments);
+};
+
+TextCellEditor.prototype.applyEditing = function() {
+	this.htmlInput.removeEventListener('keyup',this.keyUpListener,false);
+	this._applyEditing.apply(this,arguments);
 };
 
 /**
@@ -284,7 +321,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	if (this.adaptHeight) htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
 
 	// get column option values for this row 
-	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
+	var optionValues = this.column.getOptionValuesForEdit(element.parentNode.rowIndex - this.editablegrid.nbHeaderRows);
 	
 	// add these options, selecting the current one
 	var index = 0, valueFound = false;
@@ -309,7 +346,26 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	}
 	                  
 	// when a new value is selected we apply it
-	htmlInput.onchange = function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.value); };
+	var _this=this;
+	this.changeListener=function(event) {
+		_this.editorInput.removeEventListener('blur',_this.blurListener,false);
+		_this.applyEditing(element, this.value);
+	};
+	htmlInput.addEventListener('change',this.changeListener,false);
 	
+	this.htmlInput=htmlInput;
 	return htmlInput; 
+};
+
+SelectCellEditor.prototype._cancelEditing=SelectCellEditor.prototype.cancelEditing;
+SelectCellEditor.prototype._applyEditing=SelectCellEditor.prototype.applyEditing;
+
+SelectCellEditor.prototype.cancelEditing = function() {
+	this.htmlInput.removeEventListener('change',this.changeListener,false);
+	this._cancelEditing.apply(this,arguments);
+};
+
+SelectCellEditor.prototype.applyEditing = function() {
+	this.htmlInput.removeEventListener('change',this.changeListener,false);
+	this._applyEditing.apply(this,arguments);
 };

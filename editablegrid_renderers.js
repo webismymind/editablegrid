@@ -37,10 +37,6 @@ CellRenderer.prototype.init = function(config)
 
 CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value) 
 {
-	// remember all the things we need
-	element.rowIndex = rowIndex; 
-	element.columnIndex = columnIndex;
-
 	// remove existing content	
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
 
@@ -66,7 +62,7 @@ function EnumCellRenderer(config) { this.init(config); }
 EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.render = function(element, value)
 {
-	var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
+	var optionValues = this.column.getOptionValuesForRender(element.parentNode.rowIndex - this.editablegrid.nbHeaderRows);
 	element.innerHTML = (typeof value != 'undefined' ? (value in optionValues ? optionValues[value] : value) : "");
 };
 
@@ -108,10 +104,6 @@ CheckboxCellRenderer.prototype._render = function(rowIndex, columnIndex, element
 	if (element.firstChild && (typeof element.firstChild.getAttribute != "function" || element.firstChild.getAttribute("type") != "checkbox"))
 		while (element.hasChildNodes()) element.removeChild(element.firstChild);
 
-	// remember all the things we need
-	element.rowIndex = rowIndex; 
-	element.columnIndex = columnIndex;
-
 	// call the specialized render method
 	return this.render(element, value);
 };
@@ -128,23 +120,21 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
 
-	// give access to the cell editor and element from the editor field
-	htmlInput.element = element;
-	htmlInput.cellrenderer = this;
-
 	// this renderer is a little special because it allows direct edition
 	var cellEditor = new CellEditor();
 	cellEditor.editablegrid = this.editablegrid;
 	cellEditor.column = this.column;
-	htmlInput.onclick = function(event) { 
-		element.rowIndex = element.parentNode.rowIndex - this.cellrenderer.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
-		element.isEditing = true;
+	var _this=this;
+	var clickListener=function(event) { 
+		// in case it has changed due to sorting or remove
+		element.setAttribute('isEditing','true');
 		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
 	};
-
+	htmlInput.addEventListener('click',clickListener,false);
+	
 	element.appendChild(htmlInput);
 	htmlInput.checked = value;
-	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.rowIndex, element.columnIndex));
+	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.parentNode.rowIndex - this.editablegrid.nbHeaderRows, element.cellIndex));
 
 	element.className = "boolean";
 };
@@ -207,20 +197,18 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 		// create a link that will sort (alternatively ascending/descending)
 		var link = document.createElement("a");
 		cell.appendChild(link);
-		link.columnName = this.columnName;
 		link.style.cursor = "pointer";
 		link.innerHTML = value;
-		link.editablegrid = this.editablegrid;
-		link.renderer = this;
-		link.onclick = function() {
-			with (this.editablegrid) {
+		var _this=this;
+		var clickListener=function() {
+			with (_this.editablegrid) {
 
 				var cols = tHead.rows[0].cells;
 				var clearPrevious = -1;
 				
-				if (sortedColumnName != this.columnName) {
+				if (sortedColumnName != _this.columnName) {
 					clearPrevious = sortedColumnName;
-					sortedColumnName = this.columnName;
+					sortedColumnName = _this.columnName;
 					sortDescending = false;
 				}
 				else {
@@ -243,6 +231,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 				if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 			}
 		};
+		link.addEventListener('click',clickListener,false);
 
 		// add an arrow to indicate if sort is ascending or descending
 		if (this.editablegrid.sortedColumnName == this.columnName) {

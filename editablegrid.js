@@ -168,6 +168,10 @@ function EditableGrid(name, config)
     	this.sortDownImage = new Image();
     	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
     }
+	
+	var _this=this;
+	//sets new mouseClickedWrapper for each individual grid object
+	if(!this.mouseClickedWrapper) this.mouseClickedWrapper=function(e){ _this.mouseClicked(e); };
 }
 
 /**
@@ -201,12 +205,12 @@ EditableGrid.prototype.loadXML = function(url)
         if (window.ActiveXObject) 
         {
             xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.onreadystatechange = function() {
+            xmlDoc.addEventListener('readystatechange', function() {
                 if (xmlDoc.readyState == 4) {
                     processXML();
                     tableLoaded();
                 }
-            };
+            }, false);
             xmlDoc.load(url);
         }
         
@@ -214,14 +218,14 @@ EditableGrid.prototype.loadXML = function(url)
         else if (/*Browser.WebKit && */ window.XMLHttpRequest) 
         {
            	xmlDoc = new XMLHttpRequest();
-           	xmlDoc.onreadystatechange = function () {
+           	xmlDoc.addEventListener('readystatechange', function () {
            		if (xmlDoc.readyState == 4) {
        				xmlDoc = xmlDoc.responseXML;
        				if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
        				processXML();
        				tableLoaded();
        			}
-       		};
+       		}, false);
            	xmlDoc.open("GET", url, true);
            	xmlDoc.send("");
         }
@@ -230,10 +234,10 @@ EditableGrid.prototype.loadXML = function(url)
         else if (document.implementation && document.implementation.createDocument) 
         {
         	xmlDoc = document.implementation.createDocument("", "", null);
-        	xmlDoc.onload = function() {
+        	xmlDoc.addEventListener('load', function() {
         		processXML();
                 tableLoaded();
-        	};
+        	}, false);
             xmlDoc.load(url);
         }
         
@@ -1042,9 +1046,8 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
             }
 
             // attach handler on click or double click 
-            table.editablegrid = this;
-        	if (doubleclick) table.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-        	else table.onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+        	if (doubleclick) table.addEventListener('dblclick', mouseClickedWrapper, false);
+        	else table.addEventListener('click', mouseClickedWrapper, false);
     	}
     	
     	// we must render a whole new table
@@ -1092,9 +1095,8 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     		}
 
     		// attach handler on click or double click 
-            _$(containerid).editablegrid = this;
-        	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-        	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+        	if (doubleclick) _$(containerid).addEventListener('dblclick', mouseClickedWrapper, false);
+        	else _$(containerid).addEventListener('click', mouseClickedWrapper, false);
     	}
     	
 		// resort table
@@ -1141,7 +1143,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		
 		// go up parents to find a cell or a link under the clicked position
 		while (target) if (target.tagName == "A" || target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
-		if (!target || !target.parentNode || !target.parentNode.parentNode || (target.parentNode.parentNode.tagName != "TBODY" && target.parentNode.parentNode.tagName != "THEAD") || target.isEditing) return;
+		if (!target || !target.parentNode || !target.parentNode.parentNode || (target.parentNode.parentNode.tagName != "TBODY" && target.parentNode.parentNode.tagName != "THEAD") || target.hasAttribute('isEditing')) return;
 		
 		// don't handle clicks on links
 		if (target.tagName == "A") return;
