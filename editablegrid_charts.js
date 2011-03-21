@@ -135,6 +135,102 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 };
 
 /**
+ * renderStackedBarChart
+ * Render open flash stacked bar chart for the data contained in the table model
+ * @param divId
+ * @return
+ */
+EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha)
+{
+	with (this) {
+
+		if (EditableGrid_check_lib && !checkChartLib()) return false;
+
+		if (typeof bgColor == 'undefined') bgColor = "#ffffff";
+		if (typeof alpha == 'undefined') alpha = 0.8;
+
+		labelColumnIndexOrName = labelColumnIndexOrName || 0;
+		var cLabel = getColumnIndex(labelColumnIndexOrName);
+
+		var chart = new ofc_chart();
+		chart.bg_colour = bgColor;
+		chart.set_title({text: title || '', style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
+	
+		var columnCount = getColumnCount();
+		var rowCount = getRowCount();
+	
+		var maxvalue = 0;
+		var bar = new ofc_element("bar_stack");
+		bar.alpha = alpha;
+		bar.colours = smartColors1;
+		bar.fill = "transparent";
+		bar.keys = [];
+
+		for (var c = 0; c < columnCount; c++) {
+			if (!isColumnBar(c)) continue;
+			bar.keys.push({ colour: smartColors1[bar.keys.length % smartColors1.length], text: getColumnLabel(c), "font-size": '13' });
+		}
+		
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
+			var valueRow = [];
+			var valueStack = 0;
+			for (var c = 0; c < columnCount; c++) {
+				if (!isColumnBar(c)) continue;
+				var value = getValueAt(r,c);
+				valueStack += value;
+				valueRow.push(value);
+			}
+			if (valueStack > maxvalue) maxvalue = valueStack; 
+			bar.values.push(valueRow);
+		}
+		
+		chart.add_element(bar);
+		
+		// round the y max value
+		var ymax = 10;
+		while (ymax < maxvalue) ymax *= 10;
+		var dec_step = ymax / 10;
+		while (ymax - dec_step > maxvalue) ymax -= dec_step;
+		
+		var xLabels = [];
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) xLabels.push(getValueAt(r,cLabel));
+	
+		chart.x_axis = {
+		    stroke: 1,
+		    tick_height:  10,
+			colour: "#E2E2E2",
+			"grid-colour": "#E2E2E2",
+		    labels: { labels: xLabels },
+		    "3d": 5
+		};
+
+		chart.y_axis = {
+			 stroke: 4,
+			 tick_length: 3,
+			 colour: "#428BC7",
+			 "grid-colour": "#E2E2E2",
+			 offset: 0,
+			 steps: ymax / 10.0,
+			 max: ymax
+		};
+			
+		// chart.num_decimals = 0;
+		
+		chart.x_legend = {
+			text: legend || getColumnLabel(labelColumnIndexOrName),
+			style: "{font-size: 11px; color: #000033}"
+		};
+
+		chart.y_legend = {
+			text: "",
+			style: "{font-size: 11px; color: #000033}"
+		};
+
+		updateChart(divId, chart);
+	}
+};
+
+/**
  * renderPieChart
  * @param columnIndexOrName
  * @param divId
