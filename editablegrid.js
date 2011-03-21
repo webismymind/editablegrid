@@ -42,6 +42,9 @@ function Column(config)
         unit: null,
         precision: null,
         nansymbol: '',
+    	decimal_point: '.',
+    	thousands_separator: ',',
+    	unit_before_number: false,
         bar: true, // is the column to be displayed in a bar chart ? relevant only for numerical columns 
         headerRenderer: null,
         headerEditor: null,
@@ -355,8 +358,42 @@ EditableGrid.prototype.processXML = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-    // extract precision, unit and nansymbol from type if two given
-    if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
+    // extract precision, unit and number format from type if 6 given
+    if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
+    	column.datatype = RegExp.$1;
+    	column.unit = RegExp.$2;
+    	column.precision = parseInt(RegExp.$3);
+    	column.decimal_point = RegExp.$4;
+    	column.thousands_separator = RegExp.$5;
+    	column.unit_before_number = RegExp.$6;
+    	column.nansymbol = RegExp.$7;
+    	
+    	// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
+    	column.unit = column.unit.trim();
+    	column.decimal_point = column.decimal_point.trim();
+    	column.thousands_separator = column.thousands_separator.trim();
+    	column.unit_before_number = column.unit_before_number.trim() == '1';
+    	column.nansymbol = column.nansymbol.trim();
+    }
+
+    // extract precision, unit and number format from type if 5 given
+    if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*)\)$/)) {
+    	column.datatype = RegExp.$1;
+    	column.unit = RegExp.$2;
+    	column.precision = parseInt(RegExp.$3);
+    	column.decimal_point = RegExp.$4;
+    	column.thousands_separator = RegExp.$5;
+    	column.unit_before_number = RegExp.$6;
+    	
+    	// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
+    	column.unit = column.unit.trim();
+    	column.decimal_point = column.decimal_point.trim();
+    	column.thousands_separator = column.thousands_separator.trim();
+    	column.unit_before_number = column.unit_before_number.trim() == '1';
+    }
+
+    // extract precision, unit and nansymbol from type if 3 given
+    else if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
     	column.datatype = RegExp.$1;
     	column.unit = RegExp.$2.trim();
     	column.precision = parseInt(RegExp.$3);
@@ -364,21 +401,26 @@ EditableGrid.prototype.parseColumnType = function(column)
     }
 
     // extract precision and unit from type if two given
-    if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
+    else if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
     	column.datatype = RegExp.$1.trim();
     	column.unit = RegExp.$2.trim();
     	column.precision = parseInt(RegExp.$3);
     }
 
     // extract precision or unit from type if any given
-    if (column.datatype.match(/(.*)\((.*)\)$/)) {
+    else if (column.datatype.match(/(.*)\((.*)\)$/)) {
     	column.datatype = RegExp.$1.trim();
     	var unit_or_precision = RegExp.$2.trim();
     	if (unit_or_precision.match(/^[0-9]*$/)) column.precision = parseInt(unit_or_precision);
     	else column.unit = unit_or_precision;
     }
     
-    if (isNaN(column.precision)) column.precision = null;
+	if (column.decimal_point == 'comma') column.decimal_point = ',';
+	if (column.decimal_point == 'dot') column.decimal_point = '.';
+	if (column.thousands_separator == 'comma') column.thousands_separator = ',';
+	if (column.thousands_separator == 'dot') column.thousands_separator = '.';
+
+	if (isNaN(column.precision)) column.precision = null;
     if (column.unit == '') column.unit = null;
     if (column.nansymbol == '') column.nansymbol = null;
 };

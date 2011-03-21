@@ -257,7 +257,11 @@ function NumberCellEditor(type) { this.type = type; }
 NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
 NumberCellEditor.prototype.editorValue = function(value) {
-	return isNaN(value) ? "" : value;
+	return isNaN(value) ? "" : (value + '').replace('.', this.column.decimal_point);
+};
+
+NumberCellEditor.prototype.getEditorValue = function(editorInput) {
+	return editorInput.value.replace(',', '.');
 };
 
 NumberCellEditor.prototype.formatValue = function(value)

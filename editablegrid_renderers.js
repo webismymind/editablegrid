@@ -85,8 +85,16 @@ NumberCellRenderer.prototype.render = function(element, value)
 	var isNAN = typeof value == 'number' && isNaN(value);
 	var displayValue = isNAN ? (column.nansymbol || "") : value;
 	if (typeof displayValue == 'number') {
-		if (column.precision !== null) displayValue = displayValue.toFixed(column.precision);
-		if (column.unit !== null) displayValue += ' ' + column.unit;
+		
+		if (column.precision !== null) {
+			// displayValue = displayValue.toFixed(column.precision);
+			displayValue = number_format(displayValue, column.precision, column.decimal_point, column.thousands_separator);
+		}
+		
+		if (column.unit !== null) {
+			if (column.unit_before_number) displayValue = column.unit + ' ' + displayValue;
+			else displayValue = displayValue + ' ' + column.unit;
+		}
 	}
 	
 	element.innerHTML = displayValue;
