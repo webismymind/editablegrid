@@ -177,6 +177,7 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
 			for (var c = 0; c < columnCount; c++) {
 				if (!isColumnBar(c)) continue;
 				var value = getValueAt(r,c);
+				value = isNaN(value) ? 0 : value;
 				valueStack += value;
 				valueRow.push(value);
 			}
