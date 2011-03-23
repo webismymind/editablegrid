@@ -200,7 +200,9 @@ String.prototype.endsWith = function(str) { return (this.match(str+"$")==str); }
  */
 EditableGrid.prototype.checkDate = function(strDate, strDatestyle) 
 {
+	strDatestyle = strDatestyle || this.dateFormat;
 	strDatestyle = strDatestyle || "EU";
+	
 	var strDate;
 	var strDateArray;
 	var strDay;
@@ -213,9 +215,10 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	var strSeparatorArray = new Array("-"," ","/",".");
 	var intElementNr;
 	var err = 0;
-	var strMonthArray = new Array(12);
 	
-	strMonthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	var strMonthArray = this.shortMonthNames;
+	strMonthArray = strMonthArray || ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	
 	if (!strDate || strDate.length < 1) return 0;
 
 	for (intElementNr = 0; intElementNr < strSeparatorArray.length; intElementNr++) {
@@ -268,6 +271,8 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	// get and check year
 	intYear = parseInt(strYear, 10);
 	if (isNaN(intYear)) return 4;
+	if (intYear < 70) { intYear = 2000 + intYear; strYear = '' + intYear; } // 70 become 1970, 69 becomes 1969, as with PHP's date_parse_from_format
+	if (intYear < 100) { intYear = 1900 + intYear; strYear = '' + intYear; }
 	if (intYear < 1900 || intYear > 2100) return 11;
 	
 	// check day in month
@@ -648,3 +653,4 @@ function number_format (number, decimals, dec_point, thousands_sep) {
     }
     return s.join(dec);
 }
+

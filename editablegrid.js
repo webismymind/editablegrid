@@ -115,14 +115,19 @@ function EnumProvider(config)
  * Warning: on some Linux browsers (eg. Epiphany), a blur event is sent when the user clicks on a 'select' input to expand it.
  * So practically, in these browsers you should set allowSimultaneousEdition to true if you want to use columns with option values and/or enum providers.
  * This also used to happen in older versions of Google Chrome Linux but it has been fixed, so upgrade if needed.</li>
+ * <li>saveOnBlur: should be cells saved when clicking elsewhere ? (default=true)</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
  * <li>ignoreLastRow: ignore last row when sorting and charting the data (typically for a 'total' row)</li>
  * <li>caption: text to use as the grid's caption</li>
+ * <li>dateFormat: EU or US (default="EU")</li>
+ * <li>shortMonthNames: list of month names (default=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])</li>
  * </ul>
  * @constructor
  * @class EditableGrid
  */
-function EditableGrid(name, config)
+function EditableGrid(name, config) { if (name && config) this.init(name, config); }
+
+EditableGrid.prototype.init = function (name, config)
 {
 	if (typeof name != "string" || typeof config != "object") {
 		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
@@ -139,7 +144,9 @@ function EditableGrid(name, config)
 		saveOnBlur: true,
    		invalidClassName: "invalid",
    		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
-   		caption: null    
+   		caption: null,
+   		dateFormat: "EU",
+   		shortMonthNames: null
     };
     
 	// override default properties with the ones given
