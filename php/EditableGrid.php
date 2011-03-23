@@ -35,9 +35,9 @@ class EditableGrid {
 	
 	public static function escapeXML($str) 
 	{
+		$str = str_replace("&", "&amp;", $str);
 		$str = str_replace('"', "&quot;", $str);
 		$str = str_replace("'", "&apos;", $str);
-		$str = str_replace("&", "&amp;", $str);
 		$str = str_replace("<", "&lt;", $str);
 		$str = str_replace(">", "&gt;", $str);
 		return $str;
