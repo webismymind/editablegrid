@@ -50,7 +50,10 @@ class EditableGrid {
 	
 	private function _getRowField($row, $field) 
 	{
-		return is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
+		$value = is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
+		
+		// to avoid any issue with javascript not able to parse XML, ensure data is valid for encoding 
+		return @iconv($this->encoding, $this->encoding."//IGNORE", $value);
 	}
 	
 	public function getXML($rows, $customRowAttributes=array(), $encodeCustomAttributes=false) 
