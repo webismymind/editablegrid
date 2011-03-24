@@ -121,6 +121,8 @@ function EnumProvider(config)
  * <li>caption: text to use as the grid's caption</li>
  * <li>dateFormat: EU or US (default="EU")</li>
  * <li>shortMonthNames: list of month names (default=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])</li>
+ * <li>smartColorsBar: colors used for rendering (stacked) bar charts</li>
+ * <li>smartColorsPie: colors used for rendering pie charts</li>
  * </ul>
  * @constructor
  * @class EditableGrid
@@ -146,7 +148,9 @@ EditableGrid.prototype.init = function (name, config)
    		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
    		caption: null,
    		dateFormat: "EU",
-   		shortMonthNames: null
+   		shortMonthNames: null,
+   		smartColorsBar: ["#dc243c","#00f629","#4040f6","#efe100","#f93fb1","#6f8183","#111111"],
+   		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"]
     };
     
 	// override default properties with the ones given

@@ -36,9 +36,6 @@ function EditableGrid_get_chart_data(divId)
 	return JSON.stringify(EditableGrid_pending_charts[divId]);
 }
 
-var smartColors1 = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
-var smartColors2 = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
-
 EditableGrid.prototype.checkChartLib = function()
 {
 	EditableGrid_check_lib = false;
@@ -53,6 +50,11 @@ EditableGrid.prototype.checkChartLib = function()
  * renderBarChart
  * Render open flash bar chart for the data contained in the table model
  * @param divId
+ * @param title
+ * @param labelColumnIndexOrName
+ * @param legend
+ * @param bgColor
+ * @param alpha
  * @return
  */
 EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha)
@@ -79,7 +81,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			if (!isColumnBar(c)) continue;
 			var bar = new ofc_element("bar_3d");
 			bar.alpha = alpha;
-			bar.colour = smartColors1[chart.elements.length % smartColors1.length];
+			bar.colour = smartColorsBar[chart.elements.length % smartColorsBar.length];
 			bar.fill = "transparent";
 			bar.text = getColumnLabel(c);
 			for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
@@ -138,6 +140,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * renderStackedBarChart
  * Render open flash stacked bar chart for the data contained in the table model
  * @param divId
+ * @param title
+ * @param labelColumnIndexOrName
+ * @param legend
+ * @param bgColor
+ * @param alpha
  * @return
  */
 EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha)
@@ -162,13 +169,13 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
 		var maxvalue = 0;
 		var bar = new ofc_element("bar_stack");
 		bar.alpha = alpha;
-		bar.colours = smartColors1;
+		bar.colours = smartColorsBar;
 		bar.fill = "transparent";
 		bar.keys = [];
 
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
-			bar.keys.push({ colour: smartColors1[bar.keys.length % smartColors1.length], text: getColumnLabel(c), "font-size": '13' });
+			bar.keys.push({ colour: smartColorsBar[bar.keys.length % smartColorsBar.length], text: getColumnLabel(c), "font-size": '13' });
 		}
 		
 		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
@@ -233,8 +240,14 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
 
 /**
  * renderPieChart
- * @param columnIndexOrName
  * @param divId
+ * @param title
+ * @param valueColumnIndexOrName
+ * @param labelColumnIndexOrName
+ * @param startAngle
+ * @param bgColor
+ * @param alpha
+ * @param gradientFill
  * @return
  */
 EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle, bgColor, alpha, gradientFill) 
@@ -263,7 +276,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		var rowCount = getRowCount();
 	
 		var pie = new ofc_element("pie");
-		pie.colours = smartColors2;
+		pie.colours = smartColorsPie;
 		pie.alpha = alpha;
 		pie['gradient-fill'] = gradientFill;
 		
