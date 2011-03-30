@@ -149,7 +149,7 @@ EditableGrid.prototype.init = function (name, config)
    		caption: null,
    		dateFormat: "EU",
    		shortMonthNames: null,
-   		smartColorsBar: ["#dc243c","#00f629","#4040f6","#efe100","#f93fb1","#6f8183","#111111"],
+   		smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
    		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"]
     };
     
