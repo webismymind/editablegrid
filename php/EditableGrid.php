@@ -86,8 +86,8 @@ class EditableGrid {
 	
 	private function getRowXML($row, $customRowAttributes, $encodeCustomAttributes)
 	{
-		$xml = "<row id='" . $this->_getRowField($row, 'id') . "'";
-		foreach ($customRowAttributes as $name => $field) $xml.= " {$name}='" . ($encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field)) . "'";
+		$xml = "<row id='" . self::escapeXML($this->_getRowField($row, 'id')) . "'";
+		foreach ($customRowAttributes as $name => $field) $xml.= " {$name}='" . ($encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : self::escapeXML($this->_getRowField($row, $field))) . "'";
 		$xml.= ">\n";
 			
 		foreach ($this->columns as $name => $info) {
