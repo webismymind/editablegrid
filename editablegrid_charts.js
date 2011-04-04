@@ -85,6 +85,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			bar.fill = "transparent";
 			bar.text = getColumnLabel(c);
 			for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
+				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
 				if (value > maxvalue) maxvalue = value; 
 				bar.values.push(value);
@@ -99,7 +100,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		while (ymax - dec_step > maxvalue) ymax -= dec_step;
 		
 		var xLabels = [];
-		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) xLabels.push(getValueAt(r,cLabel));
+		for (var r = 0; r < rowCount - (ignoreLastRow ? 1 : 0); r++) {
+			if (getRowAttribute(r, "skip") == "1") continue;
+			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
+			xLabels.push(label ? label : getValueAt(r,cLabel));
+		}
 	
 		chart.x_axis = {
 		    stroke: 1,
