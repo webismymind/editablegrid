@@ -40,7 +40,7 @@ function Column(config)
 		renderable: true,
         datatype: "string",
         unit: null,
-        precision: null,
+        precision: -1, // means that all decimals are displayed
         nansymbol: '',
     	decimal_point: '.',
     	thousands_separator: ',',
@@ -182,7 +182,7 @@ EditableGrid.prototype.init = function (name, config)
     	this.sortDownImage = new Image();
     	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
     }
-}
+};
 
 /**
  * Callback functions
@@ -388,7 +388,7 @@ EditableGrid.prototype.parseColumnType = function(column)
     }
 
     // extract precision, unit and number format from type if 5 given
-    if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*)\)$/)) {
+    else if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*)\)$/)) {
     	column.datatype = RegExp.$1;
     	column.unit = RegExp.$2;
     	column.precision = parseInt(RegExp.$3);
