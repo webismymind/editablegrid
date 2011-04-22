@@ -47,6 +47,9 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	// always apply the number style to numerical cells and column headers
 	if (this.column.isNumerical()) EditableGrid.prototype.addClassName(element, "number");
 
+	// always apply the boolean style to boolean column headers
+	if (this.column.datatype == 'boolean') EditableGrid.prototype.addClassName(element, "boolean");
+		
 	// call the specialized render method
 	return this.render(element, typeof value == 'string' ? htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : value);
 };
@@ -153,7 +156,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	element.appendChild(htmlInput);
 	htmlInput.checked = value;
 	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.rowIndex, element.columnIndex));
-
+	
 	element.className = "boolean";
 };
 

@@ -27,6 +27,10 @@ td.number {
 	white-space: nowrap;
 }
 
-.boolean {
+td.boolean {
+	text-align: center;
+}
+
+th.boolean {
 	text-align: center;
 }
