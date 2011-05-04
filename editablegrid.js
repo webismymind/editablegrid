@@ -624,6 +624,15 @@ EditableGrid.prototype.getColumnCount = function()
 };
 
 /**
+ * Returns true if the column exists
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.hasColumn = function(columnIndexOrName)
+{
+	return this.getColumnIndex(columnIndexOrName) >= 0;
+};
+
+/**
  * Returns the column
  * @param {Object} columnIndexOrName index or name of the column
  */
