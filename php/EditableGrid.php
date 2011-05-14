@@ -63,7 +63,7 @@ class EditableGrid {
 		$xml.= "<table><metadata>\n";
 
 		foreach ($this->columns as $name => $info) {
-			$label = self::escapeXML($info['label']);
+			$label = self::escapeXML(@iconv($this->encoding, $this->encoding."//IGNORE", $info['label']));
 			$xml.= "<column name='$name' label='$label' datatype='{$info['type']}'". ($info['bar'] ? "" : " bar='false'") . " editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				$xml.= "<values>\n";
