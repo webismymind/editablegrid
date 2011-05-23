@@ -191,7 +191,7 @@ EditableGrid.prototype.init = function (name, config)
 EditableGrid.prototype.tableLoaded = function() {};
 EditableGrid.prototype.chartRendered = function() {};
 EditableGrid.prototype.tableRendered = function(containerid, className, tableid) {};
-EditableGrid.prototype.tableSorted = function() {};
+EditableGrid.prototype.tableSorted = function(columnIndex, descending) {};
 EditableGrid.prototype.tableFiltered = function() {};
 EditableGrid.prototype.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {};
 EditableGrid.prototype.rowSelected = function(oldRowIndex, newRowIndex) {};
@@ -1278,7 +1278,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		delete row_array;
 		
 		// callback
-		tableSorted();
+		tableSorted(columnIndex, descending);
 	}
 };
 
