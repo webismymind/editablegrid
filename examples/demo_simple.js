@@ -34,7 +34,7 @@ function onloadXML()
 			
 			// renderer for the action column
 			this.setCellRenderer("action", new CellRenderer({render: function(cell, value) { 
-				cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + value + ");\" style=\"cursor:pointer\"" +
+				cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + value + ");\" style=\"cursor:pointer\">" +
 								 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 			}})); 
 
