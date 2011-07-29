@@ -125,8 +125,8 @@ class EditableGrid {
 		$info = array(
 			'unit' => '',
 			'precision' => -1,
-			'decimal_point' => '.',
-			'thousands_separator' => ',',
+			'decimal_point' => ',',
+			'thousands_separator' => '.',
 			'unit_before_number' => false,
 			'nansymbol' => ''
 		);
@@ -154,7 +154,7 @@ class EditableGrid {
     		$info['unit_before_number'] = $parts[6] == '1';
 		}
 		
-		else if (preg_match("/(.*)\((.*),(.*),(.*),(.*)\)$/", $type, $parts)) {
+		else if (preg_match("/(.*)\((.*),(.*),(.*)\)$/", $type, $parts)) {
 			$parts = array_map('trim', $parts);
 			$info['datatype'] = $parts[1];
     		$info['unit'] = $parts[2];
@@ -162,14 +162,14 @@ class EditableGrid {
     		$info['nansymbol'] = $parts[4];
 		}
 
-		else if (preg_match("/(.*)\((.*),(.*),(.*)\)$/", $type, $parts)) {
+		else if (preg_match("/(.*)\((.*),(.*)\)$/", $type, $parts)) {
 			$parts = array_map('trim', $parts);
 			$info['datatype'] = $parts[1];
     		$info['unit'] = $parts[2];
 	    	$info['precision'] = self::parseInt($parts[3]);
 		}
 
-		else if (preg_match("/(.*)\((.*),(.*)\)$/", $type, $parts)) {
+		else if (preg_match("/(.*)\((.*)\)$/", $type, $parts)) {
 			$parts = array_map('trim', $parts);
 			$info['datatype'] = $parts[1];
     		$precision = self::parseInt($parts[2]);
