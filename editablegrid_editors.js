@@ -202,7 +202,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
  * @class Class to edit a cell with an HTML text input 
  */
 
-function TextCellEditor(size, maxlen, config) { this.fieldSize = size || -1; this.maxLength = maxlen || 255; if (config) this.init(config); };
+function TextCellEditor(size, maxlen, config) { this.fieldSize = size || -1; this.maxLength = maxlen || -1; if (config) this.init(config); };
 TextCellEditor.prototype = new CellEditor();
 
 TextCellEditor.prototype.editorValue = function(value) {
