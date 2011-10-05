@@ -22,6 +22,7 @@
 
 EditableGrid.prototype.unsort = function(a,b) 
 {
+	// at index 3 we have the originalIndex
 	aa = isNaN(a[3]) ? 0 : parseFloat(a[3]);
 	bb = isNaN(b[3]) ? 0 : parseFloat(b[3]);
 	return aa-bb;

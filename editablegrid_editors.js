@@ -202,8 +202,16 @@ CellEditor.prototype.applyEditing = function(element, newValue)
  * @class Class to edit a cell with an HTML text input 
  */
 
-function TextCellEditor(size, maxlen, config) { this.fieldSize = size || -1; this.maxLength = maxlen || -1; if (config) this.init(config); };
+function TextCellEditor(size, maxlen, config) { 
+	if (size) this.fieldSize = size; 
+	if (maxlen) this.maxLength = maxlen; 
+	if (config) this.init(config); 
+};
+
 TextCellEditor.prototype = new CellEditor();
+TextCellEditor.prototype.fieldSize = -1;
+TextCellEditor.prototype.maxLength = -1;
+TextCellEditor.prototype.autoHeight = true;
 
 TextCellEditor.prototype.editorValue = function(value) {
 	return value;
@@ -222,11 +230,13 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "text");
 	if (this.maxLength > 0) htmlInput.setAttribute("maxlength", this.maxLength);
+
 	if (this.fieldSize > 0) htmlInput.setAttribute("size", this.fieldSize);
 	else htmlInput.style.width = this.editablegrid.autoWidth(element) + 'px'; // auto-adapt width to cell, if no length specified 
+	
 	var autoHeight = this.editablegrid.autoHeight(element);
 	if (this.editablegrid.Browser.Gecko) autoHeight -= 2; // Firefox: input higher then given size in px!
-	htmlInput.style.height = autoHeight + 'px'; // auto-adapt height to cell
+	if (this.autoHeight) htmlInput.style.height = autoHeight + 'px'; // auto-adapt height to cell
 	htmlInput.value = this.editorValue(value);
 
 	// listen to keyup to check validity and update style of input field 
@@ -256,14 +266,17 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
 function NumberCellEditor(type) { this.type = type; }
 NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
+// editorValue is called in getEditor to initialize field
 NumberCellEditor.prototype.editorValue = function(value) {
 	return isNaN(value) ? "" : (value + '').replace('.', this.column.decimal_point);
 };
 
+// getEditorValue is called before passing to isValid and applyEditing
 NumberCellEditor.prototype.getEditorValue = function(editorInput) {
 	return editorInput.value.replace(',', '.');
 };
 
+// formatValue is called in applyEditing
 NumberCellEditor.prototype.formatValue = function(value)
 {
 	return this.type == 'integer' ? parseInt(value) : parseFloat(value);

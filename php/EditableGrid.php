@@ -67,7 +67,11 @@ class EditableGrid {
 			$xml.= "<column name='$name' label='$label' datatype='{$info['type']}'". ($info['bar'] ? "" : " bar='false'") . " editable='". ($info['editable'] ? "true" : "false") . "'>\n";
 			if (is_array($info['values'])) {
 				$xml.= "<values>\n";
-				foreach ($info['values'] as $key => $value) $xml.= "<value value='{$key}'><![CDATA[{$value}]]></value>\n"; 
+				foreach ($info['values'] as $key => $value) {
+					$clean_value = @iconv($this->encoding, $this->encoding."//IGNORE", $value);
+					$xml.= "<value value='{$key}'><![CDATA[{$clean_value}]]></value>\n"; 
+					
+				}
 				$xml.= "</values>\n";
 			}
 			$xml.= "</column>\n";
