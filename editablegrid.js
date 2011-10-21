@@ -123,6 +123,7 @@ function EnumProvider(config)
  * <li>shortMonthNames: list of month names (default=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])</li>
  * <li>smartColorsBar: colors used for rendering (stacked) bar charts</li>
  * <li>smartColorsPie: colors used for rendering pie charts</li>
+ * <li>pageSize: maximum number of rows displayed (0 means we don't want any pagination, which is the default)</li>
  * </ul>
  * @constructor
  * @class EditableGrid
@@ -145,12 +146,13 @@ EditableGrid.prototype.init = function (name, config)
 		allowSimultaneousEdition: false,
 		saveOnBlur: true,
    		invalidClassName: "invalid",
-   		ignoreLastRow: false, // ignore last row for sorting and pie/bar charts
+   		ignoreLastRow: false,
    		caption: null,
    		dateFormat: "EU",
    		shortMonthNames: null,
    		smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
-   		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"]
+   		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
+   		pageSize: 0
     };
     
 	// override default properties with the ones given
@@ -169,13 +171,19 @@ EditableGrid.prototype.init = function (name, config)
     this.name = name;
     this.columns = [];
     this.data = [];
+    this.dataUnfiltered = null; // non null means that data is filtered
     this.xmlDoc = null;
     this.sortedColumnName = -1;
     this.sortDescending = false;
     this.baseUrl = this.detectDir();
     this.nbHeaderRows = 1;
     this.lastSelectedRowIndex = -1;
-    
+    this.currentPageIndex = 0;
+    this.currentFilter = null;
+    this.currentContainerid = null; 
+    this.currentClassName = null; 
+    this.currentTableid = null;
+
     if (this.enableSort) {
     	this.sortUpImage = new Image();
     	this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
@@ -272,6 +280,7 @@ EditableGrid.prototype.processXML = function()
 		// clear model and pointer to current table
 	    this.columns = [];
 	    this.data = [];
+	    this.dataUnfiltered = null;
 		this.table = null;
 
         // load metadata (only one tag <metadata> --> metadata[0])
@@ -343,7 +352,7 @@ EditableGrid.prototype.processXML = function()
             }
 
             // for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
-            var rowData = { originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
+            var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
             for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
             	var node = rows[i].attributes.item(attrIndex);
             	if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
@@ -457,8 +466,14 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 {
     with (this) {
+    	
+    	// clear model and pointer to current table
+    	this.columns = [];
+    	this.data = [];
+    	this.dataUnfiltered = null;
+    	this.table = null;
 
-    	// we have our new columns
+        // we have our new columns
         columns = _columns;
         for (var c = 0; c < columns.length; c++) {
         	
@@ -527,7 +542,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
             var rowData = [];
             var cols = rows[i].cells;
             for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
-       		data.push({originalIndex: i, id: rows[i].id, columns: rowData});
+       		data.push({ visible: true, originalIndex: i, id: rows[i].id, columns: rowData });
        		rows[i].id = this.name + '_' + rows[i].id;
         }
     }
@@ -860,7 +875,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues, dontSort)
         	rowData.push(getTypedValue(c, cellValue));
         }
 		var rowIndex = data.length;
-		data.push({originalIndex: rowIndex, id: rowId, columns: rowData});
+		data.push({ visible: true, originalIndex: rowIndex, id: rowId, columns: rowData });
 		
 		// create row in table and render content
 		var tr = tBody.insertRow(rowIndex);
@@ -1074,33 +1089,39 @@ EditableGrid.prototype.getCellY = function(oElement)
 };
 
 /**
- * Renders the grid as an HTML table in the document
- * @param {String} containerid 
- * id of the div in which you wish to render the HTML table (this parameter is ignored if you used attachToHTMLTable)
- * @param {String} className 
- * CSS class name to be applied to the table (this parameter is ignored if you used attachToHTMLTable)
- * @param {String} tableid
- * ID to give to the table (this parameter is ignored if you used attachToHTMLTable)
- * @see EditableGrid#attachToHTMLTable
- * @see EditableGrid#loadXML
+ * Private
+ * @param containerid
+ * @param className
+ * @param tableid
+ * @return
  */
-EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
+EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 {
     with (this) {
 
     	// if we are already attached to an existing table, just update the cell contents
-    	if (typeof table != "undefined" && table) {
+    	if (typeof table != "undefined" && table != null) {
     		
-    		// render headers
+            var _data = dataUnfiltered == null ? data : dataUnfiltered; 
+
+            // render headers
     		_renderHeaders();
 			   
     		// render content
             var rows = tBody.rows;
+            var skipped = 0;
             for (var i = 0; i < rows.length; i++) {
-                var rowData = [];
-                var cols = rows[i].cells;
-                for (var j = 0; j < cols.length && j < columns.length; j++) 
-                	if (columns[j].renderable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
+
+            	// filtering and pagination in attach mode means hiding rows
+                if (!_data[i].visible) { rows[i].style.display = 'none'; }
+                else if (skipped < pageSize * currentPageIndex) { skipped++; rows[i].style.display = 'none'; }
+                else {
+                	var rowData = [];
+                	var cols = rows[i].cells;
+                	rows[i].style.display = '';
+                	for (var j = 0; j < cols.length && j < columns.length; j++) 
+                		if (columns[j].renderable) columns[j].cellRenderer._render(i - startRowIndex, j, cols[j], getValueAt(i,j));
+                }
             }
 
             // attach handler on click or double click 
@@ -1114,6 +1135,19 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     		
     		if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
 
+        	currentContainerid = containerid;
+        	currentClassName = className;
+        	currentTableid = tableid;
+
+        	var startRowIndex = 0;
+        	var endRowIndex = getRowCount();
+
+        	// paginate if required
+        	if (pageSize > 0) {
+        		startRowIndex = currentPageIndex * pageSize;
+        		endRowIndex = Math.min(getRowCount(), startRowIndex + pageSize); 
+        	}
+        		
     		// create editablegrid table and add it to our container 
     		this.table = document.createElement("table");
     		table.className = className || "editablegrid";          
@@ -1141,9 +1175,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     		// create body and rows
     		this.tBody = document.createElement("TBODY");
     		table.appendChild(tBody);
-    		var rowCount = getRowCount();
-    		for (i = 0; i < rowCount; i++) {
-    			var tr = tBody.insertRow(i);
+    		var insertRowIndex = 0;
+            for (var i = startRowIndex; i < endRowIndex; i++) {
+    			var tr = tBody.insertRow(insertRowIndex++);
     			tr.id = this.name + "_" + data[i]['id'];
     			for (j = 0; j < columnCount; j++) {
         		
@@ -1158,13 +1192,44 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
         	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
         	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
     	}
+    }
+};
+
+    
+/**
+ * Renders the grid as an HTML table in the document
+ * @param {String} containerid 
+ * id of the div in which you wish to render the HTML table (this parameter is ignored if you used attachToHTMLTable)
+ * @param {String} className 
+ * CSS class name to be applied to the table (this parameter is ignored if you used attachToHTMLTable)
+ * @param {String} tableid
+ * ID to give to the table (this parameter is ignored if you used attachToHTMLTable)
+ * @see EditableGrid#attachToHTMLTable
+ * @see EditableGrid#loadXML
+ */
+EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
+{
+    with (this) {
+
+    	_rendergrid(containerid, className, tableid);
     	
-		// resort table
+		// resort and filter table
 		sort();
+		filter();
 		
 		// callback
 		tableRendered(containerid, className, tableid);
     }
+};
+
+/**
+ * Refreshes the grid
+ * @return
+ */
+EditableGrid.prototype.refreshGrid = function()
+{
+	if (this.currentContainerid != null) this.table = null; // if we are not in "attach mode", clear table to force a full re-render
+	this._rendergrid(this.currentContainerid, this.currentClassName, this.currentTableid);
 };
 
 /**
@@ -1258,8 +1323,8 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		
 		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
-		var rows = tBody.rows;
-		for (var i = 0; i < rows.length - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getValueAt(i, columnIndex), i, rows[i], data[i].originalIndex]);
+		var rowCount = getRowCount();
+		for (var i = 0; i < rowCount - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getValueAt(i, columnIndex), i, data[i].originalIndex]);
 		row_array.sort(columnIndex < 0 ? unsort :
 					   type == "integer" || type == "double" ? sort_numeric :
 					   type == "boolean" ? sort_boolean :
@@ -1267,17 +1332,16 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 					   sort_alpha);
 		
 		if (descending) row_array = row_array.reverse();
-		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getValueAt(rows.length - 1, columnIndex), rows.length - 1, rows[rows.length - 1], data[rows.length - 1].originalIndex]);
-		
+		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getValueAt(rowCount - 1, columnIndex), rowCount - 1, data[rowCount - 1].originalIndex]);
+
+		// rebuild data using the new order
 		var _data = data;
 		data = [];
-		for (var i = 0; i < row_array.length; i++) {
-			data.push(_data[row_array[i][1]]);
-			tBody.appendChild(row_array[i][2]);
-		}
+		for (var i = 0; i < row_array.length; i++) data.push(_data[row_array[i][1]]);
 		delete row_array;
 		
-		// callback
+		// refresh grid and callback
+		refreshGrid();
 		tableSorted(columnIndex, descending);
 	}
 };
@@ -1285,28 +1349,79 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 
 /**
  * Filter the content of the table
- * @param {Element} filter Element input element used to filter
+ * @param {String} filterString String string used to filter: all words must be found in the row
  */
-EditableGrid.prototype.filter = function(str)
+EditableGrid.prototype.filter = function(filterString)
 {
 	with (this) {
-    	var words = str.toLowerCase().split(" ");
-		var ele;
-		for (var r = 1; r < table.rows.length; r++){
-			ele = table.rows[r].innerHTML.replace(/<[^>]+>/g,"");
-		    var displayStyle = 'none';
-	        for (var i = 0; i < words.length; i++) {
-		    	if (ele.toLowerCase().indexOf(words[i])>=0)
-						displayStyle = '';
-		    	 else {
-					displayStyle = 'none';
-					break;
-			    }
-	        }   
-			table.rows[r].style.display = displayStyle;
-		}
-   		// callback
-		tableFiltered();  
 		
+		if (typeof filter != 'undefined') currentFilter = filterString;
+		
+		// unfilter if no or empty filter set
+		if (currentFilter == null || currentFilter == "") {
+			if (dataUnfiltered != null) {
+				data = dataUnfiltered;
+				dataUnfiltered = null;
+				setPageIndex(0);
+				tableFiltered();
+			}
+			return false;
+		}		
+		
+		var words = currentFilter.toLowerCase().split(" ");
+
+		// work on unfiltered data
+		if (dataUnfiltered != null) data = dataUnfiltered;
+		var rowCount = getRowCount();
+		for (var r = 0; r < rowCount; r++) {
+			data[r].visible = true;
+			var rowContent = ""; 
+			for (var c = 0; c < data[r].columns.length; c++) rowContent += data[r].columns[c];
+			
+			// if row contents does not match one word in the filter, hide the row
+	        for (var i = 0; i < words.length; i++) {
+	        	if (rowContent.toLowerCase().indexOf(words[i]) < 0) {
+	        		data[r].visible = false;
+	        		break;
+	        	}
+	        }
+		}
+
+		// keep only visible rows in data
+		dataUnfiltered = data;
+		data = [];
+		for (var r = 0; r < rowCount; r++) if (dataUnfiltered[r].visible) data.push(dataUnfiltered[r]);
+
+		// refresh grid (back on first page) and callback
+		setPageIndex(0);
+		tableFiltered();
 	}
+};
+
+/**
+ * Returns the number of pages according to the current page size
+ */
+EditableGrid.prototype.getNbPages = function()
+{
+	if (this.pageSize <= 0) { alert("getNbPages: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	return Math.ceil(this.getRowCount() / this.pageSize);
+};
+
+/**
+ * Returns the number of pages according to the current page size
+ */
+EditableGrid.prototype.getCurrentPageIndex = function()
+{
+	if (this.pageSize <= 0) { alert("getCurrentPage: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	return this.currentPageIndex;
+};
+
+/**
+ * Sets the current page (no effect if pageSize is 0)
+ * @param {Integer} pageIndex Integer page index
+ */
+EditableGrid.prototype.setPageIndex = function(pageIndex)
+{
+	this.currentPageIndex = pageIndex;
+	this.refreshGrid();
 };

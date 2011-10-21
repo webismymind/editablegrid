@@ -243,15 +243,15 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 					}
 				} 
 				
-				// render header for previous sort column
-				var j = getColumnIndex(clearPrevious);
-				if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+				// render header for previous sort column (not needed anymore since the grid is now fully refreshed after a sort - cf. possible pagination)
+				// var j = getColumnIndex(clearPrevious);
+				// if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 
 				sort(sortedColumnName, sortDescending);
 
-				// render header for new sort column
-				var j = getColumnIndex(sortedColumnName);
-				if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
+				// render header for new sort column (not needed anymore since the grid is now fully refreshed after a sort - cf. possible pagination)
+				// var j = getColumnIndex(sortedColumnName);
+				// if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 			}
 		};
 
