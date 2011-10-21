@@ -1321,6 +1321,10 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			}
 		}
 		
+		// work on unfiltered data
+		var filterActive = dataUnfiltered != null; 
+		if (filterActive) data = dataUnfiltered;
+
 		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
 		var rowCount = getRowCount();
@@ -1340,6 +1344,14 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		for (var i = 0; i < row_array.length; i++) data.push(_data[row_array[i][1]]);
 		delete row_array;
 		
+		if (filterActive) {
+
+			// keep only visible rows in data
+			dataUnfiltered = data;
+			data = [];
+			for (var r = 0; r < rowCount; r++) if (dataUnfiltered[r].visible) data.push(dataUnfiltered[r]);
+		}
+
 		// refresh grid and callback
 		refreshGrid();
 		tableSorted(columnIndex, descending);
@@ -1357,7 +1369,7 @@ EditableGrid.prototype.filter = function(filterString)
 		
 		if (typeof filter != 'undefined') currentFilter = filterString;
 		
-		// unfilter if no or empty filter set
+		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
 			if (dataUnfiltered != null) {
 				data = dataUnfiltered;
@@ -1365,13 +1377,14 @@ EditableGrid.prototype.filter = function(filterString)
 				setPageIndex(0);
 				tableFiltered();
 			}
-			return false;
+			return;
 		}		
 		
 		var words = currentFilter.toLowerCase().split(" ");
 
 		// work on unfiltered data
 		if (dataUnfiltered != null) data = dataUnfiltered;
+		
 		var rowCount = getRowCount();
 		for (var r = 0; r < rowCount; r++) {
 			data[r].visible = true;
