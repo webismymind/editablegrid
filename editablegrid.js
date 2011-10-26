@@ -1120,7 +1120,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
                 	var cols = rows[i].cells;
                 	rows[i].style.display = '';
                 	for (var j = 0; j < cols.length && j < columns.length; j++) 
-                		if (columns[j].renderable) columns[j].cellRenderer._render(i - startRowIndex, j, cols[j], getValueAt(i,j));
+                		if (columns[j].renderable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
                 }
             }
 
