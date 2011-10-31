@@ -152,7 +152,9 @@ EditableGrid.prototype.init = function (name, config)
    		shortMonthNames: null,
    		smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
    		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
-   		pageSize: 0
+   		pageSize: 0,
+        adjustEditorX: -3,
+        adjustEditorY: -3
     };
     
 	// override default properties with the ones given

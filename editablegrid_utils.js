@@ -80,24 +80,65 @@ EditableGrid.prototype.isStatic = function (element)
 	return (!position || position == "static");
 };
 
+EditableGrid.prototype.paddingLeft = function (element) 
+{
+	var padding = parseInt(this.getStyle(element, "paddingLeft", "padding-left"));
+	return isNaN(padding) ? 0 : Math.max(0, padding);
+};
+
+EditableGrid.prototype.paddingRight = function (element) 
+{
+	var padding = parseInt(this.getStyle(element, "paddingRight", "padding-right"));
+	return isNaN(padding) ? 0 : Math.max(0, padding);
+};
+
+EditableGrid.prototype.paddingTop = function (element) 
+{
+	var padding = parseInt(this.getStyle(element, "paddingTop", "padding-top"));
+	return isNaN(padding) ? 0 : Math.max(0, padding);
+};
+
+EditableGrid.prototype.paddingBottom = function (element) 
+{
+	var padding = parseInt(this.getStyle(element, "paddingBottom", "padding-bottom"));
+	return isNaN(padding) ? 0 : Math.max(0, padding);
+};
+
+EditableGrid.prototype.borderLeft = function (element) 
+{
+	var border_l = parseInt(this.getStyle(element, "borderRightWidth", "border-right-width"));
+	var border_r = parseInt(this.getStyle(element, "borderLeftWidth", "border-left-width"));
+	border_l = isNaN(border_l) ? 0 : border_l;
+	border_r = isNaN(border_r) ? 0 : border_r;
+	return Math.max(border_l, border_r);
+};
+
+EditableGrid.prototype.borderRight = function (element) 
+{
+	return this.borderLeft(element);
+};
+
+EditableGrid.prototype.borderTop = function (element) 
+{
+	var border_t = parseInt(this.getStyle(element, "borderTopWidth", "border-top-width"));
+	var border_b = parseInt(this.getStyle(element, "borderBottomWidth", "border-bottom-width"));
+	border_t = isNaN(border_t) ? 0 : border_t;
+	border_b = isNaN(border_b) ? 0 : border_b;
+	return Math.max(border_t, border_b);
+};
+
+EditableGrid.prototype.borderBottom = function (element) 
+{
+	return this.borderTop(element);
+};
+
 /**
  * Returns auto width for editor
  * @private
  */
 EditableGrid.prototype.autoWidth = function (element) 
 {
-	var paddingLeft = parseInt(this.getStyle(element, "paddingLeft", "padding-left"));
-	var paddingRight = parseInt(this.getStyle(element, "paddingRight", "padding-right"));
-	var borderLeft = parseInt(this.getStyle(element, "borderLeftWidth", "border-left-width"));
-	var borderRight = parseInt(this.getStyle(element, "borderRightWidth", "border-right-width"));
-
-	paddingLeft = isNaN(paddingLeft) ? 0 : paddingLeft;
-	paddingRight = isNaN(paddingRight) ? 0 : paddingRight;
-	borderLeft = isNaN(borderLeft) ? 0 : borderLeft;
-	borderRight = isNaN(borderRight) ? 0 : borderRight;
-	
-	if (this.Browser.Gecko) paddingLeft += 3; // Firefox: input larger then given size in px!
-	return element.offsetWidth - paddingLeft - paddingRight - borderLeft - borderRight;
+	return element.offsetWidth - this.paddingLeft(element) - this.paddingRight(element) - this.borderLeft(element) - this.borderRight(element);
 };
 
 /**
@@ -106,17 +147,7 @@ EditableGrid.prototype.autoWidth = function (element)
  */
 EditableGrid.prototype.autoHeight = function (element) 
 {
-	var paddingTop = parseInt(this.getStyle(element, "paddingTop", "padding-top"));
-	var paddingBottom = parseInt(this.getStyle(element, "paddingBottom", "padding-bottom"));
-	var borderTop = parseInt(this.getStyle(element, "borderTopWidth", "border-top-width"));
-	var borderBottom = parseInt(this.getStyle(element, "borderBottomWidth", "border-bottom-width"));
-	
-	paddingTop = isNaN(paddingTop) ? 0 : paddingTop;
-	paddingBottom = isNaN(paddingBottom) ? 0 : paddingBottom;
-	borderTop = isNaN(borderTop) ? 0 : borderTop;
-	borderBottom = isNaN(borderBottom) ? 0 : borderBottom;
-
-	return element.offsetHeight - paddingTop - paddingBottom - borderTop - borderBottom;
+	return element.offsetHeight - this.paddingTop(element) - this.paddingBottom(element) - this.borderTop(element) - this.borderBottom(element);
 };
 
 /**

@@ -114,16 +114,10 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		editorInput.style.position = "absolute";
 
 		// position editor input on the cell with the same padding as the actual cell content
-		var paddingLeft = parseInt(this.editablegrid.getStyle(element, "paddingLeft", "padding-left"));
-		var paddingTop = parseInt(this.editablegrid.getStyle(element, "paddingTop", "padding-top"));
-		if (isNaN(paddingLeft)) paddingLeft = 0; else paddingLeft = Math.max(0, paddingLeft - 3);
-		if (isNaN(paddingTop)) paddingTop = 0; else paddingTop = Math.max(0, paddingTop - 3);
-		
 		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
 		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
-		
-		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + paddingLeft) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + paddingTop) + "px";
+		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + this.editablegrid.paddingLeft(element) + this.editablegrid.adjustEditorX) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + this.editablegrid.paddingTop(element) + this.editablegrid.adjustEditorY) + "px";
 
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
@@ -235,7 +229,6 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	else htmlInput.style.width = this.editablegrid.autoWidth(element) + 'px'; // auto-adapt width to cell, if no length specified 
 	
 	var autoHeight = this.editablegrid.autoHeight(element);
-	if (this.editablegrid.Browser.Gecko) autoHeight -= 2; // Firefox: input higher then given size in px!
 	if (this.autoHeight) htmlInput.style.height = autoHeight + 'px'; // auto-adapt height to cell
 	htmlInput.value = this.editorValue(value);
 
