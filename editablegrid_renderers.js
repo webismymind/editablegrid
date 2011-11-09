@@ -69,8 +69,14 @@ function EnumCellRenderer(config) { this.init(config); }
 EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.render = function(element, value)
 {
-	var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
-	element.innerHTML = (typeof value != 'undefined' ? (value in optionValues ? optionValues[value] : value) : "");
+	var label = "";
+	if (typeof value != 'undefined') {
+		var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
+		if (value in optionValues) label = optionValues[value];
+		for (var optionValue in optionValues) if (typeof optionValues[optionValue] == 'object' && value in optionValues[optionValue]) label = optionValues[optionValue][value];
+		if (label == "") label = value;
+	}
+	element.innerHTML = label;
 };
 
 /**

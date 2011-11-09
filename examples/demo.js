@@ -83,6 +83,8 @@ function initializeGrid()
 			}
 		}));
 
+		getColumn("country").cellEditor.minWidth = 100;
+		
 		// use a flag image to render the selected country
 		setCellRenderer("country", new CellRenderer({
 			render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }

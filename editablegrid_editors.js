@@ -96,7 +96,7 @@ CellEditor.prototype.formatValue = function(value) {
 	return value;
 };
 
-CellEditor.prototype.displayEditor = function(element, editorInput) 
+CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adjustY) 
 {
 	// use same font in input as in cell content
 	editorInput.style.fontFamily = this.editablegrid.getStyle(element, "fontFamily", "font-family"); 
@@ -116,8 +116,8 @@ CellEditor.prototype.displayEditor = function(element, editorInput)
 		// position editor input on the cell with the same padding as the actual cell content
 		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
 		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
-		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + this.editablegrid.paddingLeft(element) + this.editablegrid.adjustEditorX) + "px";
-		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + this.editablegrid.paddingTop(element) + this.editablegrid.adjustEditorY) + "px";
+		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + this.editablegrid.paddingLeft(element) + (adjustX ? adjustX : 0)) + "px";
+		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + this.editablegrid.paddingTop(element) + (adjustY ? adjustY : 0)) + "px";
 
 		// if number type: align field and its content to the right
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
@@ -241,7 +241,7 @@ TextCellEditor.prototype.getEditor = function(element, value)
 TextCellEditor.prototype.displayEditor = function(element, htmlInput) 
 {
 	// call base method
-	CellEditor.prototype.displayEditor.call(this, element, htmlInput);
+	CellEditor.prototype.displayEditor.call(this, element, htmlInput, -1 * this.editablegrid.borderLeft(htmlInput), -1 * (this.editablegrid.borderTop(htmlInput) + 1));
 
 	// update style of input field
 	this.updateStyle(htmlInput);
@@ -281,7 +281,7 @@ NumberCellEditor.prototype.formatValue = function(value)
  * @class Class to edit a cell with an HTML select input 
  */
 
-function SelectCellEditor() { this.minWidth = 100; this.minHeight = 22; this.adaptHeight = true; this.adaptWidth = true;}
+function SelectCellEditor() { this.minWidth = 75; this.minHeight = 22; this.adaptHeight = true; this.adaptWidth = true;}
 SelectCellEditor.prototype = new CellEditor();
 
 SelectCellEditor.prototype.getEditor = function(element, value)
@@ -299,13 +299,35 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	// add these options, selecting the current one
 	var index = 0, valueFound = false;
 	for (var optionValue in optionValues) {
-	    var option = document.createElement('option');
-	    option.text = optionValues[optionValue];
-	    option.value = optionValue;
-	    // add does not work as expected in IE7 (cf. second arg)
-		try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
-        if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
-        index++;
+		
+		// if values are grouped
+		if (typeof optionValues[optionValue] == 'object') {
+
+			var optgroup = document.createElement('optgroup');
+			optgroup.label = optionValue; 
+			htmlInput.appendChild(optgroup); 
+
+			var groupOptionValues = optionValues[optionValue];
+			for (var optionValue in groupOptionValues) {
+
+				var option = document.createElement('option');
+			    option.text = groupOptionValues[optionValue];
+			    option.value = optionValue;
+			    optgroup.appendChild(option); 
+		        if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
+		        index++;
+			}
+		}
+		else {
+
+			var option = document.createElement('option');
+			option.text = optionValues[optionValue];
+			option.value = optionValue;
+			// add does not work as expected in IE7 (cf. second arg)
+			try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
+			if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
+			index++;
+		}
 	}
 	
 	// if the current value is not in the list add it to the front

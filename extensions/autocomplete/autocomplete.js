@@ -55,7 +55,7 @@ AutocompleteCellEditor.prototype.displayEditor = function(element, htmlInput)
 	// call base method
 	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
-	// disable default blur event handling wich interfer when clicking on a suggestion in the autocomplete
+	// disable default blur event handling which interfer when clicking on a suggestion in the autocomplete
 	htmlInput.onblur = null;
 
 	// disable default ENTER event wich interfer when pressing ENTER on a suggestion in the autocomplete

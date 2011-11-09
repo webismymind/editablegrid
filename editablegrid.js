@@ -152,9 +152,7 @@ EditableGrid.prototype.init = function (name, config)
    		shortMonthNames: null,
    		smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
    		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
-   		pageSize: 0,
-        adjustEditorX: -3,
-        adjustEditorY: -3
+   		pageSize: 0
     };
     
 	// override default properties with the ones given
@@ -300,6 +298,17 @@ EditableGrid.prototype.processXML = function()
             var enumValues = col.getElementsByTagName("values");
             if (enumValues.length > 0) {
             	optionValues = {};
+
+            	var enumGroups = enumValues[0].getElementsByTagName("group");
+                for (var g = 0; g < enumGroups.length; g++) {
+                	var groupOptionValues = {};
+                    enumValues = enumValues[0].getElementsByTagName("value");
+                    for (var v = 0; v < enumValues.length; v++) {
+                    	groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+                    }
+                    optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
+                }
+
                 enumValues = enumValues[0].getElementsByTagName("value");
                 for (var v = 0; v < enumValues.length; v++) {
                 	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
