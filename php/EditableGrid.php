@@ -73,7 +73,7 @@ class EditableGrid {
 						$xml.= "<group label='$grouplabel'>\n";
 						$values = $value;
 						foreach ($values as $key => $value) {
-							$clean_value = @iconv($this->encoding, $this->encoding."//IGNORE", $_value);
+							$clean_value = @iconv($this->encoding, $this->encoding."//IGNORE", $value);
 							$xml.= "<value value='{$key}'><![CDATA[{$clean_value}]]></value>\n";
 						}
 						$xml.= "</group>\n";
