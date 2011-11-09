@@ -302,7 +302,7 @@ EditableGrid.prototype.processXML = function()
             	var enumGroups = enumValues[0].getElementsByTagName("group");
                 for (var g = 0; g < enumGroups.length; g++) {
                 	var groupOptionValues = {};
-                    enumValues = enumValues[0].getElementsByTagName("value");
+                    enumValues = enumGroups[g].getElementsByTagName("value");
                     for (var v = 0; v < enumValues.length; v++) {
                     	groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
                     }

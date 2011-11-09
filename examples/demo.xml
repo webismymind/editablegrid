@@ -45,16 +45,22 @@
 		<column name="country" label="COUNTRY" datatype="string" editable="true">
 			<!-- These values will be ignored when using demo.js because in this file we declare a custom enumeration provider -->
 			<values>
-				<value value="be">Belgium</value>
-				<value value="fr">France</value>
-				<value value="uk">Great-Britain</value>
-				<value value="nl">Nederland</value>
-				<value value="br">Brazil</value>
-				<value value="ca">Canada</value>
-				<value value="us">USA</value>
-				<value value="ng">Nigeria</value>
-				<value value="za">South-Africa</value>
-				<value value="zw">Zimbabwe</value>
+				<group label="Europe">
+					<value value="be">Belgium</value>
+					<value value="fr">France</value>
+					<value value="uk">Great-Britain</value>
+					<value value="nl">Nederland</value>
+				</group>
+					<group label="America">
+					<value value="br">Brazil</value>
+					<value value="ca">Canada</value>
+					<value value="us">USA</value>
+				</group>
+					<group label="Africa">
+					<value value="ng">Nigeria</value>
+					<value value="za">South-Africa</value>
+					<value value="zw">Zimbabwe</value>
+				</group>
 			</values>
 		</column>
 				
