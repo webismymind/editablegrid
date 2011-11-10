@@ -281,9 +281,15 @@ NumberCellEditor.prototype.formatValue = function(value)
  * @class Class to edit a cell with an HTML select input 
  */
 
-function SelectCellEditor() { this.minWidth = 75; this.minHeight = 22; this.adaptHeight = true; this.adaptWidth = true;}
-SelectCellEditor.prototype = new CellEditor();
+function SelectCellEditor(config) { 
+	this.minWidth = 75; 
+	this.minHeight = 22; 
+	this.adaptHeight = true; 
+	this.adaptWidth = true;
+	this.init(config); 
+}
 
+SelectCellEditor.prototype = new CellEditor();
 SelectCellEditor.prototype.getEditor = function(element, value)
 {
 	// create select list
