@@ -74,7 +74,10 @@ EnumCellRenderer.prototype.render = function(element, value)
 		var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
 		if (value in optionValues) label = optionValues[value];
 		for (var optionValue in optionValues) if (typeof optionValues[optionValue] == 'object' && value in optionValues[optionValue]) label = optionValues[optionValue][value];
-		if (label == "") label = value;
+		if (label == "") {
+			var isNAN = typeof value == 'number' && isNaN(value);
+			label = isNAN ? "" : value;
+		}
 	}
 	element.innerHTML = label;
 };
