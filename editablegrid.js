@@ -300,19 +300,22 @@ EditableGrid.prototype.processXML = function()
             	optionValues = {};
 
             	var enumGroups = enumValues[0].getElementsByTagName("group");
-                for (var g = 0; g < enumGroups.length; g++) {
-                	var groupOptionValues = {};
-                    enumValues = enumGroups[g].getElementsByTagName("value");
-                    for (var v = 0; v < enumValues.length; v++) {
-                    	groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
-                    }
-                    optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
-                }
-
-                enumValues = enumValues[0].getElementsByTagName("value");
-                for (var v = 0; v < enumValues.length; v++) {
-                	optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
-                }
+            	if (enumGroups.length > 0) {
+            		for (var g = 0; g < enumGroups.length; g++) {
+            			var groupOptionValues = {};
+            			enumValues = enumGroups[g].getElementsByTagName("value");
+            			for (var v = 0; v < enumValues.length; v++) {
+            				groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+            			}
+            			optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
+            		}
+            	}
+            	else {
+            		enumValues = enumValues[0].getElementsByTagName("value");
+            		for (var v = 0; v < enumValues.length; v++) {
+            			optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+            		}
+            	}
             }
 
             // create new column           
