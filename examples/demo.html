@@ -51,9 +51,25 @@
 	
 	<body>
 		<h1>EditableGrid Demo - Loading Grid From XML</h1>
-		<div id="message"></div>
-		<div id="tablecontent"></div>
-		<div id="edition"></div>		
+		<div id="wrap">
+		
+			<!-- Feedback message zone -->
+			<div id="message"></div>
+		
+			<!-- Grid filter -->
+			<label for="filter">Filter :</label>
+			<input type="text" id="filter"/>
+		
+			<!-- Grid contents -->
+			<div id="tablecontent"></div>
+		
+			<!-- Paginator control -->
+			<div id="paginator"></div>
+		
+			<!--  Edition zone (to demonstrate the "fixed" editor mode) -->
+			<div id="edition"></div>
+			
+		</div>
 	</body>
 
 </html>

@@ -24,7 +24,8 @@
 var editableGrid = new EditableGrid("DemoGrid", {
 	enableSort: true, // true is the default, set it to false if you don't want sorting to be enabled
 	editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
-	editorzoneid: "edition" // will be used only if editmode is set to "fixed"
+	editorzoneid: "edition", // will be used only if editmode is set to "fixed"
+	pageSize: 10
 });
 
 // helper method to display a message
@@ -59,7 +60,7 @@ function initializeGrid()
 		// use a special header renderer to show an info icon for some columns
 		setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
 		setHeaderRenderer("height", new InfoHeaderRenderer("The height is given in meters"));
-		setHeaderRenderer("continent", new InfoHeaderRenderer("Note that the list of proposed countries depends on the selected continent"));
+		if (hasColumn('continent')) setHeaderRenderer("continent", new InfoHeaderRenderer("Note that the list of proposed countries depends on the selected continent"));
 		setHeaderRenderer("email", new InfoHeaderRenderer("Note the validator used automatically when you specify your column as being of type email"));
 		setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
 		
@@ -69,21 +70,24 @@ function initializeGrid()
 		// })); 
 
 		// the list of allowed countries depend on the selected continent
-		setEnumProvider("country", new EnumProvider({ 
-			
-			// the function getOptionValuesForEdit is called each time the cell is edited
-			// here we do only client-side processing, but you could use Ajax here to talk with your server
-			// if you do, then don't forget to use Ajax in synchronous mode 
-			getOptionValuesForEdit: function (grid, column, rowIndex) {
-				var continent = grid.getValueAt(rowIndex, grid.getColumnIndex("continent"));
-				if (continent == "eu") return { "be" : "Belgique", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"};
-				else if (continent == "am") return { "br" : "Brazil", "ca": "Canada", "us" : "USA" };
-				else if (continent == "af") return { "ng" : "Nigeria", "za": "South Africa", "zw" : "Zimbabwe" };
-				return null;
-			}
-		}));
+		if (hasColumn('continent')) {
 
-		getColumn("country").cellEditor.minWidth = 100;
+			setEnumProvider("country", new EnumProvider({ 
+			
+				// the function getOptionValuesForEdit is called each time the cell is edited
+				// here we do only client-side processing, but you could use Ajax here to talk with your server
+				// if you do, then don't forget to use Ajax in synchronous mode 
+				getOptionValuesForEdit: function (grid, column, rowIndex) {
+					var continent = editableGrid.getValueAt(rowIndex, editableGrid.getColumnIndex("continent"));
+					if (continent == "eu") return { "be" : "Belgique", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"};
+					else if (continent == "am") return { "br" : "Brazil", "ca": "Canada", "us" : "USA" };
+					else if (continent == "af") return { "ng" : "Nigeria", "za": "South Africa", "zw" : "Zimbabwe" };
+					return null;
+				}
+			}));
+		}
+
+		getColumn("country").cellEditor.minWidth = 105;
 		
 		// use a flag image to render the selected country
 		setCellRenderer("country", new CellRenderer({
@@ -92,7 +96,19 @@ function initializeGrid()
 
 		// use autocomplete on firstname
 		setCellEditor("firstname", new AutocompleteCellEditor({
-			suggestions: ['Mark', 'Paul', 'Jackie', 'Greg', 'Matthew', 'Anthony', 'Claude', 'Louis', 'Marcello', 'Bernard', 'Betrand', 'Jessica', 'Patrick', 'Robert', 'John', 'Jack', 'Duke', 'Denise', 'Antoine', 'Coby', 'Rana', 'Jasmine', 'André', 'Martin', 'Amédé', 'Wanthus']
+			suggestions: ['Leonard','Kirsten','Scott','Wayne','Stephanie','Astra','Charissa','Quin','Baxter','Jaime',
+			              'Isabella','Slade','Ariana','Mohammad','Candice','Leslie','Jamal','Shay','Duncan','Neil',
+			              'Kermit','Yardley','Arden','Lacy','Alisa','Selma','Scott','Natalie','Acton','Yoko','Abel',
+			              'Lewis','Kellie','Shad','Joan','Ifeoma','Paloma','Jarrod','Cailin','Risa','Rylee','Giacomo',
+			              'Kuame','Samuel','Ariel','Maggy','Dennis','Jocelyn','Joan','Kermit','Zorita','Tanya','Jasmine',
+			              'Aquila','Jena','Dorian','Stacy','Bradley','Ulla','Sybil','Barrett','Ursa','Ignatius',
+			              'Lenore','Owen','Sage','Tyrone','George','Deacon','Serina','Brian','Alden','Chadwick',
+			              'Oleg','Stewart','Cynthia','Coby','Briar','Kasimir','Margaret','Lesley','Kareem','Kirestin',
+			              'Zephania','Lee','Vladimir','Daryl','Henry','Amena','Camille','Dorian','Brenna','Anne','Price',
+			              'Kelly','Maxine','Joseph','Illiana','Virginia','Reese','Mark', 'Paul', 'Jackie', 'Greg', 
+			              'Matthew', 'Anthony', 'Claude', 'Louis', 'Marcello', 'Bernard', 'Betrand', 'Jessica', 'Patrick', 
+			              'Robert', 'John', 'Jack', 'Duke', 'Denise', 'Antoine', 'Coby', 'Rana', 'Jasmine', 'André', 
+			              'Martin', 'Amédé', 'Wanthus']
 		}));
 
 		// add a cell validator to check that the age is in [16, 100[
@@ -106,6 +122,11 @@ function initializeGrid()
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
 		};
 		
+		// register the function called when table has been filtered
+   	    tableFiltered = function() { 
+   	    	updatePaginator(); 
+   	    };
+   	    
 		rowSelected = function(oldRowIndex, newRowIndex) {
 			if (oldRowIndex < 0) displayMessage("Selected row '" + this.getRowId(newRowIndex) + "'");
 			else displayMessage("Selected row has changed from '" + this.getRowId(oldRowIndex) + "' to '" + this.getRowId(newRowIndex) + "'");
@@ -120,7 +141,13 @@ function initializeGrid()
 		}})); 
 
 		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
-		renderGrid("tablecontent", "testgrid", "tableid");	
+		renderGrid("tablecontent", "testgrid", "tableid");
+		
+		// filter when something is typed into filter
+		_$('filter').onkeyup = function() { editableGrid.filter(_$('filter').value); };
+
+		// render the paginator control
+		updatePaginator();
 	}
 }
 
@@ -133,7 +160,7 @@ function onloadXML()
 	};
 
 	// load XML file
-	editableGrid.loadXML("demo.xml");
+	editableGrid.loadXML("demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
 }
 
 function onloadHTML() 
@@ -152,4 +179,47 @@ function onloadHTML()
 
 	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
 	initializeGrid();
+}
+
+function updatePaginator()
+{
+	var paginator = $("#paginator").empty();
+	var nbPages = editableGrid.getPageCount();
+
+	// get interval
+	var interval = editableGrid.getSlidingPageInterval(20);
+	if (interval == null) return;
+	
+	// get pages in interval (with links except for the current page)
+	var pages = editableGrid.getPagesInInterval(interval, function(pageIndex, isCurrent) {
+		if (isCurrent) return "" + (pageIndex + 1);
+		return $("<a>").css("cursor", "pointer").html(pageIndex + 1).click(function(event) { editableGrid.setPageIndex(parseInt($(this).html()) - 1); updatePaginator(); });
+	});
+		
+	// "first" link
+	var link = $("<a>").html("<img src='images/gofirst.png'/>&nbsp;");
+	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.firstPage(); updatePaginator(); });
+	paginator.append(link);
+
+	// "prev" link
+	link = $("<a>").html("<img src='images/prev.png'/>&nbsp;");
+	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.prevPage(); updatePaginator(); });
+	paginator.append(link);
+
+	// pages
+	for (p = 0; p < pages.length; p++) paginator.append(pages[p]).append(" | ");
+	
+	// "next" link
+	link = $("<a>").html("<img src='images/next.png'/>&nbsp;");
+	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.nextPage(); updatePaginator(); });
+	paginator.append(link);
+
+	// "last" link
+	link = $("<a>").html("<img src='images/golast.png'/>&nbsp;");
+	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.lastPage(); updatePaginator(); });
+	paginator.append(link);
 }

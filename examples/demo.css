@@ -58,13 +58,13 @@ input.invalid {
 }
 
 #message {
-	width: 850px;
+	width: 100%;
 }
 
 table.testgrid { 
 	border-collapse: collapse; 
 	border: 1px solid #CCB;
-	width: 850px;
+	width: 100%;
 }
 
 table.testgrid tr {
@@ -97,4 +97,25 @@ table.testgrid td {
 	padding-top: 5px;
 	width: 600px;
 	border: 0px;	
+}
+
+#paginator {
+	font-family:  Helvetica, Arial, sans-serif;
+  	margin: 10px 0;
+	font-size: 12px;
+	text-align: center;
+}
+
+#paginator a { color:  #0078cc; text-decoration: none; font-size: 12px; }           
+#paginator a:hover { color: #000; }
+#paginator a:active { color: #777; }
+#paginator a:focus { outline: 1px; }
+
+#filter { 
+	width: 250px;
+	margin-bottom: 10px; 
+}
+
+#wrap {
+	width: 950px;
 }
