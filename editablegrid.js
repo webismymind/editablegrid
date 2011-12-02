@@ -1428,9 +1428,9 @@ EditableGrid.prototype.filter = function(filterString)
 /**
  * Returns the number of pages according to the current page size
  */
-EditableGrid.prototype.getNbPages = function()
+EditableGrid.prototype.getPageCount = function()
 {
-	if (this.pageSize <= 0) { alert("getNbPages: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	if (this.pageSize <= 0) { alert("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
 	return Math.ceil(this.getRowCount() / this.pageSize);
 };
 
@@ -1451,4 +1451,106 @@ EditableGrid.prototype.setPageIndex = function(pageIndex)
 {
 	this.currentPageIndex = pageIndex;
 	this.refreshGrid();
+};
+
+/**
+ * Go the previous page if we are not already on the first page
+ * @return
+ */
+EditableGrid.prototype.prevPage = function()
+{
+	if (this.canGoBack()) this.setPageIndex(this.getCurrentPageIndex() - 1);
+};
+
+/**
+ * Go the first page if we are not already on the first page
+ * @return
+ */
+EditableGrid.prototype.firstPage = function()
+{
+	if (this.canGoBack()) this.setPageIndex(0);
+};
+
+/**
+ * Go the next page if we are not already on the last page
+ * @return
+ */
+EditableGrid.prototype.nextPage = function()
+{
+	if (this.canGoForward()) this.setPageIndex(this.getCurrentPageIndex() + 1);
+};
+
+/**
+ * Go the last page if we are not already on the last page
+ * @return
+ */
+EditableGrid.prototype.lastPage = function()
+{
+	if (this.canGoForward()) this.setPageIndex(this.getPageCount() - 1);
+};
+
+/**
+ * Returns true if we are not already on the first page
+ * @return
+ */
+EditableGrid.prototype.canGoBack = function()
+{
+	return this.getCurrentPageIndex() > 0;
+};
+
+/**
+ * Returns true if we are not already on the last page
+ * @return
+ */
+EditableGrid.prototype.canGoForward = function()
+{
+	return this.getCurrentPageIndex() < this.getPageCount() - 1;
+};
+
+/**
+ * Returns an interval { startPageIndex: ..., endPageIndex: ... } so that a window of the given size is visible around the current page (hence the 'sliding').
+ * If pagination is not enabled this method displays an alert and returns null.
+ * If pagination is enabled but there is only one page this function returns null (wihtout error).
+ * @param slidingWindowSize size of the visible window
+ * @return
+ */
+EditableGrid.prototype.getSlidingPageInterval = function(slidingWindowSize)
+{
+	var nbPages = this.getPageCount();
+	if (nbPages <= 1) return null;
+
+	var curPageIndex = this.getCurrentPageIndex();
+	var startPageIndex = Math.max(0, curPageIndex - (slidingWindowSize/2));
+	var endPageIndex = Math.min(nbPages, curPageIndex + (slidingWindowSize/2));
+	
+	if (endPageIndex - startPageIndex < slidingWindowSize) {
+		var diff = slidingWindowSize - (endPageIndex - startPageIndex);
+		startPageIndex = Math.max(0, startPageIndex - diff);
+		endPageIndex = Math.min(nbPages, endPageIndex + diff);
+	}
+
+	return { startPageIndex: startPageIndex, endPageIndex: endPageIndex };
+};
+
+/**
+ * Returns an array of page indices in the given interval.
+ * 
+ * @param interval
+ * The given interval must be an object with properties 'startPageIndex' and 'endPageIndex'.
+ * This interval may for example have been obtained with getCurrentPageInterval.
+ * 
+ * @param callback
+ * The given callback is applied to each page index before adding it to the result array.
+ * This callback is optional: if none given, the page index will be added as is to the array.
+ * If given , the callback will be called with two parameters: pageIndex (integer) and isCurrent (boolean).
+ * 
+ * @return
+ */
+EditableGrid.prototype.getPagesInInterval = function(interval, callback)
+{
+	var pages = [];
+	for (var p = interval.startPageIndex; p < interval.endPageIndex; p++) {
+		pages.push(typeof callback == 'function' ? callback(p, p == this.getCurrentPageIndex()) : p);
+	}
+	return pages;
 };
