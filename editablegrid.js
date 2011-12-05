@@ -1404,7 +1404,7 @@ EditableGrid.prototype.filter = function(filterString)
 		for (var r = 0; r < rowCount; r++) {
 			data[r].visible = true;
 			var rowContent = ""; 
-			for (var c = 0; c < data[r].columns.length; c++) rowContent += data[r].columns[c];
+			for (var c = 0; c < data[r].columns.length; c++) rowContent += data[r].columns[c] + " ";
 			
 			// if row contents does not match one word in the filter, hide the row
 	        for (var i = 0; i < words.length; i++) {
