@@ -220,7 +220,12 @@ Bugfixes:
 ======================================
 
 [TO BE COMPLETED: CHECK GIT HISTORY]
-   
+ 
+Support for option groups for columns with enumerated values: ...
+Pagination: ...
+Filtering on the model:...
+Date pickers provided as an extension: ...
+
 Charts:
 - if renderPieChart is called with valueColumnIndex = labelColumnIndex, we display a chart showing the frequency of values occuring in this column
 - added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set to non null and > 0, this is the maximum number of rows taken into account for drawing the chart
