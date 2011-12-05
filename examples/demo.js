@@ -188,7 +188,7 @@ function onloadHTML()
 // function to render our two demo charts
 EditableGrid.prototype.renderCharts = function() 
 {
-	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= 15 ? '' : ' (first 15 rows)'), 'name', null, null, null, 15);
+	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= 15 ? '' : ' (first 15 rows out of ' + this.getRowCount() + ')'), 'name', null, null, null, 15);
 	this.renderPieChart("piechartcontent", 'Country distribution', 'country', 'country');
 };
 
