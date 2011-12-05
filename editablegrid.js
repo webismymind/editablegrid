@@ -1206,6 +1206,9 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
         	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
         	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
     	}
+    	
+    	// callback
+		tableRendered(containerid, className, tableid);
     }
 };
 
@@ -1226,13 +1229,11 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
     with (this) {
 
     	_rendergrid(containerid, className, tableid);
-    	
-		// resort and filter table
-		sort();
+
+		// sort and filter table
+		if (sortedColumnName === -1) tableSorted(-1, sortDescending); // avoid a double render, but still send the expected callback
+		else sort();
 		filter();
-		
-		// callback
-		tableRendered(containerid, className, tableid);
     }
 };
 
@@ -1381,7 +1382,7 @@ EditableGrid.prototype.filter = function(filterString)
 {
 	with (this) {
 		
-		if (typeof filter != 'undefined') currentFilter = filterString;
+		if (typeof filterString != 'undefined') currentFilter = filterString;
 		
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {

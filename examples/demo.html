@@ -35,6 +35,7 @@
 		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_editors.js" ></script>
 		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_validators.js" ></script>
 		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_utils.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_charts.js" ></script>
 		<link rel="stylesheet" href="../editablegrid.css" type="text/css" media="screen">
 
 		<!-- include javascript and css files for the EditableGrid extensions -->
@@ -42,6 +43,12 @@
 		<script src="../extensions/autocomplete/jquery.autocomplete.min.js" ></script>
 		<script src="../extensions/autocomplete/autocomplete.js" ></script>
 		<link rel="stylesheet" href="../extensions/autocomplete/jquery.autocomplete.css" type="text/css" media="screen">
+
+	    <!-- include javascript files for the OpenFlashChart  library -->
+    	<script src="openflashchart/js/swfobject.js"></script>
+    	<script src="openflashchart/js/json/json2.js"></script>
+    	<script src="openflashchart/js-ofc-library/ofc.js"></script>
+    	<script src="openflashchart/js-ofc-library/open_flash_chart.min.js"></script>
 
 		<!-- include javascript and css files for this demo -->
 		<script src="demo.js" ></script> <!-- just replace demo.js with demo_simple.js to test out the simplified version -->
@@ -66,9 +73,13 @@
 			<!-- Paginator control -->
 			<div id="paginator"></div>
 		
-			<!--  Edition zone (to demonstrate the "fixed" editor mode) -->
+			<!-- Edition zone (to demonstrate the "fixed" editor mode) -->
 			<div id="edition"></div>
 			
+			<!-- Charts zone -->
+			<div id="barchartcontent"></div>
+			<div id="piechartcontent"></div>
+		
 		</div>
 	</body>
 

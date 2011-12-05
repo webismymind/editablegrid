@@ -215,3 +215,22 @@ Bugfixes:
    - added function setRowAttribute
    - added rowSelected callback
    - some fixes in jsdoc comments
+   
+[xx/12/2011] EditableGrid v2.0 "X-Mas"
+======================================
+
+[TO BE COMPLETED: CHECK GIT HISTORY]
+   
+Charts:
+- if renderPieChart is called with valueColumnIndex = labelColumnIndex, we display a chart showing the frequency of values occuring in this column
+- added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set to non null and > 0, this is the maximum number of rows taken into account for drawing the chart
+- all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart can be given "null" to use the default value
+- demo: displays two charts below the table: age per person (bar chart) and country distribution (frequency pie chart)
+
+Callback:
+- tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
+- sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
+- demo: updatePaginator needs only to be called in tableRendered and when deleting a row 
+
+Misc:
+- fix in filter() when called whithout argument: must refilter using current filter

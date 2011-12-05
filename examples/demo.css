@@ -119,3 +119,16 @@ table.testgrid td {
 #wrap {
 	width: 950px;
 }
+
+#barchartcontent {
+	width: 950px;
+	height: 300px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#piechartcontent {
+	width: 950px;
+	height: 300px;
+	margin-bottom: 10px;
+}

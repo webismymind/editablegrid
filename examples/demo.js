@@ -39,6 +39,7 @@ function InfoHeaderRenderer(message) {
 	this.infoImage = new Image();
 	this.infoImage.src = "images/information.png";
 };
+
 InfoHeaderRenderer.prototype = new CellRenderer();
 InfoHeaderRenderer.prototype.render = function(cell, value) 
 {
@@ -111,22 +112,25 @@ function initializeGrid()
 			              'Martin', 'Amédé', 'Wanthus']
 		}));
 
-		// add a cell validator to check that the age is in [16, 100[
+		// add a cell validator to check that the age is in [15, 100[
 		addCellValidator("age", new CellValidator({ 
-			isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
+			isValid: function(value) { return value == "" || (parseInt(value) >= 15 && parseInt(value) < 100); }
 		}));
 		
 		// register the function that will handle model changes
 		modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) { 
 			displayMessage("Value for '" + this.getColumnName(columnIndex) + "' in row " + this.getRowId(rowIndex) + " has changed from '" + oldValue + "' to '" + newValue + "'");
 			if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), ""); // if we changed the continent, reset the country
+   	    	this.renderCharts();
 		};
 		
-		// register the function called when table has been filtered
-   	    tableFiltered = function() { 
-   	    	updatePaginator(); 
-   	    };
-   	    
+		// update paginator whenever the table is rendered (after a sort, filter, page change, etc.)
+		tableRendered = function() { this.updatePaginator(); };
+
+		// update charts when the table is sorted or filtered
+		tableFiltered = function() { this.renderCharts(); };
+		tableSorted = function() { this.renderCharts(); };
+
 		rowSelected = function(oldRowIndex, newRowIndex) {
 			if (oldRowIndex < 0) displayMessage("Selected row '" + this.getRowId(newRowIndex) + "'");
 			else displayMessage("Selected row has changed from '" + this.getRowId(oldRowIndex) + "' to '" + this.getRowId(newRowIndex) + "'");
@@ -136,7 +140,7 @@ function initializeGrid()
 		setCellRenderer("action", new CellRenderer({render: function(cell, value) {
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow('" + rowId + "');\" style=\"cursor:pointer\">" +
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow('" + rowId + "'); editableGrid.renderCharts(); editableGrid.updatePaginator();\" style=\"cursor:pointer\">" +
 							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 		}})); 
 
@@ -145,9 +149,6 @@ function initializeGrid()
 		
 		// filter when something is typed into filter
 		_$('filter').onkeyup = function() { editableGrid.filter(_$('filter').value); };
-
-		// render the paginator control
-		updatePaginator();
 	}
 }
 
@@ -181,7 +182,15 @@ function onloadHTML()
 	initializeGrid();
 }
 
-function updatePaginator()
+// function to render our two demo charts
+EditableGrid.prototype.renderCharts = function() 
+{
+	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= 15 ? '' : ' (first 15 rows)'), 'name', null, null, null, 15);
+	this.renderPieChart("piechartcontent", 'Country distribution', 'country', 'country');
+};
+
+// function to render the paginator control
+EditableGrid.prototype.updatePaginator = function()
 {
 	var paginator = $("#paginator").empty();
 	var nbPages = editableGrid.getPageCount();
@@ -193,19 +202,19 @@ function updatePaginator()
 	// get pages in interval (with links except for the current page)
 	var pages = editableGrid.getPagesInInterval(interval, function(pageIndex, isCurrent) {
 		if (isCurrent) return "" + (pageIndex + 1);
-		return $("<a>").css("cursor", "pointer").html(pageIndex + 1).click(function(event) { editableGrid.setPageIndex(parseInt($(this).html()) - 1); updatePaginator(); });
+		return $("<a>").css("cursor", "pointer").html(pageIndex + 1).click(function(event) { editableGrid.setPageIndex(parseInt($(this).html()) - 1); });
 	});
 		
 	// "first" link
 	var link = $("<a>").html("<img src='images/gofirst.png'/>&nbsp;");
 	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
-	else link.css("cursor", "pointer").click(function(event) { editableGrid.firstPage(); updatePaginator(); });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.firstPage(); });
 	paginator.append(link);
 
 	// "prev" link
 	link = $("<a>").html("<img src='images/prev.png'/>&nbsp;");
 	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
-	else link.css("cursor", "pointer").click(function(event) { editableGrid.prevPage(); updatePaginator(); });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.prevPage(); });
 	paginator.append(link);
 
 	// pages
@@ -214,12 +223,12 @@ function updatePaginator()
 	// "next" link
 	link = $("<a>").html("<img src='images/next.png'/>&nbsp;");
 	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
-	else link.css("cursor", "pointer").click(function(event) { editableGrid.nextPage(); updatePaginator(); });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.nextPage(); });
 	paginator.append(link);
 
 	// "last" link
 	link = $("<a>").html("<img src='images/golast.png'/>&nbsp;");
 	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
-	else link.css("cursor", "pointer").click(function(event) { editableGrid.lastPage(); updatePaginator(); });
+	else link.css("cursor", "pointer").click(function(event) { editableGrid.lastPage(); });
 	paginator.append(link);
 }

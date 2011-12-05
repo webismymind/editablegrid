@@ -20,7 +20,7 @@ $grid->addColumn("firstname", "FIRSTNAME", "string");
 // you can specifiy the unit: double(m), the precision: double(2), or both: double(m,2)
 // these will be used in the default renderer NumberCellRenderer
 $grid->addColumn("age", "AGE", "integer");
-$grid->addColumn("height", "HEIGHT", "double(m,2)");
+$grid->addColumn("height", "HEIGHT", "double(m,2)", null, true, null, false);
 
 // add column with predefined values, organized in "option groups" (dropdown list)
 $grid->addColumn("country", "COUNTRY", "string", array(
