@@ -351,3 +351,48 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	
 	return htmlInput; 
 };
+
+/**
+ * Datepicker cell editor
+ * 
+ * Text field editor with date picker capabilities.
+ * Uses the jQuery UI's datepicker.
+ * This editor is used automatically for date columns if we detect that the jQuery UI's datepicker is present. 
+ * 
+ * @constructor Accepts an option object containing the following properties: 
+ * - fieldSize: integer (default=auto-adapt)
+ * - maxLength: integer (default=255)
+ * 
+ * @class Class to edit a cell with a datepicker linked to the HTML text input
+ */
+
+function DateCellEditor(config) 
+{
+	// erase defaults with given options
+	this.init(config); 
+};
+
+// inherits TextCellEditor functionalities
+DateCellEditor.prototype = new TextCellEditor();
+
+// redefine displayEditor to setup datepicker
+DateCellEditor.prototype.displayEditor = function(element, htmlInput) 
+{
+	// call base method
+	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
+
+	$(htmlInput).datepicker({ 
+		dateFormat: this.editablegrid.dateFormat == "EU" ? "dd/mm/yy" : "mm/dd/yy",
+		beforeShow: function() {
+			// the field cannot be blurred until the datepicker has gone away
+			// otherwise we get the "missing instance data" exception
+			this.onblur_backup = this.onblur;
+			this.onblur = null;
+		},
+		onClose: function(dateText) {
+			// apply date and reset previously set 'onblur' event on text field
+			if (dateText != '') this.celleditor.applyEditing(htmlInput.element, dateText);
+			this.onblur = this.onblur_backup;
+		}
+	}).datepicker('show');
+};
