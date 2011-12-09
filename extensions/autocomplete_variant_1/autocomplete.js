@@ -22,22 +22,24 @@
  * Autocomplete cell editor
  * 
  * Text field editor with autocomplete capabilities.
- * Uses the jQuery UI's autocomplete.
+ * Uses the "autocomplete" jQuery plugin.
  * 
  * @constructor Accepts an option object containing the following properties: 
- * - suggestions: array of possible values, a string specifying a URL or a callback function (see jQuery UI documentation for more information)
+ * - suggestions: array of possible values
+ * - autoFill: boolean (default=false)
+ * - width: integer (default=300)
  * - fieldSize: integer (default=auto-adapt)
  * - maxLength: integer (default=255)
  * 
- * You may also adapt autocomplete.css to your needs.
- *  
  * @class Class to edit a cell with an autocomplete HTML text input
- * @author Webismymind 
+ * @author Original idea by Jasper Visser, integrated by Webismymind 
  */
 
 function AutocompleteCellEditor(config) 
 {
 	// default options
+	this.autoFill = false; 
+	this.width = 300; 
 	this.suggestions = [("no suggestions")];
 	
 	// erase defaults with given options
@@ -53,25 +55,25 @@ AutocompleteCellEditor.prototype.displayEditor = function(element, htmlInput)
 	// call base method
 	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
+	// disable default blur event handling which interfer when clicking on a suggestion in the autocomplete
+	htmlInput.onblur = null;
+
+	// disable default ENTER event wich interfer when pressing ENTER on a suggestion in the autocomplete
+	// indeed, our handling on ENTER would happen when the text field value has not been updated yet
+	var onkeydown = htmlInput.onkeydown;
+	htmlInput.onkeydown = function(event) {
+		event = event || window.event;
+		if (event.keyCode != 13) onkeydown.call(this, event);
+	};
+	
 	// setup autocomplete
-	$(htmlInput).autocomplete({
-		source: this.suggestions,
-
-		open: function() {
-			// the field cannot be blurred until the autocomplete list has gone away
-			// otherwise the text field disappears before passing in 'select'
-			this.onblur_backup = this.onblur;
-			this.onblur = null;
-		},
-		
-		select: function(event, ui) { 
-			// apply value when it has been selected either with a click or with ENTER
-			this.celleditor.applyEditing(this.element, ui.item.value); 
-		},
-
-		close: function() {
-			// call original onblur event
-			if (this.onblur_backup != null) this.onblur_backup();
-		}
-	});	
+	$(htmlInput).autocomplete(this.suggestions, { 
+		autoFill: this.autoFill, 
+		width: this.width 
+	});
+	
+	// apply value when it has been selected either with a click or with ENTER
+	$(htmlInput).result(function(event, item) {
+		this.celleditor.applyEditing(this.element, this.value); 
+	});
 };

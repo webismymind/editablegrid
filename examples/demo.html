@@ -38,11 +38,28 @@
 		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_charts.js" ></script>
 		<link rel="stylesheet" href="../editablegrid.css" type="text/css" media="screen">
 
-		<!-- include javascript and css files for the EditableGrid extensions -->
-		<script src="../extensions/jquery/jquery-1.4.2.min.js" ></script>
-		<script src="../extensions/autocomplete/jquery.autocomplete.min.js" ></script>
+		<!-- include javascript and css files for jQuery, needed for the datepicker and autocomplete extensions -->
+		<script src="../extensions/jquery/jquery-1.6.4.min.js" ></script>
+		<script src="../extensions/jquery/jquery-ui-1.8.16.custom.min.js" ></script>
+		<link rel="stylesheet" href="../extensions/jquery/jquery-ui-1.8.16.custom.css" type="text/css" media="screen">
+		
+		<!-- include javascript and css files for the autocomplete extension -->
 		<script src="../extensions/autocomplete/autocomplete.js" ></script>
-		<link rel="stylesheet" href="../extensions/autocomplete/jquery.autocomplete.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="../extensions/autocomplete/autocomplete.css" type="text/css" media="screen">
+
+		<!-- Uncomment this if you want to use the first variant of the autocomplete instead of the official one from jQuery UI -->
+		<!--
+		<script src="../extensions/autocomplete_variant_1/jquery.autocomplete.min.js" ></script>
+		<script src="../extensions/autocomplete_variant_1/autocomplete.js" ></script>
+		<link rel="stylesheet" href="../extensions/autocomplete_variant_1/jquery.autocomplete.css" type="text/css" media="screen">
+		!-->
+
+		<!-- Uncomment this if you want to use the second variant of the autocomplete instead of the official one from jQuery UI -->
+		<!--
+		<script src="../extensions/autocomplete_variant_2/jquery.autocomplete.min.js" ></script>
+		<script src="../extensions/autocomplete_variant_2/autocomplete.js" ></script>
+		<link rel="stylesheet" href="../extensions/autocomplete_variant_2/jquery.autocomplete.css" type="text/css" media="screen">
+		!-->
 
 	    <!-- include javascript files for the OpenFlashChart  library -->
     	<script src="openflashchart/js/swfobject.js"></script>
@@ -53,7 +70,7 @@
 		<!-- include javascript and css files for this demo -->
 		<script src="demo.js" ></script> <!-- just replace demo.js with demo_simple.js to test out the simplified version -->
 		<link rel="stylesheet" type="text/css" href="demo.css" media="screen"/>
-		<script type="text/javascript">window.onload = onloadXML</script>	
+		<script type="text/javascript">window.onload = loadXML</script>	
 	</head>
 	
 	<body>
@@ -79,7 +96,7 @@
 			<!-- Charts zone -->
 			<div id="barchartcontent"></div>
 			<div id="piechartcontent"></div>
-		
+			
 		</div>
 	</body>
 

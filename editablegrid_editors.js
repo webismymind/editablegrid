@@ -390,9 +390,10 @@ DateCellEditor.prototype.displayEditor = function(element, htmlInput)
 			this.onblur = null;
 		},
 		onClose: function(dateText) {
-			// apply date and reset previously set 'onblur' event on text field
+			// apply date if any, otherwise call original onblur event
 			if (dateText != '') this.celleditor.applyEditing(htmlInput.element, dateText);
-			this.onblur = this.onblur_backup;
+			else if (this.onblur_backup != null) this.onblur_backup();
+			
 		}
 	}).datepicker('show');
 };

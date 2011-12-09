@@ -65,11 +65,6 @@ function initializeGrid()
 		setHeaderRenderer("email", new InfoHeaderRenderer("Note the validator used automatically when you specify your column as being of type email"));
 		setHeaderRenderer("freelance", new InfoHeaderRenderer("This column tells if the person works as a freelance or as an employee"));
 		
-		// show unit when rendering the height: not needed anymore, unit and precision can be specified in the type
-		// setCellRenderer("height", new CellRenderer({ 
-		//	render: function(cell, value) { new NumberCellRenderer().render.call(this, cell, value ? value + " m" : ""); } 
-		// })); 
-
 		// the list of allowed countries depend on the selected continent
 		if (hasColumn('continent')) {
 
@@ -155,7 +150,7 @@ function initializeGrid()
 	}
 }
 
-function onloadXML() 
+function loadXML() 
 {
 	// register the function that will be called when the XML has been fully loaded
 	editableGrid.tableLoaded = function() { 
@@ -167,7 +162,7 @@ function onloadXML()
 	editableGrid.loadXML("demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
 }
 
-function onloadHTML() 
+function loadHTML() 
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
