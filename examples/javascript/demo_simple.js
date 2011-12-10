@@ -47,5 +47,5 @@ function loadXML()
 	});
 
 	// load XML file
-	editableGrid.loadXML("demo.xml"); 
+	editableGrid.loadXML("datasource/demo.xml"); 
 }

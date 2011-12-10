@@ -751,6 +751,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 	// get value in model
 	if (rowIndex < 0) return column.label;
 	
+	if (typeof this.data[rowIndex] == 'undefined') alert("[getValueAt] Invalid row index " + rowIndex);
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
 };

@@ -159,7 +159,7 @@ function loadXML()
 	};
 
 	// load XML file
-	editableGrid.loadXML("demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
+	editableGrid.loadXML("datasource/demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
 }
 
 function loadHTML() 
@@ -229,4 +229,4 @@ EditableGrid.prototype.updatePaginator = function()
 	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
 	else link.css("cursor", "pointer").click(function(event) { editableGrid.lastPage(); });
 	paginator.append(link);
-}
+};

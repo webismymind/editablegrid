@@ -68,15 +68,21 @@
     	<script src="openflashchart/js-ofc-library/open_flash_chart.min.js"></script>
 
 		<!-- include javascript and css files for this demo -->
-		<script src="demo.js" ></script>
-		<link rel="stylesheet" type="text/css" href="demo.css" media="screen"/>
+		<script src="javascript/demo.js" ></script>
+		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen"/>
 		<script type="text/javascript">window.onload = loadHTML</script>	
 	</head>
 	
 	<body>
 		<h1>EditableGrid Demo - Attaching to an HTML table</h1>
 		<div id="wrap">
+		
+		<!-- Feedback message zone -->
 		<div id="message"></div>
+		
+		<!-- Grid filter -->
+		<label for="filter">Filter :</label>
+		<input type="text" id="filter"/>
 		
 		<!-- In real life this HTML table would have been generated with eg. a PHP server-side script -->
 		<!--  The first row of your table will serve as table header, you don't have to put it in a <THEAD> but it's better of course -->

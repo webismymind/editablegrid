@@ -5,7 +5,7 @@
 // The only thing is that the generated XML must have the expected structure .
 // Here we get the data from a CSV file; in real life, these data would probably come from a database.
 
-require_once("../php/EditableGrid.php");
+require_once("../../php/EditableGrid.php");
 
 // create grid and declare its columns
 $grid = new EditableGrid();
@@ -35,10 +35,10 @@ $grid->addColumn("freelance", "FREELANCE", "boolean");
 $grid->addColumn("lastvisit", "LAST VISIT", "date");
 
 // action column ("html" type), not editable
-$grid->addColumn("action", _("Action"), "html", NULL, false);
+$grid->addColumn("action", "Action", "html", NULL, false);
 
 // load data from csv
-$handle = fopen("demo.xml.csv", "r");
+$handle = fopen("demo.csv", "r");
 $data = array();
 while ($row = fgetcsv($handle, 0, ";")) {
 	if (count($row) <= 1 || $row[0] == 'id') continue;
