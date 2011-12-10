@@ -557,7 +557,8 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 			var cols = rows[i].cells;
 			for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
 			data.push({ visible: true, originalIndex: i, id: rows[i].id, columns: rowData });
-			rows[i].id = this.name + '_' + rows[i].id;
+			rows[i].rowId = rows[i].id;
+			rows[i].id = this._getRowDOMId(rows[i].id);
 		}
 	}
 };
@@ -812,13 +813,14 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 };
 
 /**
- * Get row object at given index
+ * Get HTML row object at given index
  * @param {Integer} index of the row
  */
 EditableGrid.prototype.getRow = function(rowIndex)
 {
 	if (rowIndex < 0) return this.tHead.rows[rowIndex + this.nbHeaderRows];
-	return this.tBody.rows[rowIndex];
+	if (typeof this.data[rowIndex] == 'undefined') alert("[getRow] Invalid row index " + rowIndex);
+	return _$(this._getRowDOMId(this.data[rowIndex].id));
 };
 
 /**
@@ -852,25 +854,52 @@ EditableGrid.prototype.setRowAttribute = function(rowIndex, attributeName, attri
 };
 
 /**
+ * Get Id of row in HTML DOM
+ * @private
+ */
+EditableGrid.prototype._getRowDOMId = function(rowId)
+{
+	return this.currentContainerid != null ? this.name + "_" + rowId : rowId;
+};
+
+/**
  * Remove row with given id
  * @param {Integer} rowId
  */
 EditableGrid.prototype.removeRow = function(rowId)
 {
-	var tr = _$(this.name + "_" + rowId);
-	var rowIndex = tr.rowIndex - this.nbHeaderRows; // remove header rows
-	this.tBody.removeChild(tr);
-	this.data.splice(rowIndex, 1);
+	// work on unfiltered data
+	var filterActive = this.dataUnfiltered != null; 
+	if (filterActive) this.data = this.dataUnfiltered;
+
+	// find and delete row
+	var rowIndex = this.getRowIndex(rowId);
+	if (rowIndex >= 0) {
+		var tr = _$(this._getRowDOMId(this.data[rowIndex].id));
+		if (tr != null) this.tBody.removeChild(tr); // needed for attach mode
+		this.data.splice(rowIndex, 1);
+	}
+	
+	if (filterActive) {
+
+		// keep only visible rows in data
+		this.dataUnfiltered = this.data;
+		this.data = [];
+		for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].visible) this.data.push(this.dataUnfiltered[r]);
+	}
+
+	this.refreshGrid();
 };
 
 /**
  * Get index of row with given id
- * @param {Integer} rowId or row object
+ * @param {Integer} rowId or HTML row object
  */
 EditableGrid.prototype.getRowIndex = function(rowId) 
 {
-	var tr = typeof rowId == 'object' ? rowId : _$(this.name + "_" + rowId);
-	return tr ? tr.rowIndex - this.nbHeaderRows : -1; // remove header rows
+	rowId = typeof rowId == 'object' ? rowId.rowId : rowId;
+	for (var rowIndex = 0; rowIndex < this.data.length; rowIndex++) if (this.data[rowIndex].id == rowId) return rowIndex;
+	return -1; 
 };
 
 /**
@@ -894,7 +923,7 @@ EditableGrid.prototype.addRow = function(rowId, cellValues, dontSort)
 
 		// create row in table and render content
 		var tr = tBody.insertRow(rowIndex);
-		tr.id = this.name + "_" + rowId;
+		tr.id = this._getRowDOMId(rowId);
 		for (var c = 0; c < columns.length; c++) {
 			var td = tr.insertCell(c);
 			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
@@ -1200,7 +1229,8 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 			var insertRowIndex = 0;
 			for (var i = startRowIndex; i < endRowIndex; i++) {
 				var tr = tBody.insertRow(insertRowIndex++);
-				tr.id = this.name + "_" + data[i]['id'];
+				tr.rowId = data[i]['id'];
+				tr.id = this._getRowDOMId(data[i]['id']);
 				for (j = 0; j < columnCount; j++) {
 
 					// create cell and render its content

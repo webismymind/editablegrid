@@ -135,7 +135,7 @@ function initializeGrid()
 		setCellRenderer("action", new CellRenderer({render: function(cell, value) {
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow('" + rowId + "'); editableGrid.renderCharts(); editableGrid.updatePaginator();\" style=\"cursor:pointer\">" +
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.removeRow('" + rowId + "'); editableGrid.renderCharts(); }\" style=\"cursor:pointer\">" +
 							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 		}})); 
 
@@ -166,7 +166,7 @@ function loadHTML()
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
-		[ new Column({ name: "name", datatype: "string(24)" }),
+		[ new Column({ name: "name", datatype: "string" }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
 		  new Column({ name: "height", datatype: "double(m, 2)", bar: false }),
