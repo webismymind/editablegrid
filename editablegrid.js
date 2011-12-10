@@ -33,31 +33,31 @@ if (typeof _$ == 'undefined') {
 function Column(config)
 {
 	// default properties
-    var props = {
-        name: "",
-        label: "",
-		editable: true,
-		renderable: true,
-        datatype: "string",
-        unit: null,
-        precision: -1, // means that all decimals are displayed
-        nansymbol: '',
-    	decimal_point: ',',
-    	thousands_separator: '.',
-    	unit_before_number: false,
-        bar: true, // is the column to be displayed in a bar chart ? relevant only for numerical columns 
-        headerRenderer: null,
-        headerEditor: null,
-        cellRenderer: null,
-		cellEditor: null,
-		cellValidators: [],
-		enumProvider: null,
-		optionValues: null,
-        columnIndex: -1
-    };
+	var props = {
+			name: "",
+			label: "",
+			editable: true,
+			renderable: true,
+			datatype: "string",
+			unit: null,
+			precision: -1, // means that all decimals are displayed
+			nansymbol: '',
+			decimal_point: ',',
+			thousands_separator: '.',
+			unit_before_number: false,
+			bar: true, // is the column to be displayed in a bar chart ? relevant only for numerical columns 
+			headerRenderer: null,
+			headerEditor: null,
+			cellRenderer: null,
+			cellEditor: null,
+			cellValidators: [],
+			enumProvider: null,
+			optionValues: null,
+			columnIndex: -1
+	};
 
-    // override default properties with the ones given
-    for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+	// override default properties with the ones given
+	for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
 }
 
 Column.prototype.getOptionValuesForRender = function(rowIndex) { 
@@ -88,11 +88,11 @@ Column.prototype.isNumerical = function() {
 function EnumProvider(config)
 {
 	// default properties
-    this.getOptionValuesForRender = function(grid, column, rowIndex) { return null; };
-    this.getOptionValuesForEdit = function(grid, column, rowIndex) { return null; };
+	this.getOptionValuesForRender = function(grid, column, rowIndex) { return null; };
+	this.getOptionValuesForEdit = function(grid, column, rowIndex) { return null; };
 
-    // override default properties with the ones given
-    for (var p in config) this[p] = config[p];
+	// override default properties with the ones given
+	for (var p in config) this[p] = config[p];
 }
 
 /**
@@ -135,61 +135,61 @@ EditableGrid.prototype.init = function (name, config)
 	if (typeof name != "string" || typeof config != "object") {
 		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
 	};
-	
+
 	// default properties
-    var props = 
-    {
-   		enableSort: true,
-		doubleclick: false,
-        editmode: "absolute",
-        editorzoneid: "",
-		allowSimultaneousEdition: false,
-		saveOnBlur: true,
-   		invalidClassName: "invalid",
-   		ignoreLastRow: false,
-   		caption: null,
-   		dateFormat: "EU",
-   		shortMonthNames: null,
-   		smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
-   		smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
-   		pageSize: 0
-    };
-    
+	var props = 
+	{
+			enableSort: true,
+			doubleclick: false,
+			editmode: "absolute",
+			editorzoneid: "",
+			allowSimultaneousEdition: false,
+			saveOnBlur: true,
+			invalidClassName: "invalid",
+			ignoreLastRow: false,
+			caption: null,
+			dateFormat: "EU",
+			shortMonthNames: null,
+			smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
+			smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
+			pageSize: 0
+	};
+
 	// override default properties with the ones given
 	for (var p in props) this[p] = props[p];
 	for (var p in config) this[p] = config[p];
-    
-    this.Browser = {
-    		IE:  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-    		Opera: navigator.userAgent.indexOf('Opera') > -1,
-    		WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-    		Gecko: navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-    		MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
-    };
-    
-    // private data
-    this.name = name;
-    this.columns = [];
-    this.data = [];
-    this.dataUnfiltered = null; // non null means that data is filtered
-    this.xmlDoc = null;
-    this.sortedColumnName = -1;
-    this.sortDescending = false;
-    this.baseUrl = this.detectDir();
-    this.nbHeaderRows = 1;
-    this.lastSelectedRowIndex = -1;
-    this.currentPageIndex = 0;
-    this.currentFilter = null;
-    this.currentContainerid = null; 
-    this.currentClassName = null; 
-    this.currentTableid = null;
 
-    if (this.enableSort) {
-    	this.sortUpImage = new Image();
-    	this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
-    	this.sortDownImage = new Image();
-    	this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
-    }
+	this.Browser = {
+			IE:  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+			Opera: navigator.userAgent.indexOf('Opera') > -1,
+			WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+			Gecko: navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+			MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
+	};
+
+	// private data
+	this.name = name;
+	this.columns = [];
+	this.data = [];
+	this.dataUnfiltered = null; // non null means that data is filtered
+	this.xmlDoc = null;
+	this.sortedColumnName = -1;
+	this.sortDescending = false;
+	this.baseUrl = this.detectDir();
+	this.nbHeaderRows = 1;
+	this.lastSelectedRowIndex = -1;
+	this.currentPageIndex = 0;
+	this.currentFilter = null;
+	this.currentContainerid = null; 
+	this.currentClassName = null; 
+	this.currentTableid = null;
+
+	if (this.enableSort) {
+		this.sortUpImage = new Image();
+		this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
+		this.sortDownImage = new Image();
+		this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
+	}
 };
 
 /**
@@ -216,57 +216,57 @@ EditableGrid.prototype.loadXML = function(url)
 	var orig_url = url;
 	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
 	url += sep + Math.floor(Math.random() * 100000);
-		
-    with (this) {
-    	
-    	// IE
-        if (window.ActiveXObject) 
-        {
-            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.onreadystatechange = function() {
-                if (xmlDoc.readyState == 4) {
-                    processXML();
-                    tableLoaded();
-                }
-            };
-            xmlDoc.load(url);
-        }
-        
-        // Safari
-        else if (/*Browser.WebKit && */ window.XMLHttpRequest) 
-        {
-           	xmlDoc = new XMLHttpRequest();
-           	xmlDoc.onreadystatechange = function () {
-           		if (xmlDoc.readyState == 4) {
-       				xmlDoc = xmlDoc.responseXML;
-       				if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
-       				processXML();
-       				tableLoaded();
-       			}
-       		};
-           	xmlDoc.open("GET", url, true);
-           	xmlDoc.send("");
-        }
-        
-        // Firefox (and other browsers) 
-        else if (document.implementation && document.implementation.createDocument) 
-        {
-        	xmlDoc = document.implementation.createDocument("", "", null);
-        	xmlDoc.onload = function() {
-        		processXML();
-                tableLoaded();
-        	};
-            xmlDoc.load(url);
-        }
-        
-        // should never happen
-        else { 
-        	alert("Cannot load XML file with this browser!"); 
-        	return false;
-        }
-    
-        return true;
-    }
+
+	with (this) {
+
+		// IE
+		if (window.ActiveXObject) 
+		{
+			xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+			xmlDoc.onreadystatechange = function() {
+				if (xmlDoc.readyState == 4) {
+					processXML();
+					tableLoaded();
+				}
+			};
+			xmlDoc.load(url);
+		}
+
+		// Safari
+		else if (/*Browser.WebKit && */ window.XMLHttpRequest) 
+		{
+			xmlDoc = new XMLHttpRequest();
+			xmlDoc.onreadystatechange = function () {
+				if (xmlDoc.readyState == 4) {
+					xmlDoc = xmlDoc.responseXML;
+					if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
+					processXML();
+					tableLoaded();
+				}
+			};
+			xmlDoc.open("GET", url, true);
+			xmlDoc.send("");
+		}
+
+		// Firefox (and other browsers) 
+		else if (document.implementation && document.implementation.createDocument) 
+		{
+			xmlDoc = document.implementation.createDocument("", "", null);
+			xmlDoc.onload = function() {
+				processXML();
+				tableLoaded();
+			};
+			xmlDoc.load(url);
+		}
+
+		// should never happen
+		else { 
+			alert("Cannot load XML file with this browser!"); 
+			return false;
+		}
+
+		return true;
+	}
 };
 
 /**
@@ -276,113 +276,113 @@ EditableGrid.prototype.loadXML = function(url)
 EditableGrid.prototype.processXML = function()
 {
 	with (this) {
-    	
+
 		// clear model and pointer to current table
-	    this.columns = [];
-	    this.data = [];
-	    this.dataUnfiltered = null;
+		this.columns = [];
+		this.data = [];
+		this.dataUnfiltered = null;
 		this.table = null;
 
-        // load metadata (only one tag <metadata> --> metadata[0])
-        var metadata = xmlDoc.getElementsByTagName("metadata");
-        if (!metadata || metadata.length < 1) return false;
-        var columnDeclarations = metadata[0].getElementsByTagName("column");
-        for (var i = 0; i < columnDeclarations.length; i++) {
-        	
-        	// get column type
-            var col = columnDeclarations[i];
-            var datatype = col.getAttribute("datatype");
+		// load metadata (only one tag <metadata> --> metadata[0])
+		var metadata = xmlDoc.getElementsByTagName("metadata");
+		if (!metadata || metadata.length < 1) return false;
+		var columnDeclarations = metadata[0].getElementsByTagName("column");
+		for (var i = 0; i < columnDeclarations.length; i++) {
 
-            // get enumerated values if any
-        	var optionValues = null;
-            var enumValues = col.getElementsByTagName("values");
-            if (enumValues.length > 0) {
-            	optionValues = {};
+			// get column type
+			var col = columnDeclarations[i];
+			var datatype = col.getAttribute("datatype");
 
-            	var enumGroups = enumValues[0].getElementsByTagName("group");
-            	if (enumGroups.length > 0) {
-            		for (var g = 0; g < enumGroups.length; g++) {
-            			var groupOptionValues = {};
-            			enumValues = enumGroups[g].getElementsByTagName("value");
-            			for (var v = 0; v < enumValues.length; v++) {
-            				groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
-            			}
-            			optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
-            		}
-            	}
-            	else {
-            		enumValues = enumValues[0].getElementsByTagName("value");
-            		for (var v = 0; v < enumValues.length; v++) {
-            			optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
-            		}
-            	}
-            }
+			// get enumerated values if any
+			var optionValues = null;
+			var enumValues = col.getElementsByTagName("values");
+			if (enumValues.length > 0) {
+				optionValues = {};
 
-            // create new column           
-            var column = new Column({
-            	name: col.getAttribute("name"),
-            	label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
-            	datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
-                editable : col.getAttribute("editable") == "true",
-                bar : col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true,
-            	optionValues: optionValues,
-            	enumProvider: (optionValues ? new EnumProvider() : null),
-            	columnIndex: i
-            });
+				var enumGroups = enumValues[0].getElementsByTagName("group");
+				if (enumGroups.length > 0) {
+					for (var g = 0; g < enumGroups.length; g++) {
+						var groupOptionValues = {};
+						enumValues = enumGroups[g].getElementsByTagName("value");
+						for (var v = 0; v < enumValues.length; v++) {
+							groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+						}
+						optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
+					}
+				}
+				else {
+					enumValues = enumValues[0].getElementsByTagName("value");
+					for (var v = 0; v < enumValues.length; v++) {
+						optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+					}
+				}
+			}
 
-            // parse column type
-            parseColumnType(column);
+			// create new column           
+			var column = new Column({
+				name: col.getAttribute("name"),
+				label: typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name"),
+						datatype: col.getAttribute("datatype") ? col.getAttribute("datatype") : "string",
+								editable : col.getAttribute("editable") == "true",
+								bar : col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true,
+										optionValues: optionValues,
+										enumProvider: (optionValues ? new EnumProvider() : null),
+										columnIndex: i
+			});
+
+			// parse column type
+			parseColumnType(column);
 
 			// create suited cell renderer
-            _createCellRenderer(column);
+			_createCellRenderer(column);
 			_createHeaderRenderer(column);
-			
+
 			// create suited cell editor
-            _createCellEditor(column);  
+			_createCellEditor(column);  
 			_createHeaderEditor(column);
 
 			// add default cell validators based on the column type
 			_addDefaultCellValidators(column);
 
-            // add column
+			// add column
 			column.editablegrid = this;
-            columns.push(column);
-        }
-        
-        // load content
-        var rows = xmlDoc.getElementsByTagName("row");
-        for (var i = 0; i < rows.length; i++) 
-        {
-        	// get all defined cell values
-            var cellValues = {};
-            var cols = rows[i].getElementsByTagName("column");
-            for (var j = 0; j < cols.length; j++) {
-            	var colname = cols[j].getAttribute("name");
-            	if (!colname) {
-            		if (j >= columns.length) alert("You defined too many columns for row " + (i+1));
-            		else colname = columns[j].name; 
-            	}
-            	cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
-            }
+			columns.push(column);
+		}
 
-            // for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
-            var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
-            for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
-            	var node = rows[i].attributes.item(attrIndex);
-            	if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
-            }
+		// load content
+		var rows = xmlDoc.getElementsByTagName("row");
+		for (var i = 0; i < rows.length; i++) 
+		{
+			// get all defined cell values
+			var cellValues = {};
+			var cols = rows[i].getElementsByTagName("column");
+			for (var j = 0; j < cols.length; j++) {
+				var colname = cols[j].getAttribute("name");
+				if (!colname) {
+					if (j >= columns.length) alert("You defined too many columns for row " + (i+1));
+					else colname = columns[j].name; 
+				}
+				cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
+			}
 
-            // get column values for this rows
-            rowData.columns = [];
-            for (var c = 0; c < columns.length; c++) {
-            	var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
-            	rowData.columns.push(getTypedValue(c, cellValue));
-            }
-            
-            // add row data in our model
-       		data.push(rowData);
-        }
-    }
+			// for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
+			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
+			for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
+				var node = rows[i].attributes.item(attrIndex);
+				if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
+			}
+
+			// get column values for this rows
+			rowData.columns = [];
+			for (var c = 0; c < columns.length; c++) {
+				var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
+				rowData.columns.push(getTypedValue(c, cellValue));
+			}
+
+			// add row data in our model
+			data.push(rowData);
+		}
+	}
 };
 
 /**
@@ -392,71 +392,71 @@ EditableGrid.prototype.processXML = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-    // extract precision, unit and number format from type if 6 given
-    if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
-    	column.datatype = RegExp.$1;
-    	column.unit = RegExp.$2;
-    	column.precision = parseInt(RegExp.$3);
-    	column.decimal_point = RegExp.$4;
-    	column.thousands_separator = RegExp.$5;
-    	column.unit_before_number = RegExp.$6;
-    	column.nansymbol = RegExp.$7;
-    	
-    	// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
-    	column.unit = column.unit.trim();
-    	column.decimal_point = column.decimal_point.trim();
-    	column.thousands_separator = column.thousands_separator.trim();
-    	column.unit_before_number = column.unit_before_number.trim() == '1';
-    	column.nansymbol = column.nansymbol.trim();
-    }
+	// extract precision, unit and number format from type if 6 given
+	if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
+		column.datatype = RegExp.$1;
+		column.unit = RegExp.$2;
+		column.precision = parseInt(RegExp.$3);
+		column.decimal_point = RegExp.$4;
+		column.thousands_separator = RegExp.$5;
+		column.unit_before_number = RegExp.$6;
+		column.nansymbol = RegExp.$7;
 
-    // extract precision, unit and number format from type if 5 given
-    else if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*)\)$/)) {
-    	column.datatype = RegExp.$1;
-    	column.unit = RegExp.$2;
-    	column.precision = parseInt(RegExp.$3);
-    	column.decimal_point = RegExp.$4;
-    	column.thousands_separator = RegExp.$5;
-    	column.unit_before_number = RegExp.$6;
-    	
-    	// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
-    	column.unit = column.unit.trim();
-    	column.decimal_point = column.decimal_point.trim();
-    	column.thousands_separator = column.thousands_separator.trim();
-    	column.unit_before_number = column.unit_before_number.trim() == '1';
-    }
+		// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
+		column.unit = column.unit.trim();
+		column.decimal_point = column.decimal_point.trim();
+		column.thousands_separator = column.thousands_separator.trim();
+		column.unit_before_number = column.unit_before_number.trim() == '1';
+		column.nansymbol = column.nansymbol.trim();
+	}
 
-    // extract precision, unit and nansymbol from type if 3 given
-    else if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
-    	column.datatype = RegExp.$1;
-    	column.unit = RegExp.$2.trim();
-    	column.precision = parseInt(RegExp.$3);
-    	column.nansymbol = RegExp.$4.trim();
-    }
+	// extract precision, unit and number format from type if 5 given
+	else if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*)\)$/)) {
+		column.datatype = RegExp.$1;
+		column.unit = RegExp.$2;
+		column.precision = parseInt(RegExp.$3);
+		column.decimal_point = RegExp.$4;
+		column.thousands_separator = RegExp.$5;
+		column.unit_before_number = RegExp.$6;
 
-    // extract precision and unit from type if two given
-    else if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
-    	column.datatype = RegExp.$1.trim();
-    	column.unit = RegExp.$2.trim();
-    	column.precision = parseInt(RegExp.$3);
-    }
+		// trim should be done after fetching RegExp matches beacuse it itself uses a RegExp and causes interferences!
+		column.unit = column.unit.trim();
+		column.decimal_point = column.decimal_point.trim();
+		column.thousands_separator = column.thousands_separator.trim();
+		column.unit_before_number = column.unit_before_number.trim() == '1';
+	}
 
-    // extract precision or unit from type if any given
-    else if (column.datatype.match(/(.*)\((.*)\)$/)) {
-    	column.datatype = RegExp.$1.trim();
-    	var unit_or_precision = RegExp.$2.trim();
-    	if (unit_or_precision.match(/^[0-9]*$/)) column.precision = parseInt(unit_or_precision);
-    	else column.unit = unit_or_precision;
-    }
-    
+	// extract precision, unit and nansymbol from type if 3 given
+	else if (column.datatype.match(/(.*)\((.*),(.*),(.*)\)$/)) {
+		column.datatype = RegExp.$1;
+		column.unit = RegExp.$2.trim();
+		column.precision = parseInt(RegExp.$3);
+		column.nansymbol = RegExp.$4.trim();
+	}
+
+	// extract precision and unit from type if two given
+	else if (column.datatype.match(/(.*)\((.*),(.*)\)$/)) {
+		column.datatype = RegExp.$1.trim();
+		column.unit = RegExp.$2.trim();
+		column.precision = parseInt(RegExp.$3);
+	}
+
+	// extract precision or unit from type if any given
+	else if (column.datatype.match(/(.*)\((.*)\)$/)) {
+		column.datatype = RegExp.$1.trim();
+		var unit_or_precision = RegExp.$2.trim();
+		if (unit_or_precision.match(/^[0-9]*$/)) column.precision = parseInt(unit_or_precision);
+		else column.unit = unit_or_precision;
+	}
+
 	if (column.decimal_point == 'comma') column.decimal_point = ',';
 	if (column.decimal_point == 'dot') column.decimal_point = '.';
 	if (column.thousands_separator == 'comma') column.thousands_separator = ',';
 	if (column.thousands_separator == 'dot') column.thousands_separator = '.';
 
 	if (isNaN(column.precision)) column.precision = null;
-    if (column.unit == '') column.unit = null;
-    if (column.nansymbol == '') column.nansymbol = null;
+	if (column.unit == '') column.unit = null;
+	if (column.nansymbol == '') column.nansymbol = null;
 };
 
 /**
@@ -479,87 +479,87 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
  */
 EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 {
-    with (this) {
-    	
-    	// clear model and pointer to current table
-    	this.columns = [];
-    	this.data = [];
-    	this.dataUnfiltered = null;
-    	this.table = null;
+	with (this) {
 
-        // we have our new columns
-        columns = _columns;
-        for (var c = 0; c < columns.length; c++) {
-        	
-        	// set column index and back pointer
-        	var column = columns[c];
+		// clear model and pointer to current table
+		this.columns = [];
+		this.data = [];
+		this.dataUnfiltered = null;
+		this.table = null;
+
+		// we have our new columns
+		columns = _columns;
+		for (var c = 0; c < columns.length; c++) {
+
+			// set column index and back pointer
+			var column = columns[c];
 			column.editablegrid = this;
-        	column.columnIndex = c;
+			column.columnIndex = c;
 
-            // parse column type
-            parseColumnType(column);
+			// parse column type
+			parseColumnType(column);
 
 			// create suited enum provider, renderer and editor if none given
-        	if (!column.enumProvider) column.enumProvider = column.optionValues ? new EnumProvider() : null;
-            if (!column.cellRenderer) _createCellRenderer(column);
-            if (!column.headerRenderer) _createHeaderRenderer(column);
-            if (!column.cellEditor) _createCellEditor(column);  
-            if (!column.headerEditor) _createHeaderEditor(column);
+			if (!column.enumProvider) column.enumProvider = column.optionValues ? new EnumProvider() : null;
+			if (!column.cellRenderer) _createCellRenderer(column);
+			if (!column.headerRenderer) _createHeaderRenderer(column);
+			if (!column.cellEditor) _createCellEditor(column);  
+			if (!column.headerEditor) _createHeaderEditor(column);
 
 			// add default cell validators based on the column type
 			_addDefaultCellValidators(column);
-        }
+		}
 
-        // get pointers to table components
-        this.table = _table;
-        this.tHead = _table.tHead;
-        this.tBody = _table.tBodies[0];
-        
-        // create table body if needed
-        if (!tBody) {
-        	tBody = document.createElement("TBODY");
-        	table.insertBefore(tBody, table.firstChild);
-        }
+		// get pointers to table components
+		this.table = _table;
+		this.tHead = _table.tHead;
+		this.tBody = _table.tBodies[0];
 
-        // create table header if needed
-        if (!tHead) {
-        	tHead = document.createElement("THEAD");
-        	table.insertBefore(tHead, tBody);
-        }
+		// create table body if needed
+		if (!tBody) {
+			tBody = document.createElement("TBODY");
+			table.insertBefore(tBody, table.firstChild);
+		}
 
-        // if header is empty use first body row as header
-        if (tHead.rows.length == 0 && tBody.rows.length > 0) 
-        	tHead.appendChild(tBody.rows[0]);
+		// create table header if needed
+		if (!tHead) {
+			tHead = document.createElement("THEAD");
+			table.insertBefore(tHead, tBody);
+		}
 
-        // check that header has exactly one row
-        this.nbHeaderRows = tHead.rows.length;
-        /*if (tHead.rows.length != 1) {
+		// if header is empty use first body row as header
+		if (tHead.rows.length == 0 && tBody.rows.length > 0) 
+			tHead.appendChild(tBody.rows[0]);
+
+		// check that header has exactly one row
+		this.nbHeaderRows = tHead.rows.length;
+		/*if (tHead.rows.length != 1) {
         	alert("You table header must have exactly row!");
         	return false;
         }*/
 
-        // load header labels
-       	var rows = tHead.rows;
-       	for (var i = 0; i < rows.length; i++) {
-       		var cols = rows[i].cells;
-       		var columnIndexInModel = 0;
-       		for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
-       			if (!columns[columnIndexInModel].label) columns[columnIndexInModel].label = cols[j].innerHTML;
-       			var colspan = parseInt(cols[j].getAttribute("colspan"));
-       			columnIndexInModel += colspan > 1 ? colspan : 1;
-       		}
-       	}
+		// load header labels
+		var rows = tHead.rows;
+		for (var i = 0; i < rows.length; i++) {
+			var cols = rows[i].cells;
+			var columnIndexInModel = 0;
+			for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
+				if (!columns[columnIndexInModel].label) columns[columnIndexInModel].label = cols[j].innerHTML;
+				var colspan = parseInt(cols[j].getAttribute("colspan"));
+				columnIndexInModel += colspan > 1 ? colspan : 1;
+			}
+		}
 
-        // load content
-        var rows = tBody.rows;
-        for (var i = 0; i < rows.length; i++) {
-            var rowData = [];
-            var cols = rows[i].cells;
-            for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
-       		data.push({ visible: true, originalIndex: i, id: rows[i].id, columns: rowData });
-       		rows[i].id = this.name + '_' + rows[i].id;
-        }
-    }
+		// load content
+		var rows = tBody.rows;
+		for (var i = 0; i < rows.length; i++) {
+			var rowData = [];
+			var cols = rows[i].cells;
+			for (var j = 0; j < cols.length && j < columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
+			data.push({ visible: true, originalIndex: i, id: rows[i].id, columns: rowData });
+			rows[i].id = this.name + '_' + rows[i].id;
+		}
+	}
 };
 
 /**
@@ -570,18 +570,18 @@ EditableGrid.prototype._createCellRenderer = function(column)
 {
 	column.cellRenderer = 
 		column.enumProvider ? new EnumCellRenderer() :
-		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
-    	column.datatype == "boolean" ? new CheckboxCellRenderer() : 
-    	column.datatype == "email" ? new EmailCellRenderer() : 
-        column.datatype == "website" || column.datatype == "url" ? new WebsiteCellRenderer() : 
-        column.datatype == "date" ? new DateCellRenderer() : 
-    	new CellRenderer();
+			column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
+				column.datatype == "boolean" ? new CheckboxCellRenderer() : 
+					column.datatype == "email" ? new EmailCellRenderer() : 
+						column.datatype == "website" || column.datatype == "url" ? new WebsiteCellRenderer() : 
+							column.datatype == "date" ? new DateCellRenderer() : 
+								new CellRenderer();
 
-	// give access to the column from the cell renderer
-	if (column.cellRenderer) {
-		column.cellRenderer.editablegrid = this;
-		column.cellRenderer.column = column;
-	}
+							// give access to the column from the cell renderer
+							if (column.cellRenderer) {
+								column.cellRenderer.editablegrid = this;
+								column.cellRenderer.column = column;
+							}
 };
 
 /**
@@ -607,18 +607,18 @@ EditableGrid.prototype._createCellEditor = function(column)
 {
 	column.cellEditor = 
 		column.enumProvider ? new SelectCellEditor() :
-		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
-		column.datatype == "boolean" ? null :
-		column.datatype == "email" ? new TextCellEditor(column.precision) :
-		column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
-		column.datatype == "date" ? (typeof $.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
-		new TextCellEditor(column.precision);  
-		
-	// give access to the column from the cell editor
-	if (column.cellEditor) {
-		column.cellEditor.editablegrid = this;
-		column.cellEditor.column = column;
-	}
+			column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
+				column.datatype == "boolean" ? null :
+					column.datatype == "email" ? new TextCellEditor(column.precision) :
+						column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
+							column.datatype == "date" ? (typeof $.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
+								new TextCellEditor(column.precision);  
+
+							// give access to the column from the cell editor
+							if (column.cellEditor) {
+								column.cellEditor.editablegrid = this;
+								column.cellEditor.column = column;
+							}
 };
 
 /**
@@ -628,7 +628,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 EditableGrid.prototype._createHeaderEditor = function(column)
 {
 	column.headerEditor =  new TextCellEditor();  
-		
+
 	// give access to the column from the cell editor
 	if (column.headerEditor) {
 		column.headerEditor.editablegrid = this;
@@ -747,10 +747,10 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 	// check and get column
 	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[getValueAt] Invalid column index " + columnIndex); return null; }
 	var column = this.columns[columnIndex];
-	
+
 	// get value in model
 	if (rowIndex < 0) return column.label;
-	
+
 	if (typeof this.data[rowIndex] == 'undefined') alert("[getValueAt] Invalid row index " + rowIndex);
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
@@ -767,11 +767,11 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 {
 	if (typeof render == "undefined") render = true;
 	var previousValue = null;;
-	
+
 	// check and get column
 	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[setValueAt] Invalid column index " + columnIndex); return null; }
 	var column = this.columns[columnIndex];
-	
+
 	// set new value in model
 	if (rowIndex < 0) {
 		previousValue = column.label;
@@ -782,13 +782,13 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 		previousValue = rowData[columnIndex];
 		if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, value);
 	}
-	
+
 	// render new value
 	if (render) {
 		var renderer = rowIndex < 0 ? column.headerRenderer : column.cellRenderer;  
 		renderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
 	}
-	
+
 	return previousValue;
 };
 
@@ -799,12 +799,12 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 {
 	if (typeof columnIndexOrName == "undefined" || columnIndexOrName === "") return -1;
-	
+
 	// TODO: problem because the name of a column could be a valid index, and we cannot make the distinction here!
-	
+
 	// if columnIndexOrName is a number which is a valid index return it
 	if (!isNaN(columnIndexOrName) && columnIndexOrName >= 0 && columnIndexOrName < this.columns.length) return columnIndexOrName;
-	
+
 	// otherwise search for the name
 	for (var c = 0; c < this.columns.length; c++) if (this.columns[c].name == columnIndexOrName) return c;
 
@@ -882,16 +882,16 @@ EditableGrid.prototype.getRowIndex = function(rowId)
 EditableGrid.prototype.addRow = function(rowId, cellValues, dontSort)
 {
 	with (this) {
-		
+
 		// add row in data
 		var rowData = [];
-        for (var c = 0; c < columns.length; c++) {
-        	var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
-        	rowData.push(getTypedValue(c, cellValue));
-        }
+		for (var c = 0; c < columns.length; c++) {
+			var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
+			rowData.push(getTypedValue(c, cellValue));
+		}
 		var rowIndex = data.length;
 		data.push({ visible: true, originalIndex: rowIndex, id: rowId, columns: rowData });
-		
+
 		// create row in table and render content
 		var tr = tBody.insertRow(rowIndex);
 		tr.id = this.name + "_" + rowId;
@@ -942,7 +942,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 	else {
 		var column = this.columns[columnIndex];
 		column.cellRenderer = cellRenderer;
-	
+
 		// give access to the column from the cell renderer
 		if (cellRenderer) {
 			cellRenderer.editablegrid = this;
@@ -963,7 +963,7 @@ EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
 	else {
 		var column = this.columns[columnIndex];
 		column.cellEditor = cellEditor;
-	
+
 		// give access to the column from the cell editor
 		if (cellEditor) {
 			cellEditor.editablegrid = this;
@@ -984,7 +984,7 @@ EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
 	else {
 		var column = this.columns[columnIndex];
 		column.headerEditor = cellEditor;
-	
+
 		// give access to the column from the cell editor
 		if (cellEditor) {
 			cellEditor.editablegrid = this;
@@ -1003,7 +1003,7 @@ EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvide
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("[setEnumProvider] Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].enumProvider = enumProvider;
-	
+
 	// we must recreate the cell renderer and editor for this column
 	this._createCellRenderer(this.columns[columnIndex]);
 	this._createCellEditor(this.columns[columnIndex]);
@@ -1112,108 +1112,115 @@ EditableGrid.prototype.getCellY = function(oElement)
  */
 EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 {
-    with (this) {
+	with (this) {
 
-    	// if we are already attached to an existing table, just update the cell contents
-    	if (typeof table != "undefined" && table != null) {
-    		
-            var _data = dataUnfiltered == null ? data : dataUnfiltered; 
+		// if we are already attached to an existing table, just update the cell contents
+		if (typeof table != "undefined" && table != null) {
 
-            // render headers
-    		_renderHeaders();
-			   
-    		// render content
-            var rows = tBody.rows;
-            var skipped = 0;
-            for (var i = 0; i < rows.length; i++) {
+			var _data = dataUnfiltered == null ? data : dataUnfiltered; 
 
-            	// filtering and pagination in attach mode means hiding rows
-                if (!_data[i].visible) { rows[i].style.display = 'none'; }
-                else if (skipped < pageSize * currentPageIndex) { skipped++; rows[i].style.display = 'none'; }
-                else {
-                	var rowData = [];
-                	var cols = rows[i].cells;
-                	rows[i].style.display = '';
-                	for (var j = 0; j < cols.length && j < columns.length; j++) 
-                		if (columns[j].renderable) columns[j].cellRenderer._render(i, j, cols[j], getValueAt(i,j));
-                }
-            }
+			// render headers
+			_renderHeaders();
 
-            // attach handler on click or double click 
-            table.editablegrid = this;
-        	if (doubleclick) table.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-        	else table.onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
-    	}
-    	
-    	// we must render a whole new table
-    	else {
-    		
-    		if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
+			// render content
+			var rows = tBody.rows;
+			var skipped = 0;
+			var displayed = 0;
+			var rowIndex = 0;
+			
+			for (var i = 0; i < rows.length; i++) {
 
-        	currentContainerid = containerid;
-        	currentClassName = className;
-        	currentTableid = tableid;
+				// filtering and pagination in attach mode means hiding rows
+				if (!_data[i].visible || displayed >= pageSize) { rows[i].style.display = 'none'; }
+				else {
+					if (skipped < pageSize * currentPageIndex) { skipped++; rows[i].style.display = 'none'; }
+					else {
+						displayed++;
+						var rowData = [];
+						var cols = rows[i].cells;
+						rows[i].style.display = '';
+						for (var j = 0; j < cols.length && j < columns.length; j++) 
+							if (columns[j].renderable) columns[j].cellRenderer._render(rowIndex, j, cols[j], getValueAt(rowIndex,j));
+					}
+					rowIndex++;
+				}
+			}
 
-        	var startRowIndex = 0;
-        	var endRowIndex = getRowCount();
+			// attach handler on click or double click 
+			table.editablegrid = this;
+			if (doubleclick) table.ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+			else table.onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+		}
 
-        	// paginate if required
-        	if (pageSize > 0) {
-        		startRowIndex = currentPageIndex * pageSize;
-        		endRowIndex = Math.min(getRowCount(), startRowIndex + pageSize); 
-        	}
-        		
-    		// create editablegrid table and add it to our container 
-    		this.table = document.createElement("table");
-    		table.className = className || "editablegrid";          
+		// we must render a whole new table
+		else {
+
+			if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
+
+			currentContainerid = containerid;
+			currentClassName = className;
+			currentTableid = tableid;
+
+			var startRowIndex = 0;
+			var endRowIndex = getRowCount();
+
+			// paginate if required
+			if (pageSize > 0) {
+				startRowIndex = currentPageIndex * pageSize;
+				endRowIndex = Math.min(getRowCount(), startRowIndex + pageSize); 
+			}
+
+			// create editablegrid table and add it to our container 
+			this.table = document.createElement("table");
+			table.className = className || "editablegrid";          
 			if (typeof tableid != "undefined") table.id = tableid;
-    		while (_$(containerid).hasChildNodes()) _$(containerid).removeChild(_$(containerid).firstChild);
-    		_$(containerid).appendChild(table);
-        
-    		// create header
-    		if (caption) {
-    			var captionElement = document.createElement("CAPTION");
-    			captionElement.innerHTML = this.caption;
-    			table.appendChild(captionElement);
-    		}
-    		
-    		this.tHead = document.createElement("THEAD");
-    		table.appendChild(tHead);
-    		var trHeader = tHead.insertRow(0);
-    		var columnCount = getColumnCount();
-    		for (var c = 0; c < columnCount; c++) {
-    			var headerCell = document.createElement("TH");
-    			var td = trHeader.appendChild(headerCell);
-        		columns[c].headerRenderer._render(-1, c, td, columns[c].label);
-    		}
-        
-    		// create body and rows
-    		this.tBody = document.createElement("TBODY");
-    		table.appendChild(tBody);
-    		var insertRowIndex = 0;
-            for (var i = startRowIndex; i < endRowIndex; i++) {
-    			var tr = tBody.insertRow(insertRowIndex++);
-    			tr.id = this.name + "_" + data[i]['id'];
-    			for (j = 0; j < columnCount; j++) {
-        		
-    				// create cell and render its content
-    				var td = tr.insertCell(j);
-    				columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
-    			}
-    		}
+			while (_$(containerid).hasChildNodes()) _$(containerid).removeChild(_$(containerid).firstChild);
+			_$(containerid).appendChild(table);
 
-    		// attach handler on click or double click 
-            _$(containerid).editablegrid = this;
-        	if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
-        	else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
-    	}
-    	
-    	// callback
+			// create header
+			if (caption) {
+				var captionElement = document.createElement("CAPTION");
+				captionElement.innerHTML = this.caption;
+				table.appendChild(captionElement);
+			}
+
+			this.tHead = document.createElement("THEAD");
+			table.appendChild(tHead);
+			var trHeader = tHead.insertRow(0);
+			var columnCount = getColumnCount();
+			for (var c = 0; c < columnCount; c++) {
+				var headerCell = document.createElement("TH");
+				var td = trHeader.appendChild(headerCell);
+				columns[c].headerRenderer._render(-1, c, td, columns[c].label);
+			}
+
+			// create body and rows
+			this.tBody = document.createElement("TBODY");
+			table.appendChild(tBody);
+			var insertRowIndex = 0;
+			for (var i = startRowIndex; i < endRowIndex; i++) {
+				var tr = tBody.insertRow(insertRowIndex++);
+				tr.id = this.name + "_" + data[i]['id'];
+				for (j = 0; j < columnCount; j++) {
+
+					// create cell and render its content
+					var td = tr.insertCell(j);
+					columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
+				}
+			}
+
+			// attach handler on click or double click 
+			_$(containerid).editablegrid = this;
+			if (doubleclick) _$(containerid).ondblclick = function(e) { this.editablegrid.mouseClicked(e); };
+			else _$(containerid).onclick = function(e) { this.editablegrid.mouseClicked(e); }; 
+		}
+
+		// callback
 		tableRendered(containerid, className, tableid);
-    }
+	}
 };
 
-    
+
 /**
  * Renders the grid as an HTML table in the document
  * @param {String} containerid 
@@ -1227,15 +1234,15 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
  */
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
-    with (this) {
+	with (this) {
 
-    	_rendergrid(containerid, className, tableid);
+		_rendergrid(containerid, className, tableid);
 
 		// sort and filter table
 		if (sortedColumnName === -1) tableSorted(-1, sortDescending); // avoid a double render, but still send the expected callback
 		else sort();
 		filter();
-    }
+	}
 };
 
 /**
@@ -1259,12 +1266,12 @@ EditableGrid.prototype._renderHeaders = function()
 		for (var i = 0; i < 1 /*rows.length*/; i++) {
 			var rowData = [];
 			var cols = rows[i].cells;
-       		var columnIndexInModel = 0;
-       		for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
+			var columnIndexInModel = 0;
+			for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
 				columns[columnIndexInModel].headerRenderer._render(-1, columnIndexInModel, cols[j], columns[columnIndexInModel].label);
-       			var colspan = parseInt(cols[j].getAttribute("colspan"));
-       			columnIndexInModel += colspan > 1 ? colspan : 1;
-       		}
+				var colspan = parseInt(cols[j].getAttribute("colspan"));
+				columnIndexInModel += colspan > 1 ? colspan : 1;
+			}
 		}
 	}
 };
@@ -1278,30 +1285,30 @@ EditableGrid.prototype.mouseClicked = function(e)
 {
 	e = e || window.event;
 	with (this) {
-		
+
 		// get row and column index from the clicked cell
 		var target = e.target || e.srcElement;
-		
+
 		// go up parents to find a cell or a link under the clicked position
 		while (target) if (target.tagName == "A" || target.tagName == "TD" || target.tagName == "TH") break; else target = target.parentNode;
 		if (!target || !target.parentNode || !target.parentNode.parentNode || (target.parentNode.parentNode.tagName != "TBODY" && target.parentNode.parentNode.tagName != "THEAD") || target.isEditing) return;
-		
+
 		// don't handle clicks on links
 		if (target.tagName == "A") return;
-		
+
 		// get cell position in table
 		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
 		var columnIndex = target.cellIndex;
 
 		var column = columns[columnIndex];
 		if (column) {
-			
+
 			// if another row has been selected: callback
 			if (rowIndex > -1 && rowIndex != lastSelectedRowIndex) {
 				rowSelected(lastSelectedRowIndex, rowIndex);				
 				lastSelectedRowIndex = rowIndex;
 			}
-			
+
 			// edit current cell value
 			if (!column.editable) { readonlyWarning(column); }
 			else {
@@ -1324,7 +1331,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 {
 	with (this) {
-		
+
 		if (typeof columnIndexOrName  == 'undefined') columnIndexOrName = sortedColumnName;
 		if (typeof descending  == 'undefined') descending = sortDescending;
 
@@ -1336,7 +1343,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 				return false;
 			}
 		}
-		
+
 		// work on unfiltered data
 		var filterActive = dataUnfiltered != null; 
 		if (filterActive) data = dataUnfiltered;
@@ -1346,11 +1353,11 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		var rowCount = getRowCount();
 		for (var i = 0; i < rowCount - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getValueAt(i, columnIndex), i, data[i].originalIndex]);
 		row_array.sort(columnIndex < 0 ? unsort :
-					   type == "integer" || type == "double" ? sort_numeric :
-					   type == "boolean" ? sort_boolean :
-					   type == "date" ? sort_date :
-					   sort_alpha);
-		
+			type == "integer" || type == "double" ? sort_numeric :
+				type == "boolean" ? sort_boolean :
+					type == "date" ? sort_date :
+						sort_alpha);
+
 		if (descending) row_array = row_array.reverse();
 		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getValueAt(rowCount - 1, columnIndex), rowCount - 1, data[rowCount - 1].originalIndex]);
 
@@ -1359,7 +1366,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		data = [];
 		for (var i = 0; i < row_array.length; i++) data.push(_data[row_array[i][1]]);
 		delete row_array;
-		
+
 		if (filterActive) {
 
 			// keep only visible rows in data
@@ -1382,9 +1389,9 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 EditableGrid.prototype.filter = function(filterString)
 {
 	with (this) {
-		
+
 		if (typeof filterString != 'undefined') currentFilter = filterString;
-		
+
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
 			if (dataUnfiltered != null) {
@@ -1395,25 +1402,25 @@ EditableGrid.prototype.filter = function(filterString)
 			}
 			return;
 		}		
-		
+
 		var words = currentFilter.toLowerCase().split(" ");
 
 		// work on unfiltered data
 		if (dataUnfiltered != null) data = dataUnfiltered;
-		
+
 		var rowCount = getRowCount();
 		for (var r = 0; r < rowCount; r++) {
 			data[r].visible = true;
 			var rowContent = ""; 
 			for (var c = 0; c < data[r].columns.length; c++) rowContent += data[r].columns[c] + " ";
-			
+
 			// if row contents does not match one word in the filter, hide the row
-	        for (var i = 0; i < words.length; i++) {
-	        	if (rowContent.toLowerCase().indexOf(words[i]) < 0) {
-	        		data[r].visible = false;
-	        		break;
-	        	}
-	        }
+			for (var i = 0; i < words.length; i++) {
+				if (rowContent.toLowerCase().indexOf(words[i]) < 0) {
+					data[r].visible = false;
+					break;
+				}
+			}
 		}
 
 		// keep only visible rows in data
@@ -1524,7 +1531,7 @@ EditableGrid.prototype.getSlidingPageInterval = function(slidingWindowSize)
 	var curPageIndex = this.getCurrentPageIndex();
 	var startPageIndex = Math.max(0, curPageIndex - (slidingWindowSize/2));
 	var endPageIndex = Math.min(nbPages, curPageIndex + (slidingWindowSize/2));
-	
+
 	if (endPageIndex - startPageIndex < slidingWindowSize) {
 		var diff = slidingWindowSize - (endPageIndex - startPageIndex);
 		startPageIndex = Math.max(0, startPageIndex - diff);
