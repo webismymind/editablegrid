@@ -22,7 +22,7 @@
 
 var editableGrid = null;
 
-function onloadXML() 
+function loadXML() 
 {
 	editableGrid = new EditableGrid("DemoGrid", {
 		

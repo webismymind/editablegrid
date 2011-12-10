@@ -1,10 +1,9 @@
 <?php
 
 // This PHP script demonstrates how to generate XML grid data "on-the-fly"
-// To achieve this, here we use our simple "PHP wrapper class", but this is not mandatory.
-// The only thing is that the generated XML must have the expected structure 
-// Here we get the data from a CSV file.
-// In real life, these data would probably come from a database.
+// To achieve this, here we use our simple "PHP wrapper class" EditableGrid.php, but this is not mandatory.
+// The only thing is that the generated XML must have the expected structure .
+// Here we get the data from a CSV file; in real life, these data would probably come from a database.
 
 require_once("../php/EditableGrid.php");
 

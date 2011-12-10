@@ -169,7 +169,7 @@ function loadHTML()
 		[ new Column({ name: "name", datatype: "string(24)" }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
-		  new Column({ name: "height", datatype: "double(m, 2)" }),
+		  new Column({ name: "height", datatype: "double(m, 2)", bar: false }),
 		  new Column({ name: "continent", datatype: "string", optionValues: {"eu": "Europa", "am": "America", "af": "Africa" }}),
 		  new Column({ name: "country", datatype: "string" }),
 		  new Column({ name: "email", datatype: "email(26)" }),
