@@ -181,9 +181,10 @@ function loadHTML()
 }
 
 // function to render our two demo charts
-EditableGrid.prototype.renderCharts = function() 
+EditableGrid.prototype.renderCharts = function(maxBars) 
 {
-	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= 15 ? '' : ' (first 15 rows out of ' + this.getRowCount() + ')'), 'name', null, null, null, 15);
+	maxBars = maxBars || this.pageSize;
+	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= maxBars ? '' : ' (first ' + maxBars + ' rows out of ' + this.getRowCount() + ')'), 'name', null, null, null, maxBars, false);
 	this.renderPieChart("piechartcontent", 'Country distribution', 'country', 'country');
 };
 

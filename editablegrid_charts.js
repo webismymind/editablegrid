@@ -58,7 +58,7 @@ EditableGrid.prototype.checkChartLib = function()
  * @param limit
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha, limit)
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha, limit, bar3d)
 {
 	with (this) {
 
@@ -67,6 +67,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		if (typeof bgColor == 'undefined' || bgColor === null) bgColor = "#ffffff";
 		if (typeof alpha == 'undefined' || alpha === null) alpha = 0.9;
 		if (typeof limit == 'undefined' || limit === null) limit = 0;
+		if (typeof bar3d == 'undefined' || bar3d === null) bar3d = true;
 		
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -82,7 +83,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		var maxvalue = 0;
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
-			var bar = new ofc_element("bar_3d");
+			var bar = new ofc_element(bar3d ? "bar_3d" : "bar");
 			bar.alpha = alpha;
 			bar.colour = smartColorsBar[chart.elements.length % smartColorsBar.length];
 			bar.fill = "transparent";
