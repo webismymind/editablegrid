@@ -76,6 +76,10 @@ table.testgrid>tbody tr:hover {
 	color: white;
 }
 
+table.testgrid>tbody tr:hover a {
+	color: white;
+}
+
 table.testgrid th {
 	background: #E5E5E5;
 	border: 1px solid #D5D5D5;
