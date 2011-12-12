@@ -1160,7 +1160,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 			for (var i = 0; i < rows.length; i++) {
 
 				// filtering and pagination in attach mode means hiding rows
-				if (!_data[i].visible || displayed >= pageSize) { rows[i].style.display = 'none'; }
+				if (!_data[i].visible || (pageSize > 0 && displayed >= pageSize)) { rows[i].style.display = 'none'; }
 				else {
 					if (skipped < pageSize * currentPageIndex) { skipped++; rows[i].style.display = 'none'; }
 					else {
