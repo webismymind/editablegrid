@@ -25,7 +25,8 @@ var editableGrid = new EditableGrid("DemoGrid", {
 	enableSort: true, // true is the default, set it to false if you don't want sorting to be enabled
 	editmode: "absolute", // change this to "fixed" to test out editorzone, and to "static" to get the old-school mode
 	editorzoneid: "edition", // will be used only if editmode is set to "fixed"
-	pageSize: 10
+	pageSize: 10,
+	maxBars: 10
 });
 
 // helper method to display a message
@@ -147,6 +148,10 @@ function initializeGrid()
 		
 		// filter when something is typed into filter
 		_$('filter').onkeyup = function() { editableGrid.filter(_$('filter').value); };
+		
+		// bind page size selector
+		$("#pagesize").val(pageSize).change(function() { editableGrid.setPageSize($("#pagesize").val()); });
+		$("#barcount").val(maxBars).change(function() { editableGrid.maxBars = $("#barcount").val(); editableGrid.renderCharts(); });
 	}
 }
 
@@ -181,10 +186,9 @@ function loadHTML()
 }
 
 // function to render our two demo charts
-EditableGrid.prototype.renderCharts = function(maxBars) 
+EditableGrid.prototype.renderCharts = function() 
 {
-	maxBars = maxBars || this.pageSize;
-	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= maxBars ? '' : ' (first ' + maxBars + ' rows out of ' + this.getRowCount() + ')'), 'name', null, null, null, maxBars, false);
+	this.renderBarChart("barchartcontent", 'Age per person' + (this.getRowCount() <= this.maxBars ? '' : ' (first ' + this.maxBars + ' rows out of ' + this.getRowCount() + ')'), 'name', { limit: this.maxBars, bar3d: false, rotateXLabels: this.maxBars > 10 ? 270 : 0 });
 	this.renderPieChart("piechartcontent", 'Country distribution', 'country', 'country');
 };
 

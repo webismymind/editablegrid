@@ -108,6 +108,7 @@ table.testgrid td {
   	margin: 10px 0;
 	font-size: 12px;
 	text-align: center;
+	margin-bottom: 5px;
 }
 
 #paginator a { color:  #0078cc; text-decoration: none; font-size: 12px; }           
@@ -136,4 +137,9 @@ table.testgrid td {
 	width: 300px;
 	height: 250px;
 	margin-bottom: 10px;
+}
+
+#pagecontrol {
+	padding-bottom: 5px;
+	float: right;
 }

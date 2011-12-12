@@ -1465,6 +1465,18 @@ EditableGrid.prototype.filter = function(filterString)
 };
 
 /**
+ * Sets the page size(pageSize of 0 means no pagination)
+ * @param {Integer} pageSize Integer page size
+ */
+EditableGrid.prototype.setPageSize = function(pageSize)
+{
+	this.pageSize = parseInt(pageSize);
+	if (isNaN(this.pageSize)) this.pageSize = 0;
+	this.currentPageIndex = 0;
+	this.refreshGrid();
+};
+
+/**
  * Returns the number of pages according to the current page size
  */
 EditableGrid.prototype.getPageCount = function()

@@ -52,22 +52,25 @@ EditableGrid.prototype.checkChartLib = function()
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param legend
- * @param bgColor
- * @param alpha
- * @param limit
+ * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.9), limit (0), bar3d (true), rotateXLabels (0) 
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha, limit, bar3d)
+EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
-		if (typeof bgColor == 'undefined' || bgColor === null) bgColor = "#ffffff";
-		if (typeof alpha == 'undefined' || alpha === null) alpha = 0.9;
-		if (typeof limit == 'undefined' || limit === null) limit = 0;
-		if (typeof bar3d == 'undefined' || bar3d === null) bar3d = true;
+		// default options
+		this.legend = null;
+		this.bgColor = "#ffffff";
+		this.alpha = 0.9;
+		this.limit = 0;
+		this.bar3d = true;
+		this.rotateXLabels = 0;
+		
+		// override default options with the ones given
+		if (options) for (var p in options) this[p] = options[p];
 		
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -115,7 +118,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		    tick_height:  10,
 			colour: "#E2E2E2",
 			"grid-colour": "#E2E2E2",
-		    labels: { labels: xLabels },
+			labels: { rotate: rotateXLabels, labels: xLabels },
 		    "3d": 5
 		};
 
@@ -151,21 +154,24 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param legend
- * @param bgColor
- * @param alpha
- * @param limit
+ * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.8), limit (0), rotateXLabels (0) 
  * @return
  */
-EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, legend, bgColor, alpha, limit)
+EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
-		if (typeof bgColor == 'undefined' || bgColor === null) bgColor = "#ffffff";
-		if (typeof alpha == 'undefined' || alpha === null) alpha = 0.8;
-		if (typeof limit == 'undefined' || limit === null) limit = 0;
+		// default options
+		this.legend = null;
+		this.bgColor = "#ffffff";
+		this.alpha = 0.8;
+		this.limit = 0;
+		this.rotateXLabels = 0;
+		
+		// override default options with the ones given
+		if (options) for (var p in options) this[p] = options[p];
 
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
@@ -220,7 +226,7 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
 		    tick_height:  10,
 			colour: "#E2E2E2",
 			"grid-colour": "#E2E2E2",
-		    labels: { labels: xLabels },
+			labels: { rotate: rotateXLabels, labels: xLabels },
 		    "3d": 5
 		};
 
@@ -256,23 +262,24 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
  * @param title
  * @param valueColumnIndexOrName
  * @param labelColumnIndexOrName: if same as valueColumnIndexOrName, the chart will display the frequency of values in this column 
- * @param startAngle
- * @param bgColor
- * @param alpha
- * @param gradientFill
- * @param limit
+ * @param options: startAngle (0), bgColor (#ffffff), alpha (0.5), limit (0), gradientFill (true) 
  * @return
  */
-EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle, bgColor, alpha, gradientFill, limit) 
+EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) 
 {
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
-		if (typeof bgColor == 'undefined' || bgColor === null) bgColor = "#ffffff";
-		if (typeof alpha == 'undefined' || alpha === null) alpha = 0.5;
-		if (typeof gradientFill == 'undefined' || gradientFill === null) gradientFill = true;
-		if (typeof limit == 'undefined' || limit === null) limit = 0;
+		// default options
+		this.startAngle = 0;
+		this.bgColor = "#ffffff";
+		this.alpha = 0.5;
+		this.limit = 0;
+		this.gradientFill = true;
+		
+		// override default options with the ones given
+		if (options) for (var p in options) this[p] = options[p];
 
 		var type = getColumnType(valueColumnIndexOrName);
 		if (type != "double" && type != "integer" && valueColumnIndexOrName != labelColumnIndexOrName) return;
