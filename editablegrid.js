@@ -1266,6 +1266,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
 	with (this) {
 
+		// back to first page before rendering
+		this.currentPageIndex = 0;
+		
 		_rendergrid(containerid, className, tableid);
 
 		// sort and filter table
