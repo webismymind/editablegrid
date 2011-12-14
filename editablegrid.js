@@ -1377,6 +1377,11 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			}
 		}
 
+		if (!enableSort) {
+			tableSorted(columnIndex, descending);
+			return;
+		}
+		
 		// work on unfiltered data
 		var filterActive = dataUnfiltered != null; 
 		if (filterActive) data = dataUnfiltered;
