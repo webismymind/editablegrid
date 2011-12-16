@@ -29,16 +29,21 @@ var editableGrid = new EditableGrid("DemoGrid", {
 	maxBars: 10
 });
 
-// helper method to display a message
+// helper function to display a message
 function displayMessage(text, style) { 
 	_$("message").innerHTML = "<p class='" + (style || "ok") + "'>" + text + "</p>"; 
 } 
+
+// helper function to get path of a demo image
+function image(relativePath) {
+	return "images/" + relativePath;
+}
 
 // this will be used to render our table headers
 function InfoHeaderRenderer(message) { 
 	this.message = message; 
 	this.infoImage = new Image();
-	this.infoImage.src = "images/information.png";
+	this.infoImage.src = image("information.png");
 };
 
 InfoHeaderRenderer.prototype = new CellRenderer();
@@ -88,7 +93,7 @@ function initializeGrid()
 		
 		// use a flag image to render the selected country
 		setCellRenderer("country", new CellRenderer({
-			render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
+			render: function(cell, value) { cell.innerHTML = value ? "<img src='" + image("flags/" + value.toLowerCase() + ".png") + "' alt='" + value + "'/>" : ""; }
 		})); 
 
 		// use autocomplete on firstname
@@ -137,7 +142,7 @@ function initializeGrid()
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
 			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.removeRow('" + rowId + "'); editableGrid.renderCharts(); }\" style=\"cursor:pointer\">" +
-							 "<img src=\"images/delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
+							 "<img src=\"" + image("delete.png") + "\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 		}})); 
 
 		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
@@ -196,27 +201,27 @@ EditableGrid.prototype.renderCharts = function()
 EditableGrid.prototype.updatePaginator = function()
 {
 	var paginator = $("#paginator").empty();
-	var nbPages = editableGrid.getPageCount();
+	var nbPages = this.getPageCount();
 
 	// get interval
-	var interval = editableGrid.getSlidingPageInterval(20);
+	var interval = this.getSlidingPageInterval(20);
 	if (interval == null) return;
 	
 	// get pages in interval (with links except for the current page)
-	var pages = editableGrid.getPagesInInterval(interval, function(pageIndex, isCurrent) {
+	var pages = this.getPagesInInterval(interval, function(pageIndex, isCurrent) {
 		if (isCurrent) return "" + (pageIndex + 1);
 		return $("<a>").css("cursor", "pointer").html(pageIndex + 1).click(function(event) { editableGrid.setPageIndex(parseInt($(this).html()) - 1); });
 	});
 		
 	// "first" link
-	var link = $("<a>").html("<img src='images/gofirst.png'/>&nbsp;");
-	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	var link = $("<a>").html("<img src='" + image("gofirst.png") + "'/>&nbsp;");
+	if (!this.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
 	else link.css("cursor", "pointer").click(function(event) { editableGrid.firstPage(); });
 	paginator.append(link);
 
 	// "prev" link
-	link = $("<a>").html("<img src='images/prev.png'/>&nbsp;");
-	if (!editableGrid.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	link = $("<a>").html("<img src='" + image("prev.png") + "'/>&nbsp;");
+	if (!this.canGoBack()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
 	else link.css("cursor", "pointer").click(function(event) { editableGrid.prevPage(); });
 	paginator.append(link);
 
@@ -224,14 +229,14 @@ EditableGrid.prototype.updatePaginator = function()
 	for (p = 0; p < pages.length; p++) paginator.append(pages[p]).append(" | ");
 	
 	// "next" link
-	link = $("<a>").html("<img src='images/next.png'/>&nbsp;");
-	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	link = $("<a>").html("<img src='" + image("next.png") + "'/>&nbsp;");
+	if (!this.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
 	else link.css("cursor", "pointer").click(function(event) { editableGrid.nextPage(); });
 	paginator.append(link);
 
 	// "last" link
-	link = $("<a>").html("<img src='images/golast.png'/>&nbsp;");
-	if (!editableGrid.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
+	link = $("<a>").html("<img src='" + image("golast.png") + "'/>&nbsp;");
+	if (!this.canGoForward()) link.css({ opacity : 0.4, filter: "alpha(opacity=40)" });
 	else link.css("cursor", "pointer").click(function(event) { editableGrid.lastPage(); });
 	paginator.append(link);
 };

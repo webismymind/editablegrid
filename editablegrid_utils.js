@@ -166,6 +166,7 @@ EditableGrid.prototype.detectDir = function()
 			var src = new URI(e[i].src);
 			var srcAbs = src.toAbsolute(base);
 			srcAbs.path = srcAbs.path.replace(/[^\/]+$/, ''); // remove filename
+			srcAbs.path = srcAbs.path.replace(/\/$/, ''); // remove trailing slash
 			delete srcAbs.query;
 			delete srcAbs.fragment;
 			return srcAbs.toString();
