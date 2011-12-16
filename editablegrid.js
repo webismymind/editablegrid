@@ -128,11 +128,11 @@ function EnumProvider(config)
  * @constructor
  * @class EditableGrid
  */
-function EditableGrid(name, config) { if (name && config) this.init(name, config); }
+function EditableGrid(name, config) { if (name) this.init(name, config); }
 
 EditableGrid.prototype.init = function (name, config)
 {
-	if (typeof name != "string" || typeof config != "object") {
+	if (typeof name != "string" || (typeof config != "object" && typeof config != "undefined")) {
 		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
 	};
 
@@ -157,8 +157,8 @@ EditableGrid.prototype.init = function (name, config)
 
 	// override default properties with the ones given
 	for (var p in props) this[p] = props[p];
-	for (var p in config) this[p] = config[p];
-
+	if (typeof config != 'undefined') for (var p in config) this[p] = config[p];
+	
 	this.Browser = {
 			IE:  !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 			Opera: navigator.userAgent.indexOf('Opera') > -1,
@@ -612,7 +612,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 				column.datatype == "boolean" ? null :
 					column.datatype == "email" ? new TextCellEditor(column.precision) :
 						column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
-							column.datatype == "date" ? (typeof $.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
+							column.datatype == "date" ? (typeof $ == 'undefined' || typeof $.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
 								new TextCellEditor(column.precision);  
 
 							// give access to the column from the cell editor

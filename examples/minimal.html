@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<!-- 
+/*
+ * minimal.html
+ * 
+ * This file is part of EditableGrid.
+ * http://editablegrid.net
+ *
+ * Copyright (c) 2011 Webismymind SPRL
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://editablegrid.net/license
+ */
+-->
+ 
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>EditableGrid - Minimal demo</title>
+		
+		<script src="../editablegrid.js"></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_renderers.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_editors.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_validators.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_utils.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../editablegrid_charts.js" ></script>
+		<link rel="stylesheet" href="../editablegrid.css" type="text/css" media="screen">
+		
+		<style>
+			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:11px; }
+			a { color: #548dc4; text-decoration: none; }
+			a:hover { text-decoration: underline; }
+			table.testgrid { border-collapse: collapse; border: 1px solid #CCB; width: 800px; }
+			table.testgrid td, table.testgrid th { padding: 5px; border: 1px solid #E0E0E0; }
+			input.invalid { background: red; color: #FDFDFD; }
+		</style>
+		
+		<script>
+			window.onload = function() {
+				editableGrid = new EditableGrid("DemoGrid"); 
+				editableGrid.tableLoaded = function() { this.renderGrid("tablecontent", "testgrid"); };
+				editableGrid.loadXML("datasource/minimal.xml");
+			} 
+		</script>
+		
+	</head>
+	
+	<body>
+		<div id="tablecontent"></div>
+	</body>
+
+</html>

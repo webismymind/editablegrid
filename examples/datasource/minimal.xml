@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- 
+/*
+ * minimal.xml
+ * 
+ * This file is part of EditableGrid.
+ * http://editablegrid.net
+ *
+ * Copyright (c) 2011 Webismymind SPRL
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://editablegrid.net/license
+ */
+-->
+ 
+<table>
+
+	<metadata>
+		<column name='name' label='NAME' datatype='string' editable='true'></column>
+		<column name='firstname' label='FIRSTNAME' datatype='string' editable='true'></column>
+		<column name='age' label='AGE' datatype='integer' editable='true'></column>
+		<column name='height' label='HEIGHT' datatype='double(m,2)' bar='false' editable='true'></column>
+		<column name='country' label='COUNTRY' datatype='string' editable='true'>
+			<values>
+				<group label='Europe'>
+					<value value='be'><![CDATA[Belgium]]></value>
+					<value value='fr'><![CDATA[France]]></value>
+					<value value='uk'><![CDATA[Great-Britain]]></value>
+					<value value='nl'><![CDATA[Nederland]]></value>
+				</group>
+				<group label='America'>
+					<value value='br'><![CDATA[Brazil]]></value>
+					<value value='ca'><![CDATA[Canada]]></value>
+					<value value='us'><![CDATA[USA]]></value>
+				</group>
+				<group label='Africa'>
+					<value value='ng'><![CDATA[Nigeria]]></value>
+					<value value='za'><![CDATA[South-Africa]]></value>
+					<value value='zw'><![CDATA[Zimbabwe]]></value>
+				</group>
+			</values>
+		</column>
+		<column name='email' label='EMAIL' datatype='email' editable='true'></column>
+		<column name='freelance' label='FREELANCE' datatype='boolean' editable='true'></column>
+		<column name='lastvisit' label='LAST VISIT' datatype='date' editable='true'></column>
+	</metadata>
+
+	<data>
+		<!-- NB: It is recommended to name your columns.This way you can give them in any order and skip some columns if you want. -->
+		<row id='1'>
+			<column name='name'><![CDATA[Hoffman]]></column>
+			<column name='firstname'><![CDATA[Tatyana]]></column>
+			<column name='age'><![CDATA[88]]></column>
+			<column name='height'><![CDATA[1.32]]></column>
+			<column name='country'><![CDATA[ca]]></column>
+			<column name='email'><![CDATA[Nam@quisdiamluctus.org]]></column>
+			<column name='freelance'><![CDATA[1]]></column>
+			<column name='lastvisit'><![CDATA[17/04/2012]]></column>
+		</row>
+		<!-- ... but naming the columns is not mandatory. The order used in metadata must then be respected. -->
+		<row id='2'>
+			<column><![CDATA[Atkins]]></column>
+			<column><![CDATA[Ishmael]]></column>
+			<column><![CDATA[44]]></column>
+			<column><![CDATA[1.42]]></column>
+			<column><![CDATA[uk]]></column>
+			<column><![CDATA[arcu.et.pede@musProin.ca]]></column>
+			<column><![CDATA[1]]></column>
+			<column><![CDATA[12/01/2011]]></column>
+		</row>
+		<row id='3'>
+			<column name='name'><![CDATA[Hamilton]]></column>
+			<column name='firstname'><![CDATA[Mohammad]]></column>
+			<column name='age'><![CDATA[73]]></column>
+			<column name='height'><![CDATA[1.22]]></column>
+			<column name='country'><![CDATA[fr]]></column>
+			<column name='email'><![CDATA[dui@duiCras.edu]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[25/09/2012]]></column>
+		</row>
+		<row id='4'>
+			<column name='name'><![CDATA[Murray]]></column>
+			<column name='firstname'><![CDATA[Troy]]></column>
+			<column name='age'><![CDATA[18]]></column>
+			<column name='height'><![CDATA[1.92]]></column>
+			<column name='country'><![CDATA[fr]]></column>
+			<column name='email'><![CDATA[mollis@eutellus.co.uk]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[22/07/2012]]></column>
+		</row>
+		<row id='5'>
+			<column name='name'><![CDATA[Schwartz]]></column>
+			<column name='firstname'><![CDATA[Carla]]></column>
+			<column name='age'><![CDATA[79]]></column>
+			<column name='height'><![CDATA[1.50]]></column>
+			<column name='country'><![CDATA[ca]]></column>
+			<column name='email'><![CDATA[ante@adipiscing.org]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[31/03/2012]]></column>
+		</row>
+		<row id='6'>
+			<column name='name'><![CDATA[Bond]]></column>
+			<column name='firstname'><![CDATA[Lenore]]></column>
+			<column name='age'><![CDATA[33]]></column>
+			<column name='height'><![CDATA[1.55]]></column>
+			<column name='country'><![CDATA[us]]></column>
+			<column name='email'><![CDATA[semper.tellus.id@sem.co.uk]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[04/02/2011]]></column>
+		</row>
+		<row id='7'>
+			<column name='name'><![CDATA[Noble]]></column>
+			<column name='firstname'><![CDATA[Georgia]]></column>
+			<column name='age'><![CDATA[88]]></column>
+			<column name='height'><![CDATA[1.90]]></column>
+			<column name='country'><![CDATA[za]]></column>
+			<column name='email'><![CDATA[mi.lacinia@nisiaodio.co.uk]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[17/01/2011]]></column>
+		</row>
+		<row id='8'>
+			<column name='name'><![CDATA[Frederick]]></column>
+			<column name='firstname'><![CDATA[Bradley]]></column>
+			<column name='age'><![CDATA[80]]></column>
+			<column name='height'><![CDATA[1.87]]></column>
+			<column name='country'><![CDATA[us]]></column>
+			<column name='email'><![CDATA[dapibus.id.blandit@aptenttacitisociosqu.com]]></column>
+			<column name='freelance'><![CDATA[]]></column>
+			<column name='lastvisit'><![CDATA[27/07/2011]]></column>
+		</row>
+		<row id='9'>
+			<column name='name'><![CDATA[Chambers]]></column>
+			<column name='firstname'><![CDATA[Aphrodite]]></column>
+			<column name='age'><![CDATA[63]]></column>
+			<column name='height'><![CDATA[1.30]]></column>
+			<column name='country'><![CDATA[fr]]></column>
+			<column name='email'><![CDATA[mattis@venenatisvel.co.uk]]></column>
+			<column name='freelance'><![CDATA[1]]></column>
+			<column name='lastvisit'><![CDATA[10/09/2011]]></column>
+		</row>
+		<row id='10'>
+			<column name='name'><![CDATA[Schultz]]></column>
+			<column name='firstname'><![CDATA[Allegra]]></column>
+			<column name='age'><![CDATA[90]]></column>
+			<column name='height'><![CDATA[1.70]]></column>
+			<column name='country'><![CDATA[ca]]></column>
+			<column name='email'><![CDATA[Fusce.feugiat.Lorem@Duis.net]]></column>
+			<column name='freelance'><![CDATA[1]]></column>
+			<column name='lastvisit'><![CDATA[03/04/2012]]></column>
+		</row>
+	</data>
+</table>
