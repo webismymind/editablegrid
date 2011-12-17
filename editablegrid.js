@@ -1,25 +1,3 @@
-/*
- * EditableGrid.js
- * 
- * Copyright 2010 Webismymind SPRL
- *
- * This file is part of EditableGrid.
- * 
- * EditableGrid is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or 
- * any later version.
- * 
- * EditableGrid is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with EditableGrid. If not, see http://www.gnu.org/licenses.
- * 
- */
-
 if (typeof _$ == 'undefined') {
 	function _$(elementId) { return document.getElementById(elementId); }
 }
@@ -511,9 +489,10 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 		}
 
 		// get pointers to table components
-		this.table = _table;
-		this.tHead = _table.tHead;
-		this.tBody = _table.tBodies[0];
+		this.table = typeof _table == 'string' ? _$(_table) : _table ;
+		if (!this.table) alert("Invalid table given: " + _table);
+		this.tHead = this.table.tHead;
+		this.tBody = this.table.tBodies[0];
 
 		// create table body if needed
 		if (!tBody) {

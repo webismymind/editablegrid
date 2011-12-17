@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<!-- 
+%LICENSE
+-->
+ 
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>EditableGrid - Minimal demo - Attach to an HTML table</title>
+		
+		<script src="../../editablegrid.js"></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_renderers.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_editors.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_validators.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_utils.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_charts.js" ></script>
+		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen">
+		
+		<style>
+			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:11px; }
+			a { color: #548dc4; text-decoration: none; }
+			a:hover { text-decoration: underline; }
+			table.testgrid { border-collapse: collapse; border: 1px solid #CCB; width: 800px; }
+			table.testgrid td, table.testgrid th { padding: 5px; border: 1px solid #E0E0E0; }
+			input.invalid { background: red; color: #FDFDFD; }
+		</style>
+		
+		<script>
+			window.onload = function() {
+				editableGrid = new EditableGrid("DemoGrid"); 
+				editableGrid.attachToHTMLTable('htmlgrid', 
+					[ new Column({ name: "name", datatype: "string" }),
+					  new Column({ name: "firstname", datatype: "string" }),
+					  new Column({ name: "age", datatype: "integer" }),
+					  new Column({ name: "height", datatype: "double(m, 2)", bar: false }),
+					  new Column({ name: "country", datatype: "string", optionValues: 
+					  	{ 'Europe': { "be" : "Belgium", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"},
+						  'America' : { "br" : "Brazil", "ca": "Canada", "us" : "USA" },
+						  'Africa': { "ng" : "Nigeria", "za": "South-Africa", "zw" : "Zimbabwe" }
+					  	}
+					  }),
+					  new Column({ name: "email", datatype: "email" }),
+					  new Column({ name: "freelance", datatype: "boolean" }),
+					  new Column({ name: "lastvisit", datatype: "date" })
+					]
+				);
+				editableGrid.renderGrid();
+			} 
+		</script>
+		
+	</head>
+	
+	<body>
+		<table id="htmlgrid" class="testgrid">
+			<tr>
+				<th>NAME</th>
+				<th>FIRSTNAME</th>
+				<th>AGE</th>
+				<th>HEIGHT</th>
+				<th>COUNTRY</th>
+				<th>EMAIL</th>
+				<th>FREELANCE</th>
+				<th>LAST VISIT</th>
+			</tr>
+			<tr id="R1">
+				<td>Duke</td>
+				<td>Patience</td>
+				<td>33</td>
+				<td>1.842</td>
+				<td>uk</td>
+				<td>patience.duke@gmail.com</td>
+				<td>false</td>
+				<td>11/12/2002</td>
+			</tr>
+			<tr id="R2">
+				<td>Rogers</td>
+				<td>Denise</td>
+				<td>59</td>
+				<td>1.627</td>
+				<td>us</td>
+				<td>rogers.d@gmail.com</td>
+				<td></td>
+				<td>07/05/2003</td>
+			</tr>
+			<tr id="R3">
+				<td>Dujardin</td>
+				<td>Antoine</td>
+				<td>21</td>
+				<td>1.73</td>
+				<td>fr</td>
+				<td>felix.compton@yahoo.fr</td>
+				<td>true</td>
+				<td>21/02/1999</td>
+			</tr>
+			<tr id="R4">
+				<td>Conway</td>
+				<td>Coby</td>
+				<td>47</td>
+				<td>1.96</td>
+				<td>za</td>
+				<td>coby@conwayinc.com</td>
+				<td>true</td>
+				<td>01/12/2007</td>
+			</tr>
+			<tr id="R5">
+				<td>Shannon</td>
+				<td>Rana</td>
+				<td>24</td>
+				<td>1.56</td>
+				<td>nl</td>
+				<td>ranna.shannon@hotmail.com</td>
+				<td>false</td>
+				<td>07/10/2009</td>
+			</tr>
+			<tr id="R6">
+				<td>Benton</td>
+				<td>Jasmine</td>
+				<td>61</td>
+				<td>1.71</td>
+				<td>ca</td>
+				<td>jasmine.benton@yahoo.com</td>
+				<td>false</td>
+				<td>13/01/2009</td>
+			</tr>
+			<tr id="R7">
+				<td>Belletoise</td>
+				<td>André</td>
+				<td>31</td>
+				<td>1.84</td>
+				<td>be</td>
+				<td>belletoise@kiloutou.be</td>
+				<td>true</td>
+				<td></td>
+			</tr>
+			<tr id="R8">
+				<td>Santa-Maria</td>
+				<td>Martin</td>
+				<td>37</td>
+				<td>1.80</td>
+				<td>br</td>
+				<td>martin.sm@gmail.com</td>
+				<td>false</td>
+				<td>12/06/1995</td>
+			</tr>
+			<tr id="R9">
+				<td>Dieumerci</td>
+				<td>Amédé</td>
+				<td>37</td>
+				<td>1.81</td>
+				<td>ng</td>
+				<td>dieumerci@gmail.com</td>
+				<td>true</td>
+				<td>05/07/2009</td>
+			</tr>
+			<tr id="R10">
+				<td>Morin</td>
+				<td>Wanthus</td>
+				<td>46</td>
+				<td>1.77</td>
+				<td>zw</td>
+				<td>morin.x@html.com</td>
+				<td>false</td>
+				<td>4/3/2004</td>
+			</tr>
+		</table>
+	</body>
+	
+</html>
