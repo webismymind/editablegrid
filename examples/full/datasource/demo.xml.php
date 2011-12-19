@@ -37,7 +37,7 @@ $grid->addColumn("freelance", "FREELANCE", "boolean");
 $grid->addColumn("lastvisit", "LAST VISIT", "date");
 
 // action column ("html" type), not editable
-$grid->addColumn("action", "Action", "html", NULL, false);
+$grid->addColumn("action", "", "html", NULL, false);
 
 // load data from csv
 $handle = fopen("demo.csv", "r");

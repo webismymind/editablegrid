@@ -11,7 +11,7 @@
 		
 		<style>
 			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:0.8em; }
-			a { color: #548dc4; text-decoration: none; }
+			a { color: #548dc4; font-weight: bold; text-decoration: none; }
 			a:hover { text-decoration: underline; }
 			#wrap { width: 650px; margin: auto; }
 		</style>
@@ -40,11 +40,20 @@
 		Extra column information (mainly the data type) are given using Javascript.
 		</p>
 		
+		<p><a href="simple">Loading grid from XML (bis)</a></p>
+		<p>
+		Here we take the first minimal demo one little step further.
+		We have externalized the CSS and Javascript code and used the "modelChanged" callback to display a message.
+		A button in each row allows removing the row.
+		We have also included the jQuery and jQuery UI libraries in order to benefit from the date picker for the date column.
+		</p>
+
 		<p><a href="full">Full demonstration</a></p>
 		<p>
 		Features: 
 		<ul>
-		<li>custom cell renderers and validators</li>
+		<li>custom cell and header renderers</li>
+		<li>custom cell validators</li>
 		<li>enumeration providers</li>
 		<li>filtering</li>
 		<li>paginator</li>
