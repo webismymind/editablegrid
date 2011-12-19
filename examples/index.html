@@ -10,17 +10,52 @@
 		<title>EditableGrid - Demos</title>
 		
 		<style>
-			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:11px; }
+			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:0.8em; }
 			a { color: #548dc4; text-decoration: none; }
 			a:hover { text-decoration: underline; }
+			#wrap { width: 650px; margin: auto; }
 		</style>
+		</style>
+		
 		
 	</head>
 	
 	<body>
+	<div id="wrap">
+	
+		<h2>EditableGrid - Demos</h2>
+		
 		<p><a href="minimal">Loading grid from XML</a></p>
+		<p>
+		This is the minimal demo: see how easy it is to create an EditableGrid.
+		Only 3 lines of Javascript code, some minimal inline CSS, and here you go!
+		In this demo, the grid structure and data are obtained from an XML file.
+		Of course, you don't have to write this file by hand...
+		Features: various built-in data types with built-in validation, edition, sorting
+		</p>
+		
 		<p><a href="attach">Attaching grid to an HTML table</a></p>
+		<p>
+		This is the exact same demo, but this time the grid structure and data are declared in the HTML file.
+		Extra column information (mainly the data type) are given using Javascript.
+		</p>
+		
 		<p><a href="full">Full demonstration</a></p>
+		<p>
+		Features: 
+		<ul>
+		<li>custom cell renderers and validators</li>
+		<li>enumeration providers</li>
+		<li>filtering</li>
+		<li>paginator</li>
+		<li>bar and pie charts</li>
+		<li>date picker</li>
+		<li>autocomplete fields</li>
+		</ul>
+		Not featuring: custom cell editors
+		</p>
+
+	</div>
 	</body>
 
 </html>
