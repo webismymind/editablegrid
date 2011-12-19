@@ -239,3 +239,10 @@ Callback:
 
 Misc:
 - fix in filter() when called whithout argument: must refilter using current filter
+
+INCOMPATIBILITIES:
+
+Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
+- removeRow now takes a row index, for consistency with the rest of the API.
+  To get the row index from the row id you can use getRowIndex(rowId).
+- addRow has been renamed as appendRow for more clarity (as insertRow is now also available)  

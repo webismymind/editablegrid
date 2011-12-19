@@ -119,8 +119,13 @@ function initializeGrid()
 		setCellRenderer("action", new CellRenderer({render: function(cell, value) {
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.removeRow('" + rowId + "'); editableGrid.renderCharts(); }\" style=\"cursor:pointer\">" +
-							 "<img src=\"" + image("delete.png") + "\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
+			
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + cell.rowIndex + "); \" style=\"cursor:pointer\">" +
+							 "<img src=\"" + image("delete.png") + "\" border=\"0\" alt=\"delete\" title=\"Delete row\"/></a>";
+			
+			cell.innerHTML+= "&nbsp;<a onclick=\"editableGrid.duplicate(" + cell.rowIndex + ");\" style=\"cursor:pointer\">" +
+			 "<img src=\"" + image("duplicate.png") + "\" border=\"0\" alt=\"duplicate\" title=\"Duplicate row\"/></a>";
+			
 		}})); 
 
 		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
@@ -167,6 +172,20 @@ function loadHTML()
 	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
 	initializeGrid();
 }
+
+EditableGrid.prototype.duplicate = function(rowIndex) 
+{
+	// copy values from given row
+	var values = this.getRowValues(rowIndex);
+	values['name'] = values['name'] + ' (copy)';
+
+	// get id for new row (max id + 1)
+	var newRowId = 0;
+	for (var r = 0; r < this.getRowCount(); r++) newRowId = parseInt(this.getRowId(r)) + 1;
+	
+	// add new row
+	this.insertRow(rowIndex + 1, newRowId, values); 
+};
 
 // function to render our two demo charts
 EditableGrid.prototype.renderCharts = function() 

@@ -803,12 +803,23 @@ EditableGrid.prototype.getRow = function(rowIndex)
 };
 
 /**
- * Get row id specified in XML or HTML
+ * Get row id for given row index
  * @param {Integer} index of the row
  */
 EditableGrid.prototype.getRowId = function(rowIndex)
 {
 	return (rowIndex < 0 || rowIndex >= this.data.length) ? null : this.data[rowIndex]['id'];
+};
+
+/**
+ * Get index of row with given id
+ * @param {Integer} rowId or HTML row object
+ */
+EditableGrid.prototype.getRowIndex = function(rowId) 
+{
+	rowId = typeof rowId == 'object' ? rowId.rowId : rowId;
+	for (var rowIndex = 0; rowIndex < this.data.length; rowIndex++) if (this.data[rowIndex].id == rowId) return rowIndex;
+	return -1; 
 };
 
 /**
@@ -843,21 +854,20 @@ EditableGrid.prototype._getRowDOMId = function(rowId)
 
 /**
  * Remove row with given id
- * @param {Integer} rowId
+ * @param {Integer} rowIndex
  */
-EditableGrid.prototype.removeRow = function(rowId)
+EditableGrid.prototype.removeRow = function(rowIndex)
 {
 	// work on unfiltered data
 	var filterActive = this.dataUnfiltered != null; 
 	if (filterActive) this.data = this.dataUnfiltered;
 
-	// find and delete row
-	var rowIndex = this.getRowIndex(rowId);
-	if (rowIndex >= 0) {
-		var tr = _$(this._getRowDOMId(this.data[rowIndex].id));
-		if (tr != null) this.tBody.removeChild(tr); // needed for attach mode
-		this.data.splice(rowIndex, 1);
-	}
+	// delete row from DOM (needed for attach mode)
+	var tr = _$(this._getRowDOMId(this.data[rowIndex].id));
+	if (tr != null) this.tBody.removeChild(tr);
+	
+	// delete row from data
+	this.data.splice(rowIndex, 1);
 	
 	if (filterActive) {
 
@@ -871,46 +881,71 @@ EditableGrid.prototype.removeRow = function(rowId)
 };
 
 /**
- * Get index of row with given id
- * @param {Integer} rowId or HTML row object
+ * Return an associative array (column name => value) of values in row with given index 
+ * @param {Integer} rowIndex
  */
-EditableGrid.prototype.getRowIndex = function(rowId) 
+EditableGrid.prototype.getRowValues = function(rowIndex) 
 {
-	rowId = typeof rowId == 'object' ? rowId.rowId : rowId;
-	for (var rowIndex = 0; rowIndex < this.data.length; rowIndex++) if (this.data[rowIndex].id == rowId) return rowIndex;
-	return -1; 
+	var rowValues = {};
+	for (var columnIndex = 0; columnIndex < this.getColumnCount(); columnIndex++) { 
+		rowValues[this.getColumnName(columnIndex)] = this.getValueAt(rowIndex, columnIndex);
+	}
+	return rowValues;
 };
 
 /**
- * Add row with given id and data
- * @param {Integer} rowId
+ * Append row with given id and data
+ * @param {Integer} rowId id of new row
  * @param {Integer} columns
  * @param {Boolean} dontSort
  */
-EditableGrid.prototype.addRow = function(rowId, cellValues, dontSort)
+EditableGrid.prototype.appendRow = function(rowId, cellValues, dontSort)
 {
-	with (this) {
+	return this.insertRow(rowId, this.data.length, cellValues, dontSort);
+};
 
-		// add row in data
-		var rowData = [];
-		for (var c = 0; c < columns.length; c++) {
-			var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
-			rowData.push(getTypedValue(c, cellValue));
-		}
-		var rowIndex = data.length;
-		data.push({ visible: true, originalIndex: rowIndex, id: rowId, columns: rowData });
+/**
+ * Insert row with given id and data at given location
+ * @param {Integer} rowIndex index of row before which to insert new row
+ * @param {Integer} rowId id of new row
+ * @param {Integer} columns
+ * @param {Boolean} dontSort
+ */
+EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, dontSort)
+{
+	// work on unfiltered data
+	var filterActive = this.dataUnfiltered != null; 
+	if (filterActive) this.data = this.dataUnfiltered;
 
-		// create row in table and render content
-		var tr = tBody.insertRow(rowIndex);
+	// append row in DOM (needed for attach mode)
+	if (this.currentContainerid == null) {
+		var tr = this.tBody.insertRow(rowIndex);
 		tr.id = this._getRowDOMId(rowId);
-		for (var c = 0; c < columns.length; c++) {
-			var td = tr.insertCell(c);
-			columns[c].cellRenderer._render(rowIndex, c, td, getValueAt(rowIndex,c));
-		}
-
-		// resort table
-		if (!dontSort) sort();
+		for (var c = 0; c < this.columns.length; c++) tr.insertCell(c);
 	}
+	
+	// append row in data
+	var rowData = [];
+	for (var c = 0; c < this.columns.length; c++) {
+		var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
+		rowData.push(this.getTypedValue(c, cellValue));
+	}
+	for (var r = 0; r < this.data.length; r++) if (this.data[r].originalIndex >= rowIndex) this.data[r].originalIndex++;
+	this.data.splice(rowIndex, 0, { visible: true, originalIndex: rowIndex, id: rowId, columns: rowData });
+	
+	if (filterActive) {
+
+		// keep only visible rows in data
+		this.dataUnfiltered = this.data;
+		this.data = [];
+		for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].visible) this.data.push(this.dataUnfiltered[r]);
+	}
+
+	this.refreshGrid();
+
+	// sort and filter table
+	if (!dontSort) this.sort();
+	this.filter();
 };
 
 /**
@@ -1251,8 +1286,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 		_rendergrid(containerid, className, tableid);
 
 		// sort and filter table
-		if (sortedColumnName === -1) tableSorted(-1, sortDescending); // avoid a double render, but still send the expected callback
-		else sort();
+		sort();
 		filter();
 	}
 };
@@ -1344,9 +1378,16 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 {
 	with (this) {
 
+		if (typeof columnIndexOrName  == 'undefined' && sortedColumnName === -1) {
+			
+			// avoid a double render, but still send the expected callback
+			tableSorted(-1, sortDescending);
+			return true;
+		}
+
 		if (typeof columnIndexOrName  == 'undefined') columnIndexOrName = sortedColumnName;
 		if (typeof descending  == 'undefined') descending = sortDescending;
-
+		
 		var columnIndex = columnIndexOrName;
 		if (columnIndex !== -1) {
 			columnIndex = this.getColumnIndex(columnIndexOrName);
@@ -1395,6 +1436,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		// refresh grid and callback
 		refreshGrid();
 		tableSorted(columnIndex, descending);
+		return true;
 	}
 };
 
