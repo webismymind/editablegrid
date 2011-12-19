@@ -155,7 +155,7 @@ function loadXML()
 	editableGrid.loadXML("datasource/demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
 }
 
-function loadHTML() 
+function attachHTML() 
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
 	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
