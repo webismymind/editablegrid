@@ -956,7 +956,7 @@ EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, dontSor
 EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRenderer)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setHedareRenderer] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) alert("[setHeaderRenderer] Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
 		column.headerRenderer = (this.enableSort && column.datatype != "html") ? new SortHeaderRenderer(column.name, cellRenderer) : cellRenderer;
