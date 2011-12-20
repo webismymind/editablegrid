@@ -1174,14 +1174,28 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 			for (var i = 0; i < rows.length; i++) {
 
 				// filtering and pagination in attach mode means hiding rows
-				if (!_data[i].visible || (pageSize > 0 && displayed >= pageSize)) { rows[i].style.display = 'none'; }
+				if (!_data[i].visible || (pageSize > 0 && displayed >= pageSize)) {
+					if (rows[i].style.display != 'none') {
+						rows[i].style.display = 'none';
+						rows[i].hidden_by_editablegrid = true;
+					}
+				}
 				else {
-					if (skipped < pageSize * currentPageIndex) { skipped++; rows[i].style.display = 'none'; }
+					if (skipped < pageSize * currentPageIndex) {
+						skipped++; 
+						if (rows[i].style.display != 'none') {
+							rows[i].style.display = 'none';
+							rows[i].hidden_by_editablegrid = true;
+						}
+					}
 					else {
 						displayed++;
 						var rowData = [];
 						var cols = rows[i].cells;
-						rows[i].style.display = '';
+						if (typeof rows[i].hidden_by_editablegrid != 'undefined' && rows[i].hidden_by_editablegrid) {
+							rows[i].style.display = '';
+							rows[i].hidden_by_editablegrid = false;
+						}
 						for (var j = 0; j < cols.length && j < columns.length; j++) 
 							if (columns[j].renderable) columns[j].cellRenderer._render(rowIndex, j, cols[j], getValueAt(rowIndex,j));
 					}
@@ -1456,6 +1470,7 @@ EditableGrid.prototype.filter = function(filterString)
 			if (dataUnfiltered != null) {
 				data = dataUnfiltered;
 				dataUnfiltered = null;
+				for (var r = 0; r < getRowCount(); r++) data[r].visible = true;
 				setPageIndex(0);
 				tableFiltered();
 			}
