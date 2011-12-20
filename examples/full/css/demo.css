@@ -16,6 +16,11 @@ a {
 	text-decoration: none;
 }
 
+h1 a {
+	font-size: 12px;
+	float: right;
+}
+
 a:hover {
 	text-decoration: underline;
 }
