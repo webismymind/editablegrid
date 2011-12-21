@@ -731,7 +731,7 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 	// get value in model
 	if (rowIndex < 0) return column.label;
 
-	if (typeof this.data[rowIndex] == 'undefined') alert("[getValueAt] Invalid row index " + rowIndex);
+	if (typeof this.data[rowIndex] == 'undefined') { alert("[getValueAt] Invalid row index " + rowIndex); return null; }
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
 };
@@ -798,7 +798,7 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 EditableGrid.prototype.getRow = function(rowIndex)
 {
 	if (rowIndex < 0) return this.tHead.rows[rowIndex + this.nbHeaderRows];
-	if (typeof this.data[rowIndex] == 'undefined') alert("[getRow] Invalid row index " + rowIndex);
+	if (typeof this.data[rowIndex] == 'undefined') { alert("[getRow] Invalid row index " + rowIndex); return null; }
 	return _$(this._getRowDOMId(this.data[rowIndex].id));
 };
 
@@ -812,7 +812,7 @@ EditableGrid.prototype.getRowId = function(rowIndex)
 };
 
 /**
- * Get index of row with given id
+ * Get index of row (in filtered data) with given id
  * @param {Integer} rowId or HTML row object
  */
 EditableGrid.prototype.getRowIndex = function(rowId) 
@@ -858,25 +858,22 @@ EditableGrid.prototype._getRowDOMId = function(rowId)
  */
 EditableGrid.prototype.removeRow = function(rowIndex)
 {
-	// work on unfiltered data
-	var filterActive = this.dataUnfiltered != null; 
-	if (filterActive) this.data = this.dataUnfiltered;
-
+	var rowId = this.data[rowIndex].id;
+	var originalIndex = this.data[rowIndex].originalIndex;
+	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
+	
 	// delete row from DOM (needed for attach mode)
-	var tr = _$(this._getRowDOMId(this.data[rowIndex].id));
+	var tr = _$(this._getRowDOMId(rowId));
 	if (tr != null) this.tBody.removeChild(tr);
 	
+	// update originalRowIndex
+	for (var r = 0; r < _data.length; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex--;
+
 	// delete row from data
 	this.data.splice(rowIndex, 1);
-	
-	if (filterActive) {
+	if (this.dataUnfiltered != null) for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == rowId) { this.dataUnfiltered.splice(r, 1); break; }
 
-		// keep only visible rows in data
-		this.dataUnfiltered = this.data;
-		this.data = [];
-		for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].visible) this.data.push(this.dataUnfiltered[r]);
-	}
-
+	// refresh grid
 	this.refreshGrid();
 };
 
@@ -899,9 +896,9 @@ EditableGrid.prototype.getRowValues = function(rowIndex)
  * @param {Integer} columns
  * @param {Boolean} dontSort
  */
-EditableGrid.prototype.appendRow = function(rowId, cellValues, dontSort)
+EditableGrid.prototype.appendRow = function(rowId, cellValues, rowAttributes, dontSort)
 {
-	return this.insertRow(rowId, this.data.length, cellValues, dontSort);
+	return this.insertRow(rowId, this.data.length, cellValues, rowAttributes, dontSort);
 };
 
 /**
@@ -911,36 +908,37 @@ EditableGrid.prototype.appendRow = function(rowId, cellValues, dontSort)
  * @param {Integer} columns
  * @param {Boolean} dontSort
  */
-EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, dontSort)
+EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, rowAttributes, dontSort)
 {
-	// work on unfiltered data
-	var filterActive = this.dataUnfiltered != null; 
-	if (filterActive) this.data = this.dataUnfiltered;
+	var rowId = this.data[rowIndex].id;
+	var originalIndex = this.data[rowIndex].originalIndex;
+	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
 
 	// append row in DOM (needed for attach mode)
 	if (this.currentContainerid == null) {
 		var tr = this.tBody.insertRow(rowIndex);
+		tr.rowId = rowId;
 		tr.id = this._getRowDOMId(rowId);
 		for (var c = 0; c < this.columns.length; c++) tr.insertCell(c);
 	}
-	
-	// append row in data
-	var rowData = [];
+
+	// build data for new row
+	var rowData = { visible: true, originalIndex: originalIndex, id: rowId };
+	if (rowAttributes) for (var attributeName in rowAttributes) rowData[attributeName] = rowAttributes[attrName]; 
+	rowData.columns = [];
 	for (var c = 0; c < this.columns.length; c++) {
 		var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
-		rowData.push(this.getTypedValue(c, cellValue));
-	}
-	for (var r = 0; r < this.data.length; r++) if (this.data[r].originalIndex >= rowIndex) this.data[r].originalIndex++;
-	this.data.splice(rowIndex, 0, { visible: true, originalIndex: rowIndex, id: rowId, columns: rowData });
-	
-	if (filterActive) {
-
-		// keep only visible rows in data
-		this.dataUnfiltered = this.data;
-		this.data = [];
-		for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].visible) this.data.push(this.dataUnfiltered[r]);
+		rowData.columns.push(this.getTypedValue(c, cellValue));
 	}
 
+	// update originalRowIndex
+	for (var r = 0; r < _data.length; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex++;
+
+	// append row in data
+	this.data.splice(rowIndex, 0, rowData);
+	if (this.dataUnfiltered != null) for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == rowId) { this.dataUnfiltered.splice(r, 0, rowData); break; }
+
+	// refresh grid
 	this.refreshGrid();
 
 	// sort and filter table
@@ -1115,6 +1113,7 @@ EditableGrid.prototype.setCaption = function(caption)
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
 	var row = this.getRow(rowIndex);
+	if (row == null) { alert("[getCell] Invalid row index " + rowIndex); return null; }
 	return row.cells[columnIndex];
 };
 
@@ -1357,7 +1356,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 		if (target.tagName == "A") return;
 
 		// get cell position in table
-		var rowIndex = target.parentNode.rowIndex - nbHeaderRows; // remove header rows
+		var rowIndex = getRowIndex(target.parentNode);
 		var columnIndex = target.cellIndex;
 
 		var column = columns[columnIndex];

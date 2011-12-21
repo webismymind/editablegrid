@@ -54,4 +54,13 @@ AutocompleteCellEditor.prototype.displayEditor = function(element, htmlInput)
 			if (this.onblur_backup != null) this.onblur_backup();
 		}
 	});	
+
+	// when pressing ENTER we need to close the autocomplete (otherwise it stays visible)
+	var onkeydown = htmlInput.onkeydown;
+	htmlInput.onkeydown = function(event) {
+		event = event || window.event;
+		onkeydown.call(this, event);
+		if (event.keyCode == 13) $(htmlInput).autocomplete('close');
+	};
+
 };

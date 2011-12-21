@@ -50,7 +50,8 @@
 		<!-- include javascript and css files for this demo -->
 		<script src="javascript/demo.js" ></script>
 		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen"/>
-		<script type="text/javascript">window.onload = loadXML</script>	
+		<script type="text/javascript">window.onload = function() { editableGrid.onloadXML(); } </script>
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadHTML("htmlgrid"); } </script> <? } ?>	
 	</head>
 	
 	<body>
@@ -93,6 +94,7 @@
 		
 			<!-- Grid contents -->
 			<div id="tablecontent"></div>
+			<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) include("htmlgrid.html"); ?>	
 		
 			<!-- Paginator control -->
 			<div id="paginator"></div>

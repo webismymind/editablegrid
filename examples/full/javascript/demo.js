@@ -38,9 +38,9 @@ InfoHeaderRenderer.prototype.render = function(cell, value)
 };
 
 // this function will initialize our editable grid
-function initializeGrid() 
+EditableGrid.prototype.initializeGrid = function() 
 {
-	with (editableGrid) {
+	with (this) {
 
 		// use a special header renderer to show an info icon for some columns
 		setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
@@ -120,7 +120,7 @@ function initializeGrid()
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
 			
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + cell.rowIndex + "); \" style=\"cursor:pointer\">" +
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.removeRow(" + cell.rowIndex + "); editableGrid.renderCharts(); } \" style=\"cursor:pointer\">" +
 							 "<img src=\"" + image("delete.png") + "\" border=\"0\" alt=\"delete\" title=\"Delete row\"/></a>";
 			
 			cell.innerHTML+= "&nbsp;<a onclick=\"editableGrid.duplicate(" + cell.rowIndex + ");\" style=\"cursor:pointer\">" +
@@ -141,24 +141,24 @@ function initializeGrid()
 		$("#pagesize").val(pageSize).change(function() { editableGrid.setPageSize($("#pagesize").val()); });
 		$("#barcount").val(maxBars).change(function() { editableGrid.maxBars = $("#barcount").val(); editableGrid.renderCharts(); });
 	}
-}
+};
 
-function loadXML() 
+EditableGrid.prototype.onloadXML = function() 
 {
 	// register the function that will be called when the XML has been fully loaded
-	editableGrid.tableLoaded = function() { 
+	this.tableLoaded = function() { 
 		displayMessage("Grid loaded from XML: " + this.getRowCount() + " row(s)"); 
-		initializeGrid();
+		this.initializeGrid();
 	};
 
-	// load XML file
-	editableGrid.loadXML("datasource/demo.xml"); // use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file
-}
+	// load XML file (you can use "demo.xml.php" if you have PHP installed, to get live data from the demo.xml.csv file)
+	this.loadXML("datasource/demo.xml");
+};
 
-function attachHTML() 
+EditableGrid.prototype.onloadHTML = function(tableId) 
 {
 	// we attach our grid to an existing table: we give for each column a name and a type
-	editableGrid.attachToHTMLTable(_$('htmlgrid'), 
+	this.attachToHTMLTable(_$(tableId), 
 		[ new Column({ name: "name", datatype: "string" }),
 		  new Column({ name: "firstname", datatype: "string" }),
 		  new Column({ name: "age", datatype: "integer" }),
@@ -169,9 +169,9 @@ function attachHTML()
 		  new Column({ name: "freelance", datatype: "boolean" }),
 		  new Column({ name: "action", datatype: "html", editable: false }) ]);
 
-	displayMessage("Grid attached to HTML table: " + editableGrid.getRowCount() + " row(s)"); 
-	initializeGrid();
-}
+	displayMessage("Grid attached to HTML table: " + this.getRowCount() + " row(s)"); 
+	this.initializeGrid();
+};
 
 EditableGrid.prototype.duplicate = function(rowIndex) 
 {
@@ -181,7 +181,7 @@ EditableGrid.prototype.duplicate = function(rowIndex)
 
 	// get id for new row (max id + 1)
 	var newRowId = 0;
-	for (var r = 0; r < this.getRowCount(); r++) newRowId = parseInt(this.getRowId(r)) + 1;
+	for (var r = 0; r < this.getRowCount(); r++) newRowId = Math.max(newRowId, parseInt(this.getRowId(r)) + 1);
 	
 	// add new row
 	this.insertRow(rowIndex + 1, newRowId, values); 
