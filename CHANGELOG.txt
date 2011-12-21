@@ -216,8 +216,8 @@ Bugfixes:
    - added rowSelected callback
    - some fixes in jsdoc comments
    
-[xx/12/2011] EditableGrid v2.0 "X-Mas"
-======================================
+[xx/12/2011] EditableGrid v2.0.0 "X-Mas"
+========================================
 
 [TO BE COMPLETED: CHECK GIT HISTORY]
  
