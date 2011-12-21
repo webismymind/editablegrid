@@ -52,7 +52,7 @@
 	
 	<body>
 		<div id="wrap">
-		<h1>EditableGrid Demo - Loading grid from XML<a href="..">Back to menu</a></h1> 
+		<h1>EditableGrid Demo - Loading grid from XML<a href="../index.html">Back to menu</a></h1> 
 		
 			<!-- Feedback message zone -->
 			<div id="message"></div>
