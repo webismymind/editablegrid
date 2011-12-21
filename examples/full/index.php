@@ -41,7 +41,7 @@
 		<link rel="stylesheet" href="../../extensions/autocomplete_variant_2/jquery.autocomplete.css" type="text/css" media="screen">
 		!-->
 
-	    <!-- include javascript files for the OpenFlashChart library -->
+		<!-- include javascript files for the OpenFlashChart library -->
 		<script src="../../extensions/openflashchart/js/swfobject.js"></script>
 		<script src="../../extensions/openflashchart/js/json/json2.js"></script>
 		<script src="../../extensions/openflashchart/js-ofc-library/ofc.js"></script>
