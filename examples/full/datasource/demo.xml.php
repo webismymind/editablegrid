@@ -1,7 +1,5 @@
 <?php
 
-/* LICENSE */
-
 // This PHP script demonstrates how to generate XML grid data "on-the-fly"
 // To achieve this, here we use our simple "PHP wrapper class" EditableGrid.php, but this is not mandatory.
 // The only thing is that the generated XML must have the expected structure .

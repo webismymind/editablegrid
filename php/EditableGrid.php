@@ -1,7 +1,5 @@
 <?php
 
-/* %LICENSE */
-
 class EditableGrid {
 
 	protected $columns;
