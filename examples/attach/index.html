@@ -27,22 +27,26 @@
 		<script>
 			window.onload = function() {
 				editableGrid = new EditableGrid("DemoGrid"); 
-				editableGrid.attachToHTMLTable('htmlgrid', 
-					[ new Column({ name: "name", datatype: "string" }),
-					  new Column({ name: "firstname", datatype: "string" }),
-					  new Column({ name: "age", datatype: "integer" }),
-					  new Column({ name: "height", datatype: "double(m, 2)" }),
-					  new Column({ name: "country", datatype: "string", optionValues: 
+
+				// metadata are built in Javascript 
+				editableGrid.load({ metadata: [
+					{ name: "name", datatype: "string", editable: true},
+				    { name: "firstname", datatype: "string", editable: true},
+				    { name: "age", datatype: "integer", editable: true},
+				    { name: "height", datatype: "double(m,2)", editable: true},
+				    { name: "country", datatype: "string", editable: true, values: 
 					  	{ 'Europe': { "be" : "Belgium", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"},
-						  'America' : { "br" : "Brazil", "ca": "Canada", "us" : "USA" },
+						  'America': { "br" : "Brazil", "ca": "Canada", "us" : "USA" },
 						  'Africa': { "ng" : "Nigeria", "za": "South-Africa", "zw" : "Zimbabwe" }
 					  	}
-					  }),
-					  new Column({ name: "email", datatype: "email" }),
-					  new Column({ name: "freelance", datatype: "boolean" }),
-					  new Column({ name: "lastvisit", datatype: "date" })
-					]
-				);
+				    },
+					{ name: "email", datatype: "email", editable: true},
+					{ name: "freelance", datatype: "boolean", editable: true},
+				    { name: "lastvisit", datatype: "date", editable: true}
+				]});
+
+				// then we attach to the HTML table and render it
+				editableGrid.attachToHTMLTable('htmlgrid');
 				editableGrid.renderGrid();
 			} 
 		</script>

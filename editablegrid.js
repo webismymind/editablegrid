@@ -581,18 +581,22 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 };
 
 /**
- * Attach to an existing HTML table, using given column definitions
+ * Attach to an existing HTML table.
+ * The second parameter can be used to give the column definitions.
+ * This parameter is left for compatibility, but is deprecated: you should now use "load" to setup the metadata.
  */
 EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 {
 	// clear model and pointer to current table
-	this.columns = _columns;
 	this.data = [];
 	this.dataUnfiltered = null;
 	this.table = null;
 
-	// process columns
-	this.processColumns();
+	// process columns if given
+	if (_columns) {
+		this.columns = _columns;
+		this.processColumns();
+	}
 
 	// get pointers to table components
 	this.table = typeof _table == 'string' ? _$(_table) : _table ;
@@ -625,7 +629,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 		var cols = rows[i].cells;
 		var columnIndexInModel = 0;
 		for (var j = 0; j < cols.length && columnIndexInModel < this.columns.length; j++) {
-			if (!this.columns[columnIndexInModel].label) this.columns[columnIndexInModel].label = cols[j].innerHTML;
+			if (!this.columns[columnIndexInModel].label || this.columns[columnIndexInModel].label == this.columns[columnIndexInModel].name) this.columns[columnIndexInModel].label = cols[j].innerHTML;
 			var colspan = parseInt(cols[j].getAttribute("colspan"));
 			columnIndexInModel += colspan > 1 ? colspan : 1;
 		}
