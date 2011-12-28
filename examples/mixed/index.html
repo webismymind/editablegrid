@@ -31,18 +31,18 @@
 				// we build and load the metadata in Javascript
 				editableGrid.load({ metadata: [
 					{ name: "name", label: "NAME", datatype: "string", editable: true },
-				    { name: "firstname", label: "FIRSTNAME", datatype: "string", editable: true },
-				    { name: "age", label: "AGE", datatype: "integer", editable: true },
-				    { name: "height", label: "HEIGHT", datatype: "double(m,2)", editable: true },
-				    { name: "country", label: "COUNTRY", datatype: "string", editable: true, values: 
+					{ name: "firstname", label: "FIRSTNAME", datatype: "string", editable: true },
+					{ name: "age", label: "AGE", datatype: "integer", editable: true },
+					{ name: "height", label: "HEIGHT", datatype: "double(m,2)", editable: true },
+					{ name: "country", label: "COUNTRY", datatype: "string", editable: true, values: 
 					  	{ 'Europe': { "be" : "Belgium", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"},
 						  'America': { "br" : "Brazil", "ca": "Canada", "us" : "USA" },
 						  'Africa': { "ng" : "Nigeria", "za": "South-Africa", "zw" : "Zimbabwe" }
 					  	}
-				    },
+					},
 					{ name: "email", label: "EMAIL", datatype: "email", editable: true },
 					{ name: "freelance", label: "FREELANCE", datatype: "boolean", editable: true },
-				    { name: "lastvisit", label: "LAST VISIT", datatype: "date", editable: true }
+					{ name: "lastvisit", label: "LAST VISIT", datatype: "date", editable: true }
 				]});
 				
 				// then we load the actual content from an URL which outputs the data as XML
