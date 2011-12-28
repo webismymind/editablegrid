@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<table>
+
+	<data>
+
+		<!-- NB: It is recommended to name your columns. 
+			 This way you can give them in any order and skip some columns if you want. 
+		-->
+		<row id="1">
+			<column name="country">uk</column>
+			<column name="age">33</column>
+			<column name="name">Duke</column>
+			<column name="firstname">Patience</column>
+			<column name="height">1.842</column>
+			<column name="email">patience.duke@gmail.com</column>
+			<column name="lastvisit">11/12/2002</column>
+		</row>
+
+		<!-- ... but naming the columns is not mandatory. 
+			 The order used in metadata must then be respected. 
+		-->
+		<row id="2">
+			<column>Rogers</column>		
+			<column>Denise</column>		
+			<column>59</column>		
+			<column>1.627</column>
+			<column>us</column>
+			<column>rogers.d@gmail.com</column>
+			<column></column>
+			<column>07/05/2003</column>
+		</row>
+
+		<row id="3">
+			<column name="name">Dujardin</column>		
+			<column name="firstname">Antoine</column>		
+			<column name="age">21</column>		
+			<column name="height">1.73</column>		
+			<column name="country">fr</column>
+			<column name="email">felix.compton@yahoo.fr</column>
+			<column name="freelance">true</column>
+			<column name="lastvisit">21/02/1999</column>
+		</row>
+
+		<row id="4">
+			<column name="name">Conway</column>		
+			<column name="firstname">Coby</column>		
+			<column name="age">47</column>		
+			<column name="height">1.96</column>		
+			<column name="country">za</column>
+			<column name="email">coby@conwayinc.com</column>
+			<column name="freelance">true</column>
+			<column name="lastvisit">01/12/2007</column>
+		</row>
+
+		<row id="5">
+			<column name="name">Shannon</column>		
+			<column name="firstname">Rana</column>		
+			<column name="age">24</column>		
+			<column name="height">1.56</column>		
+			<column name="country">nl</column>
+			<column name="email">ranna.shannon@hotmail.com</column>
+			<column name="freelance">false</column>
+			<column name="lastvisit">07/10/2009</column>		
+		</row>
+
+		<row id="6">
+			<column name="name">Benton</column>		
+			<column name="firstname">Jasmine</column>		
+			<column name="age">61</column>		
+			<column name="height">1.71</column>		
+			<column name="country">ca</column>
+			<column name="email">jasmine.benton@yahoo.com</column>
+			<column name="freelance">false</column>
+			<column name="lastvisit">13/01/2009</column>
+		</row>
+
+		<row id="7">
+			<column name="name">Belletoise</column>		
+			<column name="firstname">André</column>		
+			<column name="age">31</column>		
+			<column name="height">1.84</column>		
+			<column name="country">be</column>
+			<column name="email">belletoise@kiloutou.be</column>
+			<column name="freelance">true</column>
+			<column name="lastvisit"></column>
+		</row>
+
+		<row id="8">
+			<column name="name">Santa-Maria</column>		
+			<column name="firstname">Martin</column>		
+			<column name="age">37</column>		
+			<column name="height">1.80</column>		
+			<column name="country">br</column>
+			<column name="email">martin.sm@gmail.com</column>
+			<column name="freelance">false</column>
+			<column name="lastvisit">12/06/1995</column>
+		</row>
+
+		<row id="9">
+			<column name="name">Dieumerci</column>		
+			<column name="firstname">Amédé</column>		
+			<column name="age">37</column>		
+			<column name="height">1.81</column>		
+			<column name="country">ng</column>
+			<column name="email">dieumerci@gmail.com</column>
+			<column name="freelance">true</column>
+			<column name="lastvisit">05/07/2009</column>
+		</row>
+
+		<row id="10">
+			<column name="name">Morin</column>		
+			<column name="firstname">Wanthus</column>		
+			<column name="age">46</column>		
+			<column name="height">1.77</column>		
+			<column name="country">zw</column>
+			<column name="email">morin.x@yahoo.mixed.com</column>
+			<column name="freelance">false</column>
+			<column name="lastvisit">04/03/2004</column>
+		</row>
+	</data>
+</table>

@@ -186,7 +186,7 @@ EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true
 EditableGrid.prototype.readonlyWarning = function() {};
 
 /**
- * Load metadata and data from an XML url
+ * Load metadata and/or data from an XML url
  * The callback "tableLoaded" is called when loading is complete.
  */
 EditableGrid.prototype.loadXML = function(url)
@@ -257,59 +257,61 @@ EditableGrid.prototype.processXML = function()
 	with (this) {
 
 		// clear model and pointer to current table
-		this.columns = [];
 		this.data = [];
 		this.dataUnfiltered = null;
 		this.table = null;
 
 		// load metadata (only one tag <metadata> --> metadata[0])
 		var metadata = xmlDoc.getElementsByTagName("metadata");
-		if (!metadata || metadata.length < 1) return false;
-		var columnDeclarations = metadata[0].getElementsByTagName("column");
-		for (var i = 0; i < columnDeclarations.length; i++) {
+		if (metadata && metadata.length >= 1) {
 
-			// get column type
-			var col = columnDeclarations[i];
-			var datatype = col.getAttribute("datatype");
+			this.columns = [];
+			var columnDeclarations = metadata[0].getElementsByTagName("column");
+			for (var i = 0; i < columnDeclarations.length; i++) {
 
-			// get enumerated values if any
-			var optionValues = null;
-			var enumValues = col.getElementsByTagName("values");
-			if (enumValues.length > 0) {
-				optionValues = {};
+				// get column type
+				var col = columnDeclarations[i];
+				var datatype = col.getAttribute("datatype");
 
-				var enumGroups = enumValues[0].getElementsByTagName("group");
-				if (enumGroups.length > 0) {
-					for (var g = 0; g < enumGroups.length; g++) {
-						var groupOptionValues = {};
-						enumValues = enumGroups[g].getElementsByTagName("value");
-						for (var v = 0; v < enumValues.length; v++) {
-							groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+				// get enumerated values if any
+				var optionValues = null;
+				var enumValues = col.getElementsByTagName("values");
+				if (enumValues.length > 0) {
+					optionValues = {};
+
+					var enumGroups = enumValues[0].getElementsByTagName("group");
+					if (enumGroups.length > 0) {
+						for (var g = 0; g < enumGroups.length; g++) {
+							var groupOptionValues = {};
+							enumValues = enumGroups[g].getElementsByTagName("value");
+							for (var v = 0; v < enumValues.length; v++) {
+								groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+							}
+							optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
 						}
-						optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
+					}
+					else {
+						enumValues = enumValues[0].getElementsByTagName("value");
+						for (var v = 0; v < enumValues.length; v++) {
+							optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+						}
 					}
 				}
-				else {
-					enumValues = enumValues[0].getElementsByTagName("value");
-					for (var v = 0; v < enumValues.length; v++) {
-						optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
-					}
-				}
+
+				// create new column           
+				columns.push(new Column({
+					name: col.getAttribute("name"),
+					label: (typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name")),
+					datatype: (col.getAttribute("datatype") ? col.getAttribute("datatype") : "string"),
+					editable: col.getAttribute("editable") == "true",
+					bar: (col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true),
+					optionValues: optionValues
+				}));
 			}
 
-			// create new column           
-			columns.push(new Column({
-				name: col.getAttribute("name"),
-				label: (typeof col.getAttribute("label") == 'string' ? col.getAttribute("label") : col.getAttribute("name")),
-				datatype: (col.getAttribute("datatype") ? col.getAttribute("datatype") : "string"),
-				editable: col.getAttribute("editable") == "true",
-				bar: (col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true),
-				optionValues: optionValues
-			}));
+			// process columns
+			processColumns();
 		}
-
-		// process columns
-		processColumns();
 
 		// load content
 		var rows = xmlDoc.getElementsByTagName("row");
@@ -345,12 +347,12 @@ EditableGrid.prototype.processXML = function()
 			data.push(rowData);
 		}
 	}
-	
+
 	return true;
 };
 
 /**
- * Load metadata and data from a JSON url
+ * Load metadata and/or data from a JSON url
  * The callback "tableLoaded" is called when loading is complete.
  */
 EditableGrid.prototype.loadJSON = function(url)
@@ -385,7 +387,7 @@ EditableGrid.prototype.loadJSON = function(url)
 };
 
 /**
- * Load metadata and data from an Javascript object or a JSON string
+ * Load metadata and/or data from an Javascript object or a JSON string
  * No callback "tableLoaded" is called since this is a synchronous operation.
  */
 EditableGrid.prototype.load = function(object)
@@ -403,38 +405,35 @@ EditableGrid.prototype.processJSON = function(jsonData)
 	if (!jsonData) return false;
 
 	// clear model and pointer to current table
-	this.columns = [];
 	this.data = [];
 	this.dataUnfiltered = null;
 	this.table = null;
 
 	// load metadata
-	var metadata = jsonData.metadata;
-	if (!metadata || metadata.length < 1) return false;
-	
-	// create columns
-	for (var c = 0; c < metadata.length; c++) {
-		var columndata = metadata[c];
-		this.columns.push(new Column({
-			name: columndata.name,
-			label: (columndata.label ? columndata.label : columndata.name),
-			datatype: (columndata.datatype ? columndata.datatype : "string"),
-			editable: (columndata.editable ? true : false),
-			bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar ? true : false)),
-			optionValues: columndata.values ? columndata.values : null
-		}));
+	if (jsonData.metadata) {
+
+		// create columns 
+		this.columns = [];
+		for (var c = 0; c < jsonData.metadata.length; c++) {
+			var columndata = jsonData.metadata[c];
+			this.columns.push(new Column({
+				name: columndata.name,
+				label: (columndata.label ? columndata.label : columndata.name),
+				datatype: (columndata.datatype ? columndata.datatype : "string"),
+				editable: (columndata.editable ? true : false),
+				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar ? true : false)),
+				optionValues: columndata.values ? columndata.values : null
+			}));
+		}
+		
+		// process columns
+		this.processColumns();
 	}
 
-	// process columns
-	this.processColumns();
-
 	// load content
-	var rows = jsonData.data;
-	if (!rows || rows.length < 1) return true; // not an error, just an empty table
-
-	for (var i = 0; i < rows.length; i++) 
+	if (jsonData.data) for (var i = 0; i < jsonData.data.length; i++) 
 	{
-		var row = rows[i];
+		var row = jsonData.data[i];
 		if (!row.values) continue;
 
 		// row values can be given as an array (same order as columns) or as an object (associative array)
@@ -455,7 +454,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		// add row data in our model
 		this.data.push(rowData);
 	}
-	
+
 	return true;
 };
 

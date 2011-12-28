@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>EditableGrid - Minimal demo - Mixing Javascript and XML</title>
+		
+		<script src="../../editablegrid.js"></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_renderers.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_editors.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_validators.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_utils.js" ></script>
+		<!-- [DO NOT DEPLOY] --> <script src="../../editablegrid_charts.js" ></script>
+		<link rel="stylesheet" href="../../editablegrid.css" type="text/css" media="screen">
+		
+		<style>
+			body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif; font-size:11px; }
+			h1 { font-size: 15px; }
+			a { color: #548dc4; text-decoration: none; }
+			a:hover { text-decoration: underline; }
+			table.testgrid { border-collapse: collapse; border: 1px solid #CCB; width: 800px; }
+			table.testgrid td, table.testgrid th { padding: 5px; border: 1px solid #E0E0E0; }
+			table.testgrid th { background: #E5E5E5; text-align: left; }
+			input.invalid { background: red; color: #FDFDFD; }
+		</style>
+		
+		<script>
+			window.onload = function() {
+				editableGrid = new EditableGrid("DemoGrid");
+
+				// metadata are built in Javascript
+				var metadata = [];
+				metadata.push({"name":"name","label":"NAME","datatype":"string","editable":true});
+				metadata.push({"name":"firstname","label":"FIRSTNAME","datatype":"string","editable":true});
+				metadata.push({"name":"age","label":"AGE","datatype":"integer","editable":true});
+				metadata.push({"name":"height","label":"HEIGHT","datatype":"double(m,2)","editable":true});
+				metadata.push({"name":"country","label":"COUNTRY","datatype":"string","editable":true,
+					"values": {
+						"Europe": {"be":"Belgium","fr":"France","uk":"Great-Britain","nl":"Nederland"},
+						"America": {"br":"Brazil","ca":"Canada","us":"USA"},
+						"Africa": {"ng":"Nigeria","za":"South-Africa","zw":"Zimbabwe"}
+					}
+				});
+				metadata.push({"name":"email","label":"EMAIL","datatype":"email","editable":true});
+				metadata.push({"name":"freelance","label":"FREELANCE","datatype":"boolean","editable":true});
+				metadata.push({"name":"lastvisit","label":"LAST VISIT","datatype":"date","editable":true});
+
+				// we use "load" to load the metadat only 
+				editableGrid.load({"metadata": metadata});
+
+				// then we load the actual content from an URL which outputs the data as XML
+				editableGrid.tableLoaded = function() { this.renderGrid("tablecontent", "testgrid"); };
+				editableGrid.loadXML("data.xml");
+			} 
+		</script>
+		
+	</head>
+	
+	<body>
+		<h1>EditableGrid - Minimal Demo - Mixing Javascript and XML - <a href="../index.html">Back to menu</a></h1> 
+		<div id="tablecontent"></div>
+	</body>
+
+</html>
