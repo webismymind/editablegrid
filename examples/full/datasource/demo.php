@@ -51,7 +51,7 @@ while ($row = fgetcsv($handle, 0, ";")) {
 		"height" => $row[4],
 		"continent" => $row[5],
 		"country" => $row[6],
-		"email" => $row[7],
+		"email" => str_replace("Nam@quisdiamluctus.org", "Nam@quisdiamluctus." . (isset($_GET['json']) ? "json" : "xml") . ".php.org", $row[7]), // just to check out if json/xml is active!
 		"freelance" => $row[8] == '1',
 		"lastvisit" => $row[9],
 		"website" => $row[10]

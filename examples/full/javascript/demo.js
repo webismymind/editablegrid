@@ -127,7 +127,7 @@ EditableGrid.prototype.initializeGrid = function()
 			 "<img src=\"" + image("duplicate.png") + "\" border=\"0\" alt=\"duplicate\" title=\"Duplicate row\"/></a>";
 			
 		}})); 
-
+		
 		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
 		renderGrid("tablecontent", "testgrid", "tableid");
 		
@@ -169,19 +169,23 @@ EditableGrid.prototype.onloadJSON = function(url)
 
 EditableGrid.prototype.onloadHTML = function(tableId) 
 {
-	// we attach our grid to an existing table: we give for each column a name and a type
-	this.attachToHTMLTable(_$(tableId), 
-		[ new Column({ name: "name", datatype: "string" }),
-		  new Column({ name: "firstname", datatype: "string" }),
-		  new Column({ name: "age", datatype: "integer" }),
-		  new Column({ name: "height", datatype: "double(m, 2)", bar: false }),
-		  new Column({ name: "continent", datatype: "string", optionValues: {"eu": "Europa", "am": "America", "af": "Africa" }}),
-		  new Column({ name: "country", datatype: "string" }),
-		  new Column({ name: "email", datatype: "email(26)" }),
-		  new Column({ name: "freelance", datatype: "boolean" }),
-		  new Column({ name: "action", datatype: "html", editable: false }) ]);
+	// metadata are built in Javascript: we give for each column a name and a type
+	this.load({ metadata: [
+	    { name: "name", datatype: "string", editable: true },
+	    { name: "firstname", datatype: "string", editable: true },
+	    { name: "age", datatype: "integer", editable: true },
+	    { name: "height", datatype: "double(m,2)", editable: true, bar: false },
+	    { name: "continent", datatype: "string", editable: true, values: {"eu": "Europa", "am": "America", "af": "Africa" } },
+	    { name: "country", datatype: "string", editable: true },
+	    { name: "email", datatype: "email", editable: true },
+	    { name: "freelance", datatype: "boolean", editable: true },
+	    { name: "action", datatype: "html", editable: false }
+	]});
 
+	// we attach our grid to an existing table
+	this.attachToHTMLTable(_$(tableId));
 	displayMessage("Grid attached to HTML table: " + this.getRowCount() + " row(s)"); 
+	
 	this.initializeGrid();
 };
 
