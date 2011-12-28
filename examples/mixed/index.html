@@ -28,26 +28,23 @@
 			window.onload = function() {
 				editableGrid = new EditableGrid("DemoGrid");
 
-				// metadata are built in Javascript
-				var metadata = [];
-				metadata.push({"name":"name","label":"NAME","datatype":"string","editable":true});
-				metadata.push({"name":"firstname","label":"FIRSTNAME","datatype":"string","editable":true});
-				metadata.push({"name":"age","label":"AGE","datatype":"integer","editable":true});
-				metadata.push({"name":"height","label":"HEIGHT","datatype":"double(m,2)","editable":true});
-				metadata.push({"name":"country","label":"COUNTRY","datatype":"string","editable":true,
-					"values": {
-						"Europe": {"be":"Belgium","fr":"France","uk":"Great-Britain","nl":"Nederland"},
-						"America": {"br":"Brazil","ca":"Canada","us":"USA"},
-						"Africa": {"ng":"Nigeria","za":"South-Africa","zw":"Zimbabwe"}
-					}
-				});
-				metadata.push({"name":"email","label":"EMAIL","datatype":"email","editable":true});
-				metadata.push({"name":"freelance","label":"FREELANCE","datatype":"boolean","editable":true});
-				metadata.push({"name":"lastvisit","label":"LAST VISIT","datatype":"date","editable":true});
-
-				// we use "load" to load the metadata only 
-				editableGrid.load({"metadata": metadata});
-
+				// we build and load the metadata in Javascript
+				editableGrid.load({ metadata: [
+					{ name: "name", label: "NAME", datatype: "string", editable: true },
+				    { name: "firstname", label: "FIRSTNAME", datatype: "string", editable: true },
+				    { name: "age", label: "AGE", datatype: "integer", editable: true },
+				    { name: "height", label: "HEIGHT", datatype: "double(m,2)", editable: true },
+				    { name: "country", label: "COUNTRY", datatype: "string", editable: true, values: 
+					  	{ 'Europe': { "be" : "Belgium", "fr" : "France", "uk" : "Great-Britain", "nl": "Nederland"},
+						  'America': { "br" : "Brazil", "ca": "Canada", "us" : "USA" },
+						  'Africa': { "ng" : "Nigeria", "za": "South-Africa", "zw" : "Zimbabwe" }
+					  	}
+				    },
+					{ name: "email", label: "EMAIL", datatype: "email", editable: true },
+					{ name: "freelance", label: "FREELANCE", datatype: "boolean", editable: true },
+				    { name: "lastvisit", label: "LAST VISIT", datatype: "date", editable: true }
+				]});
+				
 				// then we load the actual content from an URL which outputs the data as XML
 				editableGrid.tableLoaded = function() { this.renderGrid("tablecontent", "testgrid"); };
 				editableGrid.loadXML("data.xml");
