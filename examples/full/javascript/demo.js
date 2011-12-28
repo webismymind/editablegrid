@@ -143,7 +143,7 @@ EditableGrid.prototype.initializeGrid = function()
 	}
 };
 
-EditableGrid.prototype.onloadXML = function() 
+EditableGrid.prototype.onloadXML = function(url) 
 {
 	// register the function that will be called when the XML has been fully loaded
 	this.tableLoaded = function() { 
@@ -151,11 +151,11 @@ EditableGrid.prototype.onloadXML = function()
 		this.initializeGrid();
 	};
 
-	// load XML file (you can use "demo.php?xml" if you have PHP installed, to get live data from the demo.csv file)
-	this.loadXML("datasource/demo.xml");
+	// load XML URL
+	this.loadXML(url);
 };
 
-EditableGrid.prototype.onloadJSON = function() 
+EditableGrid.prototype.onloadJSON = function(url) 
 {
 	// register the function that will be called when the XML has been fully loaded
 	this.tableLoaded = function() { 
@@ -163,8 +163,8 @@ EditableGrid.prototype.onloadJSON = function()
 		this.initializeGrid();
 	};
 
-	// load JSON file (you can use "demo.php?json" if you have PHP installed, to get live data from the demo.csv file)
-	this.loadJSON("datasource/demo.json");
+	// load JSON URL
+	this.loadJSON(url);
 };
 
 EditableGrid.prototype.onloadHTML = function(tableId) 

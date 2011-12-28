@@ -46,8 +46,15 @@
 		<!-- include javascript and css files for this demo -->
 		<script src="javascript/demo.js" ></script>
 		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen"/>
-		<script type="text/javascript">window.onload = function() { editableGrid.onloadXML(); } </script>
-		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['json'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadJSON(); } </script> <? } ?>	
+		<script type="text/javascript">
+			window.onload = function() { 
+				// you can use "datasource/demo.php" if you have PHP installed, to get live data from the demo.csv file
+				editableGrid.onloadXML("datasource/demo.xml"); 
+			}; 
+		</script>
+		
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['php'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadXML("datasource/demo.php"); } </script> <? } ?>	
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['json'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadJSON("datasource/<?php echo isset($_GET['php']) ? "demo.php?json" : "demo.json" ?>"); } </script> <? } ?>	
 		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadHTML("htmlgrid"); } </script> <? } ?>	
 	</head>
 	
