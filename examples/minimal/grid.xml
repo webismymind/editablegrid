@@ -38,7 +38,6 @@
 			 This way you can give them in any order and skip some columns if you want. 
 		-->
 		<row id="1">
-			<column name="continent">eu</column>
 			<column name="country">uk</column>
 			<column name="age">33</column>
 			<column name="name">Duke</column>
@@ -145,7 +144,7 @@
 			<column name="age">46</column>		
 			<column name="height">1.77</column>		
 			<column name="country">zw</column>
-			<column name="email">morin.x@yahoo.com</column>
+			<column name="email">morin.x@yahoo.xml.com</column>
 			<column name="freelance">false</column>
 			<column name="lastvisit">04/03/2004</column>
 		</row>

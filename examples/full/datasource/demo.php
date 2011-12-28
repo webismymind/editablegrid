@@ -5,7 +5,7 @@
 // The only thing is that the generated XML must have the expected structure .
 // Here we get the data from a CSV file; in real life, these data would probably come from a database.
 
-require_once("../../php/EditableGrid.php");
+require_once("../../../php/EditableGrid.php");
 
 // create grid and declare its columns
 $grid = new EditableGrid();
@@ -58,5 +58,6 @@ while ($row = fgetcsv($handle, 0, ";")) {
 	);
 }
 
-// render XML
-$grid->renderXML($data);
+// render XML or JSON
+if (isset($_GET['json'])) $grid->renderJSON($data);
+else $grid->renderXML($data);

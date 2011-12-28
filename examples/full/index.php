@@ -47,12 +47,13 @@
 		<script src="javascript/demo.js" ></script>
 		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen"/>
 		<script type="text/javascript">window.onload = function() { editableGrid.onloadXML(); } </script>
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['json'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadJSON(); } </script> <? } ?>	
 		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadHTML("htmlgrid"); } </script> <? } ?>	
 	</head>
 	
 	<body>
 		<div id="wrap">
-		<h1>EditableGrid Demo - Loading grid from XML<a href="../index.html">Back to menu</a></h1> 
+		<h1>EditableGrid Demo - Grid with pagination<a href="../index.html">Back to menu</a></h1> 
 		
 			<!-- Feedback message zone -->
 			<div id="message"></div>

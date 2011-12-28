@@ -98,6 +98,48 @@ class EditableGrid {
 		echo $this->getXML($rows, $customRowAttributes, $encodeCustomAttributes);
 	}
 
+	public function getJSON($rows, $customRowAttributes=array(), $encodeCustomAttributes=false)
+	{
+		$metadata = array();
+		foreach ($this->columns as $name => $info) {
+			$metadata[] = array(
+				"name" => $name,
+				"label" => @iconv($this->encoding, $this->encoding."//IGNORE", $info['label']),
+				"datatype" => $info['type'],
+				"bar" => $info['bar'],
+				"editable" => $info['editable'],
+				"values" => $info['values']
+			);
+		}
+
+		$data = array();
+		
+		$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
+		if (!$fetchMethod) foreach ($rows as $row) $data[] = $this->getRowJSON($row, $customRowAttributes, $encodeCustomAttributes);
+		else while ($row = call_user_func(array($rows, $fetchMethod))) $data[] = $this->getRowJSON($row, $customRowAttributes, $encodeCustomAttributes);
+
+		return json_encode(array("metadata" => $metadata, "data" => $data));
+	}
+
+	private function getRowJSON($row, $customRowAttributes, $encodeCustomAttributes)
+	{
+		$data = array("id" => $this->_getRowField($row, 'id'), "values" => array());
+		foreach ($customRowAttributes as $name => $field) $data[$name] = $encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field);
+			
+		foreach ($this->columns as $name => $info) {
+			$field = $info['field'];
+			$data["values"][$name] = $this->_getRowField($row, $field);
+		}
+
+		return $data;
+	}
+	
+	public function renderJSON($rows, $customRowAttributes=array(), $encodeCustomAttributes=false)
+	{
+		header('Content-Type: text/json');
+		echo $this->getJSON($rows, $customRowAttributes, $encodeCustomAttributes);
+	}
+
 	public static function parseInt($string) {
 		return preg_match('/[-+]{0,1}(\d+)/', $string, $array) ? intval($array[0]) : NULL;
 	}

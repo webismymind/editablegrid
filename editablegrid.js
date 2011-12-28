@@ -215,8 +215,8 @@ EditableGrid.prototype.loadXML = function(url)
 		{
 			xmlDoc = new XMLHttpRequest();
 			xmlDoc.onreadystatechange = function () {
-				if (xmlDoc.readyState == 4) {
-					xmlDoc = xmlDoc.responseXML;
+				if (this.readyState == 4) {
+					xmlDoc = this.responseXML;
 					if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
 					processXML();
 					tableLoaded();
@@ -239,7 +239,7 @@ EditableGrid.prototype.loadXML = function(url)
 
 		// should never happen
 		else { 
-			alert("Cannot load XML file with this browser!"); 
+			alert("Cannot load a XML url with this browser!"); 
 			return false;
 		}
 
@@ -344,6 +344,108 @@ EditableGrid.prototype.processXML = function()
 			data.push(rowData);
 		}
 	}
+	
+	return true;
+};
+
+/**
+ * Load metadata and data from an JSON url
+ */
+EditableGrid.prototype.loadJSON = function(url)
+{
+	// we use a trick to avoid getting an old version from the browser's cache
+	var orig_url = url;
+	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
+	url += sep + Math.floor(Math.random() * 100000);
+
+	// should never happen
+	if (!window.XMLHttpRequest) {
+		alert("Cannot load a JSON url with this browser!"); 
+		return false;
+	}
+
+	with (this) {
+
+		var ajaxRequest = new XMLHttpRequest();
+		ajaxRequest.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				if (!this.responseText) { /* alert("Could not load JSON from url '" + orig_url + "'"); */ return false; }
+				if (!processJSON(this.responseText))  { alert("Invalid JSON data obtained from url '" + orig_url + "'"); return false; }
+				tableLoaded();
+			}
+		};
+
+		ajaxRequest.open("GET", url, true);
+		ajaxRequest.send("");
+	}
+
+	return true;
+};
+
+/**
+ * Process the JSON content
+ * @private
+ */
+EditableGrid.prototype.processJSON = function(jsonText)
+{	
+	var jsonData = eval("(" + jsonText + ")");
+	if (!jsonData) return false;
+
+	// clear model and pointer to current table
+	this.columns = [];
+	this.data = [];
+	this.dataUnfiltered = null;
+	this.table = null;
+
+	// load metadata
+	var metadata = jsonData.metadata;
+	if (!metadata || metadata.length < 1) return false;
+	
+	// create columns
+	for (var c = 0; c < metadata.length; c++) {
+		var columndata = metadata[c];
+		this.columns.push(new Column({
+			name: columndata.name,
+			label: (columndata.label ? columndata.label : columndata.name),
+			datatype: (columndata.datatype ? columndata.datatype : "string"),
+			editable: (columndata.editable ? true : false),
+			bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar ? true : false)),
+			optionValues: columndata.values ? columndata.values : null
+		}));
+	}
+
+	// process columns
+	this.processColumns();
+
+	// load content
+	var rows = jsonData.data;
+	if (!rows || rows.length < 1) return true; // not an error, just an empty table
+
+	for (var i = 0; i < rows.length; i++) 
+	{
+		var row = rows[i];
+		if (!row.values) continue;
+
+		// row values can be given as an array (same order as columns) or as an object (associative array)
+		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
+		else for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
+
+		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
+		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : "" };  
+		for (var attributeName in row) if (attributeName != "id") rowData[attributeName] = row[attributeName];
+
+		// get column values for this rows
+		rowData.columns = [];
+		for (var c = 0; c < this.columns.length; c++) {
+			var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
+			rowData.columns.push(this.getTypedValue(c, cellValue));
+		}
+
+		// add row data in our model
+		this.data.push(rowData);
+	}
+	
+	return true;
 };
 
 /**

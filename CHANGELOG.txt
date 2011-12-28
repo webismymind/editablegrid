@@ -219,12 +219,15 @@ Bugfixes:
 [xx/01/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
 ================================
 
-[TO BE COMPLETED: CHECK GIT HISTORY]
+[TO BE COMPLETED: CHECK GIT HISTORY SINCE 17/02]
  
 Support for option groups for columns with enumerated values: ...
 Pagination: ...
 Filtering on the model:...
-Date pickers provided as an extension: ...
+
+Extensions (need jQuery UI):
+- date pickers: ...
+- autocomplete editor (official jQuery UI autocomplete) : ...
 
 Charts:
 - if renderPieChart is called with valueColumnIndex = labelColumnIndex, we display a chart showing the frequency of values occuring in this column
@@ -239,6 +242,7 @@ Callback:
 
 Misc:
 - fix in filter() when called whithout argument: must refilter using current filter
+- preserve HTML row ids
 
 INCOMPATIBILITIES:
 
@@ -247,3 +251,5 @@ Version 2.0 comes with some compatibility breaks, but updating your code should 
   To get the row index from the row id you can use getRowIndex(rowId).
 - addRow has been renamed as appendRow for more clarity (as insertRow is now also available)
   addRow si still there but deprecated
+- attach mode: original HTML row ids are now preserved
+  
