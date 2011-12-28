@@ -179,7 +179,7 @@ Bugfixes:
 - the PHP wrapper replaces all special XML characters in column labels by the corresponding XML code (&, ', ", <, >)
 - getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority)
 
-[07/09/2010] EditableGrid v1.0.10 - RELEASED UNDER THE GNU GPL
+[07/09/2010] EditableGrid v1.0.10 - [Released under the GNU GPL license]
 =================================
 
 API:
@@ -216,8 +216,8 @@ Bugfixes:
    - added rowSelected callback
    - some fixes in jsdoc comments
    
-[xx/12/2011] EditableGrid v2.0.0 "X-Mas"
-========================================
+[xx/01/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
+================================
 
 [TO BE COMPLETED: CHECK GIT HISTORY]
  
@@ -245,4 +245,5 @@ INCOMPATIBILITIES:
 Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
 - removeRow now takes a row index, for consistency with the rest of the API.
   To get the row index from the row id you can use getRowIndex(rowId).
-- addRow has been renamed as appendRow for more clarity (as insertRow is now also available)  
+- addRow has been renamed as appendRow for more clarity (as insertRow is now also available)
+  addRow si still there but deprecated

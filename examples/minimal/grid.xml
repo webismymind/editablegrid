@@ -6,7 +6,7 @@
 		<column name='name' label='NAME' datatype='string' editable='true'></column>
 		<column name='firstname' label='FIRSTNAME' datatype='string' editable='true'></column>
 		<column name='age' label='AGE' datatype='integer' editable='true'></column>
-		<column name='height' label='HEIGHT' datatype='double(m,2)' bar='false' editable='true'></column>
+		<column name='height' label='HEIGHT' datatype='double(m,2)' editable='true'></column>
 		<column name='country' label='COUNTRY' datatype='string' editable='true'>
 			<values>
 				<group label='Europe'>
