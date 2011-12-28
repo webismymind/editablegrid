@@ -187,6 +187,7 @@ EditableGrid.prototype.readonlyWarning = function() {};
 
 /**
  * Load metadata and data from an XML url
+ * The callback "tableLoaded" is called when loading is complete.
  */
 EditableGrid.prototype.loadXML = function(url)
 {
@@ -349,7 +350,8 @@ EditableGrid.prototype.processXML = function()
 };
 
 /**
- * Load metadata and data from an JSON url
+ * Load metadata and data from a JSON url
+ * The callback "tableLoaded" is called when loading is complete.
  */
 EditableGrid.prototype.loadJSON = function(url)
 {
@@ -383,12 +385,21 @@ EditableGrid.prototype.loadJSON = function(url)
 };
 
 /**
+ * Load metadata and data from an Javascript object or a JSON string
+ * No callback "tableLoaded" is called since this is a synchronous operation.
+ */
+EditableGrid.prototype.load = function(object)
+{
+	return this.processJSON(object);
+};
+
+/**
  * Process the JSON content
  * @private
  */
-EditableGrid.prototype.processJSON = function(jsonText)
+EditableGrid.prototype.processJSON = function(jsonData)
 {	
-	var jsonData = eval("(" + jsonText + ")");
+	if (typeof jsonData == "string") jsonData = eval("(" + jsonData + ")");
 	if (!jsonData) return false;
 
 	// clear model and pointer to current table
