@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>EditableGrid Demo - Loading grid from XML</title>
+		<title>EditableGrid Demo - Grid with pagination</title>
 		
 		<!-- include javascript and css files for the EditableGrid library -->
 		<script src="../../editablegrid.js"></script>
