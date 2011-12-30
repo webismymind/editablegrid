@@ -959,9 +959,19 @@ EditableGrid.prototype._getRowDOMId = function(rowId)
 
 /**
  * Remove row with given id
+ * Deprecated: use remove(rowIndex) instead
+ * @param {Integer} rowId
+ */
+EditableGrid.prototype.removeRow = function(rowId)
+{
+	return this.remove(this.getRowIndex(rowId));
+};
+
+/**
+ * Remove row at given index
  * @param {Integer} rowIndex
  */
-EditableGrid.prototype.removeRow = function(rowIndex)
+EditableGrid.prototype.remove = function(rowIndex)
 {
 	var rowId = this.data[rowIndex].id;
 	var originalIndex = this.data[rowIndex].originalIndex;
@@ -1001,9 +1011,9 @@ EditableGrid.prototype.getRowValues = function(rowIndex)
  * @param {Integer} columns
  * @param {Boolean} dontSort
  */
-EditableGrid.prototype.appendRow = function(rowId, cellValues, rowAttributes, dontSort)
+EditableGrid.prototype.append = function(rowId, cellValues, rowAttributes, dontSort)
 {
-	return this.insertRow(rowId, this.data.length, cellValues, rowAttributes, dontSort);
+	return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
 };
 
 /**
@@ -1015,25 +1025,28 @@ EditableGrid.prototype.appendRow = function(rowId, cellValues, rowAttributes, do
  */
 EditableGrid.prototype.addRow = function(rowId, cellValues, rowAttributes, dontSort)
 {
-	return this.appendRow(rowId, cellValues, rowAttributes, dontSort);
+	return this.append(rowId, cellValues, rowAttributes, dontSort);
 };
 
 /**
  * Insert row with given id and data at given location
- * @param {Integer} rowIndex index of row before which to insert new row
- * @param {Integer} rowId id of new row
- * @param {Integer} columns
- * @param {Boolean} dontSort
+ * We know rowIndex is valid, unless the table is empty
+ * @private
  */
-EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, rowAttributes, dontSort)
+EditableGrid.prototype._insert = function(rowIndex, offset, rowId, cellValues, rowAttributes, dontSort)
 {
-	var rowId = this.data[rowIndex].id;
-	var originalIndex = this.data[rowIndex].originalIndex;
-	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
+	var originalRowId = null;
+	var originalIndex = 0;
+	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered;
+
+	if (typeof this.data[rowIndex] != "undefined") {
+		originalRowId = this.data[rowIndex].id;
+		originalIndex = this.data[rowIndex].originalIndex + offset;
+	}
 
 	// append row in DOM (needed for attach mode)
 	if (this.currentContainerid == null) {
-		var tr = this.tBody.insertRow(rowIndex);
+		var tr = this.tBody.insertRow(rowIndex + offset);
 		tr.rowId = rowId;
 		tr.id = this._getRowDOMId(rowId);
 		for (var c = 0; c < this.columns.length; c++) tr.insertCell(c);
@@ -1052,8 +1065,11 @@ EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, rowAttr
 	for (var r = 0; r < _data.length; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex++;
 
 	// append row in data
-	this.data.splice(rowIndex, 0, rowData);
-	if (this.dataUnfiltered != null) for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == rowId) { this.dataUnfiltered.splice(r, 0, rowData); break; }
+	this.data.splice(rowIndex + offset, 0, rowData);
+	if (this.dataUnfiltered != null) {
+		if (originalRowId === null) this.dataUnfiltered.splice(rowIndex + offset, 0, rowData);
+		else for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == originalRowId) { this.dataUnfiltered.splice(r + offset, 0, rowData); break; }
+	}
 
 	// refresh grid
 	this.refreshGrid();
@@ -1061,6 +1077,34 @@ EditableGrid.prototype.insertRow = function(rowIndex, rowId, cellValues, rowAttr
 	// sort and filter table
 	if (!dontSort) this.sort();
 	this.filter();
+};
+
+/**
+ * Insert row with given id and data before given row index
+ * @param {Integer} rowIndex index of row before which to insert new row
+ * @param {Integer} rowId id of new row
+ * @param {Integer} columns
+ * @param {Boolean} dontSort
+ */
+EditableGrid.prototype.insert = function(rowIndex, rowId, cellValues, rowAttributes, dontSort)
+{
+	if (rowIndex < 0) rowIndex = 0;
+	if (rowIndex >= this.data.length) return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
+	return this._insert(rowIndex, 0, rowId, cellValues, rowAttributes, dontSort);
+};
+
+/**
+ * Insert row with given id and data after given row index
+ * @param {Integer} rowIndex index of row after which to insert new row
+ * @param {Integer} rowId id of new row
+ * @param {Integer} columns
+ * @param {Boolean} dontSort
+ */
+EditableGrid.prototype.insertAfter = function(rowIndex, rowId, cellValues, rowAttributes, dontSort)
+{
+	if (rowIndex < 0) return this.insert(0, rowId, cellValues, rowAttributes, dontSort);
+	if (rowIndex >= this.data.length) rowIndex = this.data.length - 1; 
+	return this._insert(rowIndex, 1, rowId, cellValues, rowAttributes, dontSort);
 };
 
 /**

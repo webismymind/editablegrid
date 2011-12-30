@@ -120,7 +120,7 @@ EditableGrid.prototype.initializeGrid = function()
 			// this action will remove the row, so first find the ID of the row containing this cell 
 			var rowId = editableGrid.getRowId(cell.rowIndex);
 			
-			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.removeRow(" + cell.rowIndex + "); editableGrid.renderCharts(); } \" style=\"cursor:pointer\">" +
+			cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) { editableGrid.remove(" + cell.rowIndex + "); editableGrid.renderCharts(); } \" style=\"cursor:pointer\">" +
 							 "<img src=\"" + image("delete.png") + "\" border=\"0\" alt=\"delete\" title=\"Delete row\"/></a>";
 			
 			cell.innerHTML+= "&nbsp;<a onclick=\"editableGrid.duplicate(" + cell.rowIndex + ");\" style=\"cursor:pointer\">" +
@@ -200,7 +200,7 @@ EditableGrid.prototype.duplicate = function(rowIndex)
 	for (var r = 0; r < this.getRowCount(); r++) newRowId = Math.max(newRowId, parseInt(this.getRowId(r)) + 1);
 	
 	// add new row
-	this.insertRow(rowIndex + 1, newRowId, values); 
+	this.insertAfter(rowIndex, newRowId, values); 
 };
 
 // function to render our two demo charts

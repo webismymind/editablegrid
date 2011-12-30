@@ -12,7 +12,7 @@ function loadXML()
 			
 			// renderer for the action column
 			this.setCellRenderer("action", new CellRenderer({render: function(cell, value) { 
-				cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.removeRow(" + cell.rowIndex + ");\" style=\"cursor:pointer\">" +
+				cell.innerHTML = "<a onclick=\"if (confirm('Are you sure you want to delete this person ? ')) editableGrid.remove(" + cell.rowIndex + ");\" style=\"cursor:pointer\">" +
 								 "<img src=\"delete.png\" border=\"0\" alt=\"delete\" title=\"delete\"/></a>";
 			}})); 
 
