@@ -155,7 +155,7 @@ class EditableGrid {
 		return $str;
 	}
 
-	protected function parseColumnType($type)
+	protected function parseColumnType($type, $unitTranslations = FALSE)
 	{
 		$info = array(
 			'unit' => '',
@@ -217,6 +217,8 @@ class EditableGrid {
 			if ($info['thousands_separator'] == 'comma') $info['thousands_separator'] = ',';
 			if ($info['thousands_separator'] == 'dot') $info['thousands_separator'] = '.';
 
+			if ($info['unit'] && isset($unitTranslations[$info['unit']])) $info['unit'] = $unitTranslations[$info['unit']];
+			
 			return $info;
 	}
 
@@ -228,9 +230,9 @@ class EditableGrid {
 	 * @param numeric $value
 	 * @param string $columnType such as double($, 2, dot, comma, 1, n/a)
 	 */
-	public static function format($value, $columnType)
+	public static function format($value, $columnType, $unitTranslations = FALSE)
 	{
-		$info = self::parseColumnType($columnType);
+		$info = self::parseColumnType($columnType, $unitTranslations);
 		if (!isset($info['datatype']) || !in_array($info['datatype'], array('double', 'integer'))) return $value;
 
 		$floatValue = self::parseFloat($value);
@@ -243,7 +245,7 @@ class EditableGrid {
 		if ($displayValue[strlen($displayValue) - 1] == '.') $displayValue = substr($displayValue, 0, strlen($displayValue) - 1);
 
 		if ($info['unit']) $displayValue = $info['unit_before_number'] ? ($info['unit'] . ' ' . $displayValue) : ($displayValue . ' ' . $info['unit']);
-
+		
 		return $displayValue;
 	}
 
@@ -253,9 +255,9 @@ class EditableGrid {
 	 * @param string $columnType such as double($, 2, dot, comma, 1, n/a)
 	 * @param string $encoding, optional (utf-8 by default)
 	 */
-	public static function getXlsFormat($columnType, $encoding = "utf-8")
+	public static function getXlsFormat($columnType, $encoding = "utf-8", $unitTranslations = FALSE)
 	{
-		$info = self::parseColumnType($columnType);
+		$info = self::parseColumnType($columnType, $unitTranslations);
 		if (!isset($info['datatype']) || !in_array($info['datatype'], array('double', 'integer'))) return '';
 
 		$precision = $info['precision'];
