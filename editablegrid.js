@@ -118,6 +118,7 @@ EditableGrid.prototype.init = function (name, config)
 	var props = 
 	{
 			enableSort: true,
+			enableStore: true,
 			doubleclick: false,
 			editmode: "absolute",
 			editorzoneid: "",
@@ -574,7 +575,7 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 {
 	var colType = this.getColumnType(columnIndex);
 	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
-	if (colType == 'integer') { cellValue = parseInt(cellValue); } 
+	if (colType == 'integer') { cellValue = parseInt(cellValue, 10); } 
 	if (colType == 'double') { cellValue = parseFloat(cellValue); }
 	if (colType == 'string') { cellValue = "" + cellValue; }
 	return cellValue;
@@ -840,6 +841,23 @@ EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
 };
+
+/**
+ * Returns the display value (used for sorting and filtering) at the specified index
+ * @param {Integer} rowIndex
+ * @param {Integer} columnIndex
+ */
+EditableGrid.prototype.getDisplayValueAt = function(rowIndex, columnIndex)
+{
+	var value = this.getValueAt(rowIndex, columnIndex);
+	if (value !== null) {
+		// use renderer to get the value that must be used for sorting
+		var renderer = rowIndex < 0 ? this.columns[columnIndex].headerRenderer : this.columns[columnIndex].cellRenderer;  
+		value = renderer.getDisplayValue(rowIndex, value);
+	}	
+	return value;
+};
+
 
 /**
  * Sets the value at the specified index
@@ -1452,17 +1470,22 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
  */
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
-	with (this) {
+	// restore stored parameters, or use default values if nothing stored
+	var pageIndex = this.localisset('pageIndex') ? this.localget('pageIndex') : 0;
+	this.sortedColumnName = this.localisset('sortColumnIndexOrName') ? this.localget('sortColumnIndexOrName') : -1;
+	this.sortDescending = this.localisset('sortDescending') ? this.localget('sortDescending') : false;
+	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
 
-		// back to first page before rendering
-		this.currentPageIndex = 0;
+	// actually render grid
+	this.currentPageIndex = 0;
+	this._rendergrid(containerid, className, tableid);
 
-		_rendergrid(containerid, className, tableid);
+	// sort and filter table
+	this.sort() ;
+	this.filter();
 
-		// sort and filter table
-		sort();
-		filter();
-	}
+	// go to stored page (or first if nothing stored)
+	this.setPageIndex(pageIndex);
 };
 
 /**
@@ -1561,9 +1584,12 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 
 		if (typeof columnIndexOrName  == 'undefined') columnIndexOrName = sortedColumnName;
 		if (typeof descending  == 'undefined') descending = sortDescending;
+		
+		localset('sortColumnIndexOrName', columnIndexOrName);
+		localset('sortDescending', descending);
 
 		var columnIndex = columnIndexOrName;
-		if (columnIndex !== -1) {
+		if (parseInt(columnIndex, 10) !== -1) {
 			columnIndex = this.getColumnIndex(columnIndexOrName);
 			if (columnIndex < 0) {
 				alert("[sort] Invalid column: " + columnIndexOrName);
@@ -1583,7 +1609,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 		var type = columnIndex < 0 ? "" : getColumnType(columnIndex);
 		var row_array = [];
 		var rowCount = getRowCount();
-		for (var i = 0; i < rowCount - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getValueAt(i, columnIndex), i, data[i].originalIndex]);
+		for (var i = 0; i < rowCount - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getDisplayValueAt(i, columnIndex), i, data[i].originalIndex]);
 		row_array.sort(columnIndex < 0 ? unsort :
 			type == "integer" || type == "double" ? sort_numeric :
 				type == "boolean" ? sort_boolean :
@@ -1591,7 +1617,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 						sort_alpha);
 
 		if (descending) row_array = row_array.reverse();
-		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getValueAt(rowCount - 1, columnIndex), rowCount - 1, data[rowCount - 1].originalIndex]);
+		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getDisplayValueAt(rowCount - 1, columnIndex), rowCount - 1, data[rowCount - 1].originalIndex]);
 
 		// rebuild data using the new order
 		var _data = data;
@@ -1623,7 +1649,10 @@ EditableGrid.prototype.filter = function(filterString)
 {
 	with (this) {
 
-		if (typeof filterString != 'undefined') currentFilter = filterString;
+		if (typeof filterString != 'undefined') {
+			this.currentFilter = filterString;
+			this.localset('filter', filterString);
+		}
 
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
@@ -1643,10 +1672,11 @@ EditableGrid.prototype.filter = function(filterString)
 		if (dataUnfiltered != null) data = dataUnfiltered;
 
 		var rowCount = getRowCount();
+		var columnCount = getColumnCount();
 		for (var r = 0; r < rowCount; r++) {
 			data[r].visible = true;
 			var rowContent = ""; 
-			for (var c = 0; c < data[r].columns.length; c++) rowContent += data[r].columns[c] + " ";
+			for (var c = 0; c < columnCount; c++) rowContent += getDisplayValueAt(r, c) + " ";
 
 			// if row contents does not match one word in the filter, hide the row
 			for (var i = 0; i < words.length; i++) {
@@ -1705,6 +1735,7 @@ EditableGrid.prototype.getCurrentPageIndex = function()
 EditableGrid.prototype.setPageIndex = function(pageIndex)
 {
 	this.currentPageIndex = pageIndex;
+	this.localset('pageIndex', pageIndex);
 	this.refreshGrid();
 };
 

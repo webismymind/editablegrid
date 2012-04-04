@@ -37,6 +37,11 @@ CellRenderer.prototype.render = function(element, value)
 	element.innerHTML = value ? value : "";
 };
 
+CellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
+{
+	return value;
+};
+
 /**
  * Enum cell renderer
  * @constructor
@@ -45,11 +50,11 @@ CellRenderer.prototype.render = function(element, value)
 
 function EnumCellRenderer(config) { this.init(config); }
 EnumCellRenderer.prototype = new CellRenderer();
-EnumCellRenderer.prototype.render = function(element, value)
+EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 {
 	var label = "";
 	if (typeof value != 'undefined') {
-		var optionValues = this.column.getOptionValuesForRender(element.rowIndex);
+		var optionValues = this.column.getOptionValuesForRender(rowIndex);
 		if (value in optionValues) label = optionValues[value];
 		for (var optionValue in optionValues) if (typeof optionValues[optionValue] == 'object' && value in optionValues[optionValue]) label = optionValues[optionValue][value];
 		if (label == "") {
@@ -57,7 +62,18 @@ EnumCellRenderer.prototype.render = function(element, value)
 			label = isNAN ? "" : value;
 		}
 	}
-	element.innerHTML = label;
+	return label;
+};
+
+EnumCellRenderer.prototype.render = function(element, value)
+{
+	element.innerHTML = this.getLabel(element.rowIndex, value);
+};
+
+EnumCellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
+{
+	// if the column has enumerated values, sort and filter on the value label
+	return this.getLabel(rowIndex, value);
 };
 
 /**
