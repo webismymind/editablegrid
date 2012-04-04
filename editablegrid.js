@@ -118,6 +118,7 @@ EditableGrid.prototype.init = function (name, config)
 	var props = 
 	{
 			enableSort: true,
+			enableStore: true,
 			doubleclick: false,
 			editmode: "absolute",
 			editorzoneid: "",
@@ -1452,17 +1453,18 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
  */
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
-	with (this) {
+	// restore stored parameters, or use default values if nothing stored
+	this.currentPageIndex = this.localisset('pageIndex') ? this.localget('pageIndex') : 0;
+	this.sortedColumnName = this.localisset('sortColumnIndexOrName') ? this.localget('sortColumnIndexOrName') : -1;
+	this.sortDescending = this.localisset('sortDescending') ? this.localget('sortDescending') : false;
+	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
 
-		// back to first page before rendering
-		this.currentPageIndex = 0;
+	// actually render grid
+	this._rendergrid(containerid, className, tableid);
 
-		_rendergrid(containerid, className, tableid);
-
-		// sort and filter table
-		sort();
-		filter();
-	}
+	// sort and filter table
+	this.sort() ;
+	this.filter();
 };
 
 /**
@@ -1561,6 +1563,9 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 
 		if (typeof columnIndexOrName  == 'undefined') columnIndexOrName = sortedColumnName;
 		if (typeof descending  == 'undefined') descending = sortDescending;
+		
+		localset('sortColumnIndexOrName', columnIndexOrName);
+		localset('sortDescending', descending);
 
 		var columnIndex = columnIndexOrName;
 		if (columnIndex !== -1) {
@@ -1623,7 +1628,10 @@ EditableGrid.prototype.filter = function(filterString)
 {
 	with (this) {
 
-		if (typeof filterString != 'undefined') currentFilter = filterString;
+		if (typeof filterString != 'undefined') {
+			this.currentFilter = filterString;
+			this.localset('filter', filterString);
+		}
 
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
@@ -1705,6 +1713,7 @@ EditableGrid.prototype.getCurrentPageIndex = function()
 EditableGrid.prototype.setPageIndex = function(pageIndex)
 {
 	this.currentPageIndex = pageIndex;
+	this.localset('pageIndex', pageIndex);
 	this.refreshGrid();
 };
 

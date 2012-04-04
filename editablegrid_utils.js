@@ -1,3 +1,20 @@
+EditableGrid.prototype.localset = function(key, value) 
+{
+	if (localStorage && this.enableStore) localStorage.setItem(this.name + '_' + key, value);
+};
+
+EditableGrid.prototype.localget = function(key) 
+{
+	if (localStorage) return localStorage.getItem(this.name + '_' + key);
+	return null;
+};
+
+EditableGrid.prototype.localisset = function(key, value) 
+{
+	if (localStorage) return localStorage.getItem(this.name + '_' + key) !== null;
+	return false;
+};
+
 EditableGrid.prototype.unsort = function(a,b) 
 {
 	// at index 2 we have the originalIndex
