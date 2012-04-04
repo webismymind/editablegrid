@@ -134,8 +134,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	var cellEditor = new CellEditor();
 	cellEditor.editablegrid = this.editablegrid;
 	cellEditor.column = this.column;
-	htmlInput.onclick = function(event) { 
-		element.rowIndex = element.parentNode.rowIndex - this.cellrenderer.editablegrid.nbHeaderRows; // in case it has changed due to sorting or remove
+	htmlInput.onclick = function(event) {
+		element.rowIndex = this.cellrenderer.editablegrid.getRowIndex(element.parentNode); // in case it has changed due to sorting or remove
 		element.isEditing = true;
 		cellEditor.applyEditing(element, htmlInput.checked ? true : false); 
 	};

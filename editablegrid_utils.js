@@ -75,6 +75,11 @@ EditableGrid.prototype.isStatic = function (element)
 	return (!position || position == "static");
 };
 
+EditableGrid.prototype.verticalAlign = function (element) 
+{
+	return this.getStyle(element, "verticalAlign", "vertical-align");
+};
+
 EditableGrid.prototype.paddingLeft = function (element) 
 {
 	var padding = parseInt(this.getStyle(element, "paddingLeft", "padding-left"));
