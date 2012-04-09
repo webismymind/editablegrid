@@ -1471,7 +1471,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
 	// restore stored parameters, or use default values if nothing stored
-	var pageIndex = this.localisset('pageIndex') ? this.localget('pageIndex') : 0;
+	var pageIndex = this.localisset('pageIndex') ? parseInt(this.localget('pageIndex')) : 0;
 	this.sortedColumnName = this.localisset('sortColumnIndexOrName') ? this.localget('sortColumnIndexOrName') : -1;
 	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
 	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
