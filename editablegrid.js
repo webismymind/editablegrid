@@ -108,34 +108,32 @@ function EnumProvider(config)
  */
 function EditableGrid(name, config) { if (name) this.init(name, config); }
 
+/**
+ * Default properties
+ */ 
+EditableGrid.prototype.enableSort = true;
+EditableGrid.prototype.enableStore = true;
+EditableGrid.prototype.doubleclick = false;
+EditableGrid.prototype.editmode = "absolute"
+EditableGrid.prototype.editorzoneid = "";
+EditableGrid.prototype.allowSimultaneousEdition = false;
+EditableGrid.prototype.saveOnBlur = true;
+EditableGrid.prototype.invalidClassName = "invalid";
+EditableGrid.prototype.ignoreLastRow = false;
+EditableGrid.prototype.caption = null;
+EditableGrid.prototype.dateFormat = "EU";
+EditableGrid.prototype.shortMonthNames = null;
+EditableGrid.prototype.smartColorsBar = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
+EditableGrid.prototype.smartColorsPie = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
+EditableGrid.prototype.pageSize = 0;
+
 EditableGrid.prototype.init = function (name, config)
 {
 	if (typeof name != "string" || (typeof config != "object" && typeof config != "undefined")) {
 		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
 	};
 
-	// default properties
-	var props = 
-	{
-			enableSort: true,
-			enableStore: true,
-			doubleclick: false,
-			editmode: "absolute",
-			editorzoneid: "",
-			allowSimultaneousEdition: false,
-			saveOnBlur: true,
-			invalidClassName: "invalid",
-			ignoreLastRow: false,
-			caption: null,
-			dateFormat: "EU",
-			shortMonthNames: null,
-			smartColorsBar: ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"],
-			smartColorsPie: ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"],
-			pageSize: 0
-	};
-
 	// override default properties with the ones given
-	for (var p in props) this[p] = props[p];
 	if (typeof config != 'undefined') for (var p in config) this[p] = config[p];
 
 	this.Browser = {
