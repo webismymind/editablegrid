@@ -559,7 +559,7 @@ EditableGrid.prototype.parseColumnType = function(column)
 	if (column.thousands_separator == 'comma') column.thousands_separator = ',';
 	if (column.thousands_separator == 'dot') column.thousands_separator = '.';
 
-	if (isNaN(column.precision)) column.precision = null;
+	if (isNaN(column.precision)) column.precision = -1;
 	if (column.unit == '') column.unit = null;
 	if (column.nansymbol == '') column.nansymbol = null;
 };
