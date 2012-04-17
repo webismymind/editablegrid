@@ -1,18 +1,54 @@
+EditableGrid.prototype.setCookie = function(c_name, value, exdays)
+{
+	var exdate = new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+	document.cookie = c_name + "=" + c_value;
+};
+
+EditableGrid.prototype.getCookie = function(c_name)
+{
+	var _cookies = document.cookie.split(";");
+	for (var i = 0; i < _cookies.length; i++) {
+		var x = _cookies[i].substr(0, _cookies[i].indexOf("="));
+		var y = _cookies[i].substr(_cookies[i].indexOf("=") + 1);
+		x = x.replace(/^\s+|\s+$/g, "");
+		if (x == c_name) return unescape(y);
+	}
+
+	return null;
+};
+
+EditableGrid.prototype._localset = function(key, value) 
+{
+	if (localStorage) localStorage.setItem(key, value);
+	else this.setCookie(key, value, null);
+};
+
+EditableGrid.prototype._localget = function(key) 
+{
+	if (localStorage) return localStorage.getItem(key);
+	return this.getCookie(key);
+};
+
+EditableGrid.prototype._localisset = function(key, value) 
+{
+	return this._localget(key, value) !== null;
+};
+
 EditableGrid.prototype.localset = function(key, value) 
 {
-	if (localStorage && this.enableStore) localStorage.setItem(this.name + '_' + key, value);
+	if (this.enableStore) return this._localset(this.name + '_' + key, value);
 };
 
 EditableGrid.prototype.localget = function(key) 
 {
-	if (localStorage) return localStorage.getItem(this.name + '_' + key);
-	return null;
+	return this.enableStore ? this._localget(this.name + '_' + key) : null;
 };
 
 EditableGrid.prototype.localisset = function(key, value) 
 {
-	if (localStorage) return localStorage.getItem(this.name + '_' + key) !== null;
-	return false;
+	return this.localget(key, value) !== null;
 };
 
 EditableGrid.prototype.unsort = function(a,b) 
