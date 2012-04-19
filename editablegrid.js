@@ -251,7 +251,7 @@ EditableGrid.prototype.loadXML = function(url)
  * Load metadata and/or data from an XML string
  * No callback "tableLoaded" is called since this is a synchronous operation.
  * 
- * Contributed by Tim Consolazio.
+ * Contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com
  * http://tcoztechwire.blogspot.com/2012/04/setxmlfromstring-extension-for.html
  */
 EditableGrid.prototype.loadXMLFromString = function(xml)
