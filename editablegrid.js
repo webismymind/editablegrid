@@ -248,6 +248,28 @@ EditableGrid.prototype.loadXML = function(url)
 };
 
 /**
+ * Load metadata and/or data from an XML string
+ * No callback "tableLoaded" is called since this is a synchronous operation.
+ * 
+ * Contributed by Tim Consolazio.
+ * http://tcoztechwire.blogspot.com/2012/04/setxmlfromstring-extension-for.html
+ */
+EditableGrid.prototype.loadXMLFromString = function(xml)
+{
+	if (window.DOMParser) {
+		var parser = new DOMParser();
+		this.xmlDoc = parser.parseFromString(xml, "application/xml");
+	}
+	else {
+		this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); // IE
+		this.xmlDoc.async = "false";
+		this.xmlDoc.loadXML(xml);
+	}
+
+	this.processXML();
+};
+
+/**
  * Process the XML content
  * @private
  */
@@ -386,7 +408,16 @@ EditableGrid.prototype.loadJSON = function(url)
 };
 
 /**
- * Load metadata and/or data from an Javascript object or a JSON string
+ * Load metadata and/or data from a JSON string
+ * No callback "tableLoaded" is called since this is a synchronous operation.
+ */
+EditableGrid.prototype.loadJSONFromString = function(json)
+{
+	return this.processJSON(json);
+};
+
+/**
+ * Load metadata and/or data from a Javascript object
  * No callback "tableLoaded" is called since this is a synchronous operation.
  */
 EditableGrid.prototype.load = function(object)
