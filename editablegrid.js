@@ -1600,7 +1600,7 @@ EditableGrid.prototype.mouseClicked = function(e)
  * @param {Object} columnIndexOrName index or name of the column
  * @param {Boolean} descending
  */
-EditableGrid.prototype.sort = function(columnIndexOrName, descending)
+EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirstPage)
 {
 	with (this) {
 
@@ -1662,8 +1662,8 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending)
 			for (var r = 0; r < rowCount; r++) if (dataUnfiltered[r].visible) data.push(dataUnfiltered[r]);
 		}
 
-		// refresh grid and callback
-		refreshGrid();
+		// refresh grid (back on first page if sort column has changed) and callback
+		if (backOnFirstPage) setPageIndex(0); else refreshGrid();
 		tableSorted(columnIndex, descending);
 		return true;
 	}

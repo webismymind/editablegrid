@@ -231,11 +231,13 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 
 				var cols = tHead.rows[0].cells;
 				var clearPrevious = -1;
+				var backOnFirstPage = false;
 				
 				if (sortedColumnName != this.columnName) {
 					clearPrevious = sortedColumnName;
 					sortedColumnName = this.columnName;
 					sortDescending = false;
+					backOnFirstPage = true;
 				}
 				else {
 					if (!sortDescending) sortDescending = true;
@@ -243,6 +245,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 						clearPrevious = sortedColumnName;
 						sortedColumnName = -1; 
 						sortDescending = false; 
+						backOnFirstPage = true;
 					}
 				} 
 				
@@ -250,7 +253,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 				// var j = getColumnIndex(clearPrevious);
 				// if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
 
-				sort(sortedColumnName, sortDescending);
+				sort(sortedColumnName, sortDescending, backOnFirstPage);
 
 				// render header for new sort column (not needed anymore since the grid is now fully refreshed after a sort - cf. possible pagination)
 				// var j = getColumnIndex(sortedColumnName);
