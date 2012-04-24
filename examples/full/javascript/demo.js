@@ -93,7 +93,7 @@ EditableGrid.prototype.initializeGrid = function()
 
 		// add a cell validator to check that the age is in [15, 100[
 		addCellValidator("age", new CellValidator({ 
-			isValid: function(value) { return value == "" || (parseInt(value) >= 15 && parseInt(value) < 100); }
+			isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
 		}));
 		
 		// register the function that will handle model changes
