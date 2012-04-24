@@ -19,15 +19,20 @@ EditableGrid.prototype.getCookie = function(c_name)
 	return null;
 };
 
+EditableGrid.prototype.has_local_storage = function() 
+{
+	try { return 'localStorage' in window && window['localStorage'] !== null; } catch(e) { return false; }
+}
+
 EditableGrid.prototype._localset = function(key, value) 
 {
-	if (localStorage) localStorage.setItem(key, value);
+	if (this.has_local_storage()) localStorage.setItem(key, value);
 	else this.setCookie(key, value, null);
 };
 
 EditableGrid.prototype._localget = function(key) 
 {
-	if (localStorage) return localStorage.getItem(key);
+	if (this.has_local_storage()) return localStorage.getItem(key);
 	return this.getCookie(key);
 };
 
