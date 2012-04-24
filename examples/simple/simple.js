@@ -2,7 +2,7 @@ var editableGrid = null;
 
 function loadXML() 
 {
-	editableGrid = new EditableGrid("DemoGrid", {
+	editableGrid = new EditableGrid("DemoGridSimple", {
 		
 		// called when the XML has been fully loaded 
 		tableLoaded: function() { 
