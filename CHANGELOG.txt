@@ -216,48 +216,44 @@ Bugfixes:
    - added rowSelected callback
    - some fixes in jsdoc comments
    
-[xx/01/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
+[24/04/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
 ================================
 
-[TO BE COMPLETED: CHECK GIT HISTORY SINCE 17/02]
- 
-Support for option groups for columns with enumerated values: ...
-Pagination: ...
-Filtering on the model: ...
-JSON support: ...
-LoadXMLFromString:  ... (Contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com)
+WARNING:
+ EditableGrid currently suffers from a lack of documentation.
+ Please check the examples to learn how to use EditableGrid.
 
-Extensions (need jQuery UI):
-- date pickers: ...
-- autocomplete editor (official jQuery UI autocomplete) : ...
+MAIN NEW FEATURES:
+* Full client-side pagination
+* Grid state saved and restored using localStorage (or cookies if localStorage is not supported by the browser)
+* Support for option groups in columns with enumerated values
+* Filtering is now done on the model (and hence on the charts)
+* JSON support (from an URL, a JSON string or a Javascript object) 
+* LoadXMLFromString (contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com)
+* Frequency pie charts: call renderPieChart with valueColumnIndex = labelColumnIndex to get a chart showing the frequency of values occuring in this column 
 
-Charts:
-- if renderPieChart is called with valueColumnIndex = labelColumnIndex, we display a chart showing the frequency of values occuring in this column
-- added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set to non null and > 0, this is the maximum number of rows taken into account for drawing the chart
-- all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart can be given "null" to use the default value
-- demo: displays two charts below the table: age per person (bar chart) and country distribution (frequency pie chart)
+NEW EXTENSIONS (need jQuery UI):
+* Support for date pickers: automatically enabled for date columns if jQuery UI is detected
+* Autocomplete editor (using official jQuery UI autocomplete)
 
-Callback:
+Misc.:
+- added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set, this is the maximum number of rows taken into account for drawing the chart
 - tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
 - sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
-- demo: updatePaginator needs only to be called in tableRendered and when deleting a row 
-
-Misc:
-- fix in filter() when called whithout argument: must refilter using current filter
-- preserve HTML row ids
-
-INCOMPATIBILITIES:
 
 Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
+
+INCOMPATIBILITIES: 
 - attach mode: original HTML row ids are now preserved
+  you may have to update your javascript code if you somehow relied on the modified row ids
 
-DEPRECATED:
-
+DEPRECTATED METHODS:
+- charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object 
+  this "options" object should contain only options for which you do not want to use the default value
 - addRow has been renamed as appendRow for more clarity (as insertRow is now also available)
   addRow si still there but deprecated
-
 - removeRow(rowId) is deprecated: use remove(rowIndex) instead
   remove takes a row index, for consistency with the rest of the API.
   To get the row index from the row id you can use getRowIndex(rowId).
-  
-- attachToHTMLTable: second parameter deprecated: ...   
+- attachToHTMLTable: second parameter (used to give the column definitions) is deprecated
+  you should now use "load" to setup the metadata
