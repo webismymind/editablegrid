@@ -230,30 +230,39 @@ MAIN NEW FEATURES:
 * Filtering is now done on the model (and hence on the charts)
 * JSON support (from an URL, a JSON string or a Javascript object) 
 * LoadXMLFromString (contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com)
-* Frequency pie charts: call renderPieChart with valueColumnIndex = labelColumnIndex to get a chart showing the frequency of values occuring in this column 
 
 NEW EXTENSIONS (need jQuery UI):
 * Support for date pickers: automatically enabled for date columns if jQuery UI is detected
 * Autocomplete editor (using official jQuery UI autocomplete)
 
-Misc.:
-- added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set, this is the maximum number of rows taken into account for drawing the chart
-- tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
-- sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
+NEW CHART FEATURES:
+* Frequency pie charts: call renderPieChart with valueColumnIndex = labelColumnIndex to get a chart showing the frequency of values occuring in this column 
+* Stacked bar charts: added function renderStackedBarChart 
+* Added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set, this is the maximum number of rows taken into account for drawing the chart
 
+MISC.:
+* To avoid any issue with javascript not able to parse XML, ensure data is valid for encoding in EditableGrid.php wrapper (using iconv)
+* Callback tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
+* Function sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
+* Added column attributes: decimal_point, thousands_separator, unit_before_number.
+  All have a default value and can be overridden in the XML column type declaration, as follows:
+  datatype(unit, precision, decimal_point, thousands_separator, unit_before_number[, nanSymbol]) 
+  e.g. double(€, 2, comma, dot, 0, n/a)
+* Lots of other bugfixes and minor improvements!
+ 
 Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
 
 INCOMPATIBILITIES: 
 - attach mode: original HTML row ids are now preserved
   you may have to update your javascript code if you somehow relied on the modified row ids
 
-DEPRECTATED METHODS:
-- charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object 
-  this "options" object should contain only options for which you do not want to use the default value
-- addRow has been renamed as appendRow for more clarity (as insertRow is now also available)
-  addRow si still there but deprecated
-- removeRow(rowId) is deprecated: use remove(rowIndex) instead
-  remove takes a row index, for consistency with the rest of the API.
+DEPRECATED METHODS:
+- Charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object. 
+  This "options" object should contain only options for which you do not want to use the default value.
+- Function addRow has been renamed as appendRow for more clarity (as insertRow is now also available).
+  Function addRow is still there but deprecated.
+- Function removeRow(rowId) is deprecated: use remove(rowIndex) instead.
+  Function remove takes a row index, for consistency with the rest of the API.
   To get the row index from the row id you can use getRowIndex(rowId).
-- attachToHTMLTable: second parameter (used to give the column definitions) is deprecated
-  you should now use "load" to setup the metadata
+- Function attachToHTMLTable: the second parameter (used to give the column definitions) is deprecated.
+  You should now use "load" to setup the metadata.
