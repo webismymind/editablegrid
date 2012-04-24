@@ -131,8 +131,8 @@ EditableGrid.prototype.initializeGrid = function()
 		// render the grid (parameters will be ignored if we have attached to an existing HTML table)
 		renderGrid("tablecontent", "testgrid", "tableid");
 		
-		// filter is filter field is already filled in (refresh in some browsers will leave the field at its previous value) 
-		if (_$('filter').value != "") filter(_$('filter').value);
+		// set active (stored) filter if any
+		_$('filter').value = currentFilter ? currentFilter : '';
 		
 		// filter when something is typed into filter
 		_$('filter').onkeyup = function() { editableGrid.filter(_$('filter').value); };
