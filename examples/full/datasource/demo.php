@@ -59,5 +59,5 @@ while ($row = fgetcsv($handle, 0, ";")) {
 }
 
 // render XML or JSON
-if (isset($_GET['json'])) $grid->renderJSON($data);
-else $grid->renderXML($data);
+if (isset($_GET['xml'])) $grid->renderXML($data);
+else $grid->renderJSON($data);
