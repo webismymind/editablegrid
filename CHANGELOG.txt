@@ -221,7 +221,7 @@ Bugfixes:
 
 WARNING:
  EditableGrid currently suffers from a lack of documentation.
- Please check the examples to learn how to use EditableGrid.
+ Please check the examples (examples/index.html) to learn how to use EditableGrid.
 
 MAIN NEW FEATURES:
 * Full client-side pagination
@@ -253,8 +253,8 @@ MISC.:
 Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
 
 INCOMPATIBILITIES: 
-- attach mode: original HTML row ids are now preserved
-  you may have to update your javascript code if you somehow relied on the modified row ids
+- Attach mode: original HTML row ids are now preserved.
+  You may have to update your javascript code if you somehow relied on the modified row ids.
 
 DEPRECATED METHODS:
 - Charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object. 
