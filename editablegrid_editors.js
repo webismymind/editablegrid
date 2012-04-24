@@ -37,8 +37,11 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		
 		// ENTER or TAB: apply value
 		if (event.keyCode == 13 || event.keyCode == 9) {
-			this.onblur = null; 
-			this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this));
+
+			// backup onblur then remove it: it will be restored if editing could not be applied
+			this.onblur_backup = this.onblur; 
+			this.onblur = null;
+			if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup; 
 			return false;
 		}
 		
@@ -52,8 +55,18 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 
 	// if simultaneous edition is not allowed, we cancel edition when focus is lost
 	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ?
-			function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); } :
-			function(event) { this.onblur = null; this.celleditor.cancelEditing(this.element); };
+			function(event) { 
+
+				// backup onblur then remove it: it will be restored if editing could not be applied
+				this.onblur_backup = this.onblur; 
+				this.onblur = null;
+				if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup; 
+			}
+			:
+			function(event) { 
+				this.onblur = null; 
+				this.celleditor.cancelEditing(this.element); 
+			};
 
 	// display the resulting editor widget
 	this.displayEditor(element, editorInput);
@@ -167,7 +180,10 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 			}
 		
 			_clearEditor(element);	
+			return true;
 		}
+
+		return false;
 	}
 };
 
