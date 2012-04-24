@@ -4,11 +4,13 @@ class EditableGrid {
 
 	protected $columns;
 	protected $encoding;
-
-	function __construct($encoding = "utf-8")
+	protected $writeColumnNames; // write column names in XML and JSON (set to false to save bandwidth)
+	
+	function __construct($encoding = "utf-8", $writeColumnNames = false)
 	{
 		$this->encoding = $encoding;
 		$this->columns = array();
+		$this->writeColumnNames = $writeColumnNames;
 	}
 
 	public static function escapeXML($str)
@@ -85,7 +87,8 @@ class EditableGrid {
 			
 		foreach ($this->columns as $name => $info) {
 			$field = $info['field'];
-			$xml.= "<column name='{$name}'><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
+			$name_attr = $this->writeColumnNames ? " name='{$name}'" : "";
+			$xml.= "<column{$name_attr}><![CDATA[" . $this->_getRowField($row, $field) . "]]></column>\n";
 		}
 
 		$xml.= "</row>\n";
@@ -128,7 +131,8 @@ class EditableGrid {
 			
 		foreach ($this->columns as $name => $info) {
 			$field = $info['field'];
-			$data["values"][$name] = $this->_getRowField($row, $field);
+			if ($this->writeColumnNames) $data["values"][$name] = $this->_getRowField($row, $field);
+			else $data["values"][] = $this->_getRowField($row, $field);
 		}
 
 		return $data;

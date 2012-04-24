@@ -468,7 +468,10 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 		// row values can be given as an array (same order as columns) or as an object (associative array)
 		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
-		else for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
+		else {
+			cellValues = {};
+			for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
+		}
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
 		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : "" };  
