@@ -71,7 +71,7 @@ EditableGrid.prototype.initializeGrid = function()
 		
 		// use a flag image to render the selected country
 		setCellRenderer("country", new CellRenderer({
-			render: function(cell, value) { cell.innerHTML = value ? "<img src='" + image("flags/" + value.toLowerCase() + ".png") + "' alt='" + value + "'/>" : ""; }
+			render: function(cell, value) { cell.innerHTML = value ? "<img src='" + image("flags/" + value.toLowerCase() + ".png") + "' alt='" + value + "'/>" : ""; cell.style.textAlign = "center"; }
 		})); 
 
 		// use autocomplete on firstname
