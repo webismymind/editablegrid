@@ -23,6 +23,13 @@ class EditableGrid {
 		return $str;
 	}
 
+	public function getColumnLabels()
+	{
+		$labels = array();
+		foreach ($this->columns as $name => $column) $labels[$name] = $column['label'];
+		return $labels;
+	}
+		
 	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $bar = true)
 	{
 		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "bar" => $bar, "values" => $values );
