@@ -763,6 +763,15 @@ EditableGrid.prototype.getRowCount = function()
 };
 
 /**
+ * Returns the number of rows, not taking the filter into account if any
+ */
+EditableGrid.prototype.getUnfilteredRowCount = function()
+{
+	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
+	return _data.length;
+};
+
+/**
  * Returns the number of columns
  */
 EditableGrid.prototype.getColumnCount = function()
