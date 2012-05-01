@@ -1719,7 +1719,9 @@ EditableGrid.prototype.filter = function(filterString)
 			var rowContent = ""; 
 			for (var c = 0; c < columnCount; c++) {
 				if (getColumnType(c) == 'boolean') continue;
-				rowContent += getDisplayValueAt(r, c) + " ";
+				var displayValue = getDisplayValueAt(r, c);
+				var value = getValueAt(r, c);
+				rowContent += displayValue + " " + (displayValue == value ? "" : value + " ");
 			}
 			
 			// if row contents does not match one word in the filter, hide the row
@@ -1733,20 +1735,28 @@ EditableGrid.prototype.filter = function(filterString)
 				
 				// if word is of the form "colname=value", only this column is used
 				var colindex = -1;
-				if (word.contains("=")) {
+				if (word.contains("!=")) {
+					var parts = word.split("!=");
+					colindex = getColumnIndex(parts[0]);
+					if (colindex >= 0) {
+						word = parts[1];
+						invertMatch = !invertMatch;
+					}
+				}
+				else if (word.contains("=")) {
 					var parts = word.split("=");
 					colindex = getColumnIndex(parts[0]);
 					if (colindex >= 0) word = parts[1];
 				}
 
 				// a word ending with "!" means that a column must match this word exactly
-				if (!word.endsWith("!")) match = colindex < 0 ? rowContent.toLowerCase().indexOf(word) >= 0 : (getDisplayValueAt(r, colindex) + "").trim().toLowerCase().indexOf(word) >= 0; 
+				if (!word.endsWith("!")) match = colindex < 0 ? rowContent.toLowerCase().indexOf(word) >= 0 : ("" + getValueAt(r, colindex) + " " + getDisplayValueAt(r, colindex)).trim().toLowerCase().indexOf(word) >= 0; 
 				else {
 					word = word.substr(0, word.length - 1);
-					if (colindex >= 0) match = (getDisplayValueAt(r, colindex) + "").trim().toLowerCase() == word;
+					if (colindex >= 0) match = (getValueAt(r, colindex) + " " + getDisplayValueAt(r, colindex)).trim().toLowerCase() == word;
 					else for (var c = 0; c < columnCount; c++) {
 						if (getColumnType(c) == 'boolean') continue;
-						if ((getDisplayValueAt(r, c) + "").trim().toLowerCase() == word) match = true;
+						if ((getValueAt(r, c) + " " + getDisplayValueAt(r, c)).trim().toLowerCase() == word) match = true;
 					}
 				}
 
