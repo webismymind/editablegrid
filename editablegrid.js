@@ -1721,7 +1721,17 @@ EditableGrid.prototype.filter = function(filterString)
 
 			// if row contents does not match one word in the filter, hide the row
 			for (var i = 0; i < words.length; i++) {
-				if (rowContent.toLowerCase().indexOf(words[i]) < 0) {
+				var word = words[i];
+				var match = false;
+				
+				// a word ending with "!" means that a column must match this word exactly
+				if (!word.endsWith("!")) match = rowContent.toLowerCase().indexOf(word) >= 0; 
+				else {
+					word = word.substr(0, word.length - 1);
+					for (var c = 0; c < columnCount; c++) if (getDisplayValueAt(r, c) == word) match = true;
+				}
+
+				if (!match) {
 					data[r].visible = false;
 					break;
 				}
