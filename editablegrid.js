@@ -1726,6 +1726,10 @@ EditableGrid.prototype.filter = function(filterString)
 			for (var i = 0; i < words.length; i++) {
 				var word = words[i];
 				var match = false;
+
+				// a word starting with "!" means that we want a NON match
+				var invertMatch = word.startsWith("!");
+				if (invertMatch) word = word.substr(1);
 				
 				// if word is of the form "colname=value", only this column is used
 				var colindex = -1;
@@ -1734,7 +1738,7 @@ EditableGrid.prototype.filter = function(filterString)
 					colindex = getColumnIndex(parts[0]);
 					if (colindex >= 0) word = parts[1];
 				}
-					
+
 				// a word ending with "!" means that a column must match this word exactly
 				if (!word.endsWith("!")) match = colindex < 0 ? rowContent.toLowerCase().indexOf(word) >= 0 : (getDisplayValueAt(r, colindex) + "").trim().toLowerCase().indexOf(word) >= 0; 
 				else {
@@ -1746,7 +1750,7 @@ EditableGrid.prototype.filter = function(filterString)
 					}
 				}
 
-				if (!match) {
+				if (invertMatch ? match : !match) {
 					data[r].visible = false;
 					break;
 				}
