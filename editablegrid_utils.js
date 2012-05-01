@@ -22,7 +22,7 @@ EditableGrid.prototype.getCookie = function(c_name)
 EditableGrid.prototype.has_local_storage = function() 
 {
 	try { return 'localStorage' in window && window['localStorage'] !== null; } catch(e) { return false; }
-}
+};
 
 EditableGrid.prototype._localset = function(key, value) 
 {
@@ -36,9 +36,10 @@ EditableGrid.prototype._localget = function(key)
 	return this.getCookie(key);
 };
 
-EditableGrid.prototype._localisset = function(key, value) 
+EditableGrid.prototype._localisset = function(key) 
 {
-	return this._localget(key, value) !== null;
+	if (this.has_local_storage()) return localStorage.getItem(key) !== null;
+	return this.getCookie(key) !== null;
 };
 
 EditableGrid.prototype.localset = function(key, value) 
@@ -51,9 +52,9 @@ EditableGrid.prototype.localget = function(key)
 	return this.enableStore ? this._localget(this.name + '_' + key) : null;
 };
 
-EditableGrid.prototype.localisset = function(key, value) 
+EditableGrid.prototype.localisset = function(key) 
 {
-	return this.localget(key, value) !== null;
+	return this.enableStore ? this._localget(this.name + '_' + key) !== null : false;
 };
 
 EditableGrid.prototype.unsort = function(a,b) 
