@@ -1717,8 +1717,11 @@ EditableGrid.prototype.filter = function(filterString)
 		for (var r = 0; r < rowCount; r++) {
 			data[r].visible = true;
 			var rowContent = ""; 
-			for (var c = 0; c < columnCount; c++) rowContent += getDisplayValueAt(r, c) + " ";
-
+			for (var c = 0; c < columnCount; c++) {
+				if (getColumnType(c) == 'boolean') continue;
+				rowContent += getDisplayValueAt(r, c) + " ";
+			}
+			
 			// if row contents does not match one word in the filter, hide the row
 			for (var i = 0; i < words.length; i++) {
 				var word = words[i];
@@ -1728,7 +1731,10 @@ EditableGrid.prototype.filter = function(filterString)
 				if (!word.endsWith("!")) match = rowContent.toLowerCase().indexOf(word) >= 0; 
 				else {
 					word = word.substr(0, word.length - 1);
-					for (var c = 0; c < columnCount; c++) if (getDisplayValueAt(r, c) == word) match = true;
+					for (var c = 0; c < columnCount; c++) {
+						if (getColumnType(c) == 'boolean') continue;
+						if (getDisplayValueAt(r, c) == word) match = true;
+					}
 				}
 
 				if (!match) {
