@@ -244,6 +244,7 @@ EditableGrid.prototype.removeClassName = function(element, className) { element.
  * @private
  */
 String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")); };
+String.prototype.contains = function(str) { return (this.match(str)==str); };
 String.prototype.startsWith = function(str) { return (this.match("^"+str)==str); };
 String.prototype.endsWith = function(str) { return (this.match(str+"$")==str); };
 	

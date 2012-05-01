@@ -1727,13 +1727,22 @@ EditableGrid.prototype.filter = function(filterString)
 				var word = words[i];
 				var match = false;
 				
+				// if word is of the form "colname=value", only this column is used
+				var colindex = -1;
+				if (word.contains("=")) {
+					var parts = word.split("=");
+					colindex = getColumnIndex(parts[0]);
+					if (colindex >= 0) word = parts[1];
+				}
+					
 				// a word ending with "!" means that a column must match this word exactly
-				if (!word.endsWith("!")) match = rowContent.toLowerCase().indexOf(word) >= 0; 
+				if (!word.endsWith("!")) match = colindex < 0 ? rowContent.toLowerCase().indexOf(word) >= 0 : (getDisplayValueAt(r, colindex) + "").trim().toLowerCase().indexOf(word) >= 0; 
 				else {
 					word = word.substr(0, word.length - 1);
-					for (var c = 0; c < columnCount; c++) {
+					if (colindex >= 0) match = (getDisplayValueAt(r, colindex) + "").trim().toLowerCase() == word;
+					else for (var c = 0; c < columnCount; c++) {
 						if (getColumnType(c) == 'boolean') continue;
-						if (getDisplayValueAt(r, c) == word) match = true;
+						if ((getDisplayValueAt(r, c) + "").trim().toLowerCase() == word) match = true;
 					}
 				}
 
