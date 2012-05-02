@@ -475,7 +475,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
 		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : "" };  
-		for (var attributeName in row) if (attributeName != "id") rowData[attributeName] = row[attributeName];
+		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
 
 		// get column values for this rows
 		rowData.columns = [];
@@ -1715,8 +1715,11 @@ EditableGrid.prototype.filter = function(filterString)
 		var rowCount = getRowCount();
 		var columnCount = getColumnCount();
 		for (var r = 0; r < rowCount; r++) {
-			data[r].visible = true;
+			var row = data[r];
+			row.visible = true;
 			var rowContent = ""; 
+			
+			// add column values
 			for (var c = 0; c < columnCount; c++) {
 				if (getColumnType(c) == 'boolean') continue;
 				var displayValue = getDisplayValueAt(r, c);
@@ -1724,7 +1727,12 @@ EditableGrid.prototype.filter = function(filterString)
 				rowContent += displayValue + " " + (displayValue == value ? "" : value + " ");
 			}
 			
-			// if row contents does not match one word in the filter, hide the row
+			// add attribute values
+			for (var attributeName in row) {
+				if (attributeName != "visible" && attributeName != "originalIndex" && attributeName != "columns") rowContent += row[attributeName];
+			}
+			
+			// if row contents do not match one word in the filter, hide the row
 			for (var i = 0; i < words.length; i++) {
 				var word = words[i];
 				var match = false;
@@ -1733,12 +1741,18 @@ EditableGrid.prototype.filter = function(filterString)
 				var invertMatch = word.startsWith("!");
 				if (invertMatch) word = word.substr(1);
 				
-				// if word is of the form "colname=value", only this column is used
+				// if word is of the form "colname/attributename=value" or "colname/attributename!=value", only this column/attribute is used
 				var colindex = -1;
+				var attributeName = null;
 				if (word.contains("!=")) {
 					var parts = word.split("!=");
 					colindex = getColumnIndex(parts[0]);
 					if (colindex >= 0) {
+						word = parts[1];
+						invertMatch = !invertMatch;
+					}
+					else if (typeof row[parts[0]] != 'undefined') {
+						attributeName = parts[0];
 						word = parts[1];
 						invertMatch = !invertMatch;
 					}
@@ -1747,13 +1761,22 @@ EditableGrid.prototype.filter = function(filterString)
 					var parts = word.split("=");
 					colindex = getColumnIndex(parts[0]);
 					if (colindex >= 0) word = parts[1];
+					else if (typeof row[parts[0]] != 'undefined') {
+						attributeName = parts[0];
+						word = parts[1];
+					}
 				}
 
 				// a word ending with "!" means that a column must match this word exactly
-				if (!word.endsWith("!")) match = colindex < 0 ? rowContent.toLowerCase().indexOf(word) >= 0 : ("" + getValueAt(r, colindex) + " " + getDisplayValueAt(r, colindex)).trim().toLowerCase().indexOf(word) >= 0; 
+				if (!word.endsWith("!")) {
+					if (colindex >= 0) match = (getValueAt(r, colindex) + ' ' + getDisplayValueAt(r, colindex)).trim().toLowerCase().indexOf(word) >= 0;
+					else if (attributeName !== null) match = (''+getRowAttribute(r, attributeName)).trim().toLowerCase().indexOf(word) >= 0;
+					else match = rowContent.toLowerCase().indexOf(word) >= 0; 
+				}
 				else {
 					word = word.substr(0, word.length - 1);
 					if (colindex >= 0) match = (''+getDisplayValueAt(r, colindex)).trim().toLowerCase() == word || (''+getValueAt(r, colindex)).trim().toLowerCase() == word;
+					else if (attributeName !== null) match = (''+getRowAttribute(r, attributeName)).trim().toLowerCase() == word;
 					else for (var c = 0; c < columnCount; c++) {
 						if (getColumnType(c) == 'boolean') continue;
 						if ((''+getDisplayValueAt(r, c)).trim().toLowerCase() == word || (''+getValueAt(r, c)).trim().toLowerCase() == word) match = true;
