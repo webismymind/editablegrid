@@ -1910,12 +1910,12 @@ EditableGrid.prototype.getSlidingPageInterval = function(slidingWindowSize)
 
 	var curPageIndex = this.getCurrentPageIndex();
 	var startPageIndex = Math.max(0, curPageIndex - Math.floor(slidingWindowSize/2));
-	var endPageIndex = Math.min(nbPages, curPageIndex + Math.floor(slidingWindowSize/2));
+	var endPageIndex = Math.min(nbPages - 1, curPageIndex + Math.floor(slidingWindowSize/2));
 
 	if (endPageIndex - startPageIndex < slidingWindowSize) {
-		var diff = slidingWindowSize - (endPageIndex - startPageIndex);
+		var diff = slidingWindowSize - (endPageIndex - startPageIndex + 1);
 		startPageIndex = Math.max(0, startPageIndex - diff);
-		endPageIndex = Math.min(nbPages, endPageIndex + diff);
+		endPageIndex = Math.min(nbPages - 1, endPageIndex + diff);
 	}
 
 	return { startPageIndex: startPageIndex, endPageIndex: endPageIndex };
@@ -1938,7 +1938,7 @@ EditableGrid.prototype.getSlidingPageInterval = function(slidingWindowSize)
 EditableGrid.prototype.getPagesInInterval = function(interval, callback)
 {
 	var pages = [];
-	for (var p = interval.startPageIndex; p < interval.endPageIndex; p++) {
+	for (var p = interval.startPageIndex; p <= interval.endPageIndex; p++) {
 		pages.push(typeof callback == 'function' ? callback(p, p == this.getCurrentPageIndex()) : p);
 	}
 	return pages;
