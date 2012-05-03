@@ -125,7 +125,14 @@ EditableGrid.prototype.dateFormat = "EU";
 EditableGrid.prototype.shortMonthNames = null;
 EditableGrid.prototype.smartColorsBar = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
 EditableGrid.prototype.smartColorsPie = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
-EditableGrid.prototype.pageSize = 0;
+EditableGrid.prototype.pageSize = 0; // client-side pagination
+
+// server-side pagination, sorting and filtering
+EditableGrid.prototype.serverSide = false;
+EditableGrid.prototype.pageCount = 0;
+EditableGrid.prototype.totalRowCount = 0;
+EditableGrid.prototype.unfilteredRowCount = 0;
+EditableGrid.prototype.lastURL = null;
 
 EditableGrid.prototype.init = function (name, config)
 {
@@ -188,13 +195,14 @@ EditableGrid.prototype.readonlyWarning = function() {};
  * Load metadata and/or data from an XML url
  * The callback "tableLoaded" is called when loading is complete.
  */
-EditableGrid.prototype.loadXML = function(url)
+EditableGrid.prototype.loadXML = function(url, callback)
 {
 	// we use a trick to avoid getting an old version from the browser's cache
 	var orig_url = url;
 	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
 	url += sep + Math.floor(Math.random() * 100000);
 
+	var self = this;
 	with (this) {
 
 		// IE
@@ -204,7 +212,7 @@ EditableGrid.prototype.loadXML = function(url)
 			xmlDoc.onreadystatechange = function() {
 				if (xmlDoc.readyState == 4) {
 					processXML();
-					tableLoaded();
+					_callback('xml', orig_url, callback);
 				}
 			};
 			xmlDoc.load(url);
@@ -219,7 +227,7 @@ EditableGrid.prototype.loadXML = function(url)
 					xmlDoc = this.responseXML;
 					if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
 					processXML();
-					tableLoaded();
+					_callback('xml', orig_url, callback);
 				}
 			};
 			xmlDoc.open("GET", url, true);
@@ -232,7 +240,7 @@ EditableGrid.prototype.loadXML = function(url)
 			xmlDoc = document.implementation.createDocument("", "", null);
 			xmlDoc.onload = function() {
 				processXML();
-				tableLoaded();
+				_callback('xml', orig_url, callback);
 			};
 			xmlDoc.load(url);
 		}
@@ -376,7 +384,7 @@ EditableGrid.prototype.processXML = function()
  * Load metadata and/or data from a JSON url
  * The callback "tableLoaded" is called when loading is complete.
  */
-EditableGrid.prototype.loadJSON = function(url)
+EditableGrid.prototype.loadJSON = function(url, callback)
 {
 	// we use a trick to avoid getting an old version from the browser's cache
 	var orig_url = url;
@@ -389,6 +397,7 @@ EditableGrid.prototype.loadJSON = function(url)
 		return false;
 	}
 
+	var self = this;
 	with (this) {
 
 		var ajaxRequest = new XMLHttpRequest();
@@ -396,7 +405,7 @@ EditableGrid.prototype.loadJSON = function(url)
 			if (this.readyState == 4) {
 				if (!this.responseText) { /* alert("Could not load JSON from url '" + orig_url + "'"); */ return false; }
 				if (!processJSON(this.responseText))  { alert("Invalid JSON data obtained from url '" + orig_url + "'"); return false; }
-				tableLoaded();
+				_callback('json', orig_url, callback);
 			}
 		};
 
@@ -405,6 +414,36 @@ EditableGrid.prototype.loadJSON = function(url)
 	}
 
 	return true;
+};
+
+EditableGrid.prototype._callback = function(type, url, callback)
+{
+	if (callback) callback.call(this); 
+	else {
+
+		// replace refreshGrid to enable server-side pagination, sorting and filtering
+		if (this.serverSide) {
+			this.refreshGrid = function() {
+
+				// add pagination, filtering and sorting parameters to the last used url
+				var url = this.lastURL + (this.lastURL.indexOf('?') >= 0 ? '&' : '?')
+				+ "page=" + (this.currentPageIndex + 1)
+				+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
+				+ "&sort=" + (this.sortedColumnName && this.sortedColumnName != -1 ? encodeURIComponent(this.sortedColumnName) : "")
+				+ "&asc=" + (this.sortDescending ? 0 : 1);
+
+				// the original refreshGrid will be called after ajax request is done (ie. after updated data have been loaded)
+				var callback = function() { EditableGrid.prototype.refreshGrid.call(this); };
+
+				// load data using the parameterized url
+				if (type == 'xml') this.loadXML(url, callback);
+				else this.loadJSON(url, callback);
+			};
+		}
+
+		this.lastURL = url; 
+		this.tableLoaded();
+	}
 };
 
 /**
@@ -460,6 +499,13 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		this.processColumns();
 	}
 
+	// load server-side pagination data
+	if (jsonData.paginator) {
+		this.pageCount = jsonData.paginator.pagecount;
+		this.totalRowCount = jsonData.paginator.totalrowcount;
+		this.unfilteredRowCount = jsonData.paginator.unfilteredrowcount;
+	}
+	
 	// load content
 	if (jsonData.data) for (var i = 0; i < jsonData.data.length; i++) 
 	{
@@ -767,8 +813,22 @@ EditableGrid.prototype.getRowCount = function()
  */
 EditableGrid.prototype.getUnfilteredRowCount = function()
 {
+	// given if server-side filtering is involved
+	if (this.unfilteredRowCount > 0) return this.unfilteredRowCount;
+	
 	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
 	return _data.length;
+};
+
+/**
+ * Returns the number of rows in all pages
+ */
+EditableGrid.prototype.getTotalRowCount = function()
+{
+	// different from getRowCount only is server-side pagination is involved
+	if (this.totalRowCount > 0) return this.totalRowCount;
+	
+	return this.getRowCount();
 };
 
 /**
@@ -1522,9 +1582,11 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 	this._rendergrid(containerid, className, tableid);
 
 	// sort and filter table
-	this.sort() ;
-	this.filter();
-
+	if (!this.serverSide) {
+		this.sort() ;
+		this.filter();
+	}
+	
 	// go to stored page (or first if nothing stored)
 	this.setPageIndex(pageIndex);
 };
@@ -1629,6 +1691,9 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 		localset('sortColumnIndexOrName', columnIndexOrName);
 		localset('sortDescending', descending);
 
+		// if filtering is done on server-side, we are done here
+		if (serverSide) return backOnFirstPage ? setPageIndex(0) : refreshGrid();
+
 		var columnIndex = columnIndexOrName;
 		if (parseInt(columnIndex, 10) !== -1) {
 			columnIndex = this.getColumnIndex(columnIndexOrName);
@@ -1695,6 +1760,9 @@ EditableGrid.prototype.filter = function(filterString)
 			this.localset('filter', filterString);
 		}
 
+		// if filtering is done on server-side, we are done here
+		if (serverSide) return setPageIndex(0);
+		
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
 			if (dataUnfiltered != null) {
@@ -1818,7 +1886,9 @@ EditableGrid.prototype.setPageSize = function(pageSize)
  */
 EditableGrid.prototype.getPageCount = function()
 {
-	if (this.pageSize <= 0) { alert("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	if (this.getRowCount() == 0) return 0;
+	if (this.pageCount > 0) return this.pageCount; // server side pagination
+	else if (this.pageSize <= 0) { alert("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
 	return Math.ceil(this.getRowCount() / this.pageSize);
 };
 
@@ -1827,7 +1897,7 @@ EditableGrid.prototype.getPageCount = function()
  */
 EditableGrid.prototype.getCurrentPageIndex = function()
 {
-	if (this.pageSize <= 0) { alert("getCurrentPage: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	// if (this.pageSize <= 0) { alert("getCurrentPageIndex: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
 	return this.currentPageIndex;
 };
 
