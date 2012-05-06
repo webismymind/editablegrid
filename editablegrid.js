@@ -1588,7 +1588,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 	}
 	
 	// go to stored page (or first if nothing stored)
-	this.setPageIndex(pageIndex);
+	this.setPageIndex(pageIndex < 0 ? 0 : pageIndex);
 };
 
 /**
