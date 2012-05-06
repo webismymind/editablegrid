@@ -1572,7 +1572,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
 	// restore stored parameters, or use default values if nothing stored
-	var pageIndex = this.localisset('pageIndex') ? Math.min(parseInt(this.localget('pageIndex')), this.getPageCount() - 1) : 0;
+	var pageIndex = this.localisset('pageIndex') ? parseInt(this.localget('pageIndex')) : 0;
 	this.sortedColumnName = this.localisset('sortColumnIndexOrName') && this.hasColumn(this.localget('sortColumnIndexOrName')) ? this.localget('sortColumnIndexOrName') : -1;
 	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
 	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
@@ -1586,6 +1586,9 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 		this.sort() ;
 		this.filter();
 	}
+	
+	// if stored page does not exist anymore, go to last page
+	if (pageIndex >= this.getPageCount() && this.getRowCount() > 0) pageIndex = this.getPageCount() - 1;
 	
 	// go to stored page (or first if nothing stored)
 	this.setPageIndex(pageIndex < 0 ? 0 : pageIndex);
