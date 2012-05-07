@@ -1436,6 +1436,8 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 {
 	with (this) {
 
+		_currentPageIndex = getCurrentPageIndex();
+					
 		// if we are already attached to an existing table, just update the cell contents
 		if (typeof table != "undefined" && table != null) {
 
@@ -1460,7 +1462,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 					}
 				}
 				else {
-					if (skipped < pageSize * currentPageIndex) {
+					if (skipped < pageSize * _currentPageIndex) {
 						skipped++; 
 						if (rows[i].style.display != 'none') {
 							rows[i].style.display = 'none';
@@ -1502,7 +1504,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 
 			// paginate if required
 			if (pageSize > 0) {
-				startRowIndex = currentPageIndex * pageSize;
+				startRowIndex = _currentPageIndex * pageSize;
 				endRowIndex = Math.min(getRowCount(), startRowIndex + pageSize); 
 			}
 
@@ -1586,9 +1588,6 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 		this.sort() ;
 		this.filter();
 	}
-	
-	// if stored page does not exist anymore, go to last page
-	if (pageIndex >= this.getPageCount() && this.getRowCount() > 0) pageIndex = this.getPageCount() - 1;
 	
 	// go to stored page (or first if nothing stored)
 	this.setPageIndex(pageIndex < 0 ? 0 : pageIndex);
@@ -1900,8 +1899,8 @@ EditableGrid.prototype.getPageCount = function()
  */
 EditableGrid.prototype.getCurrentPageIndex = function()
 {
-	// if (this.pageSize <= 0) { alert("getCurrentPageIndex: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
-	return this.currentPageIndex;
+	// if page index does not exist anymore, go to last page (without losing the information of the current page)
+	return this.currentPageIndex >= this.getPageCount() ? this.getPageCount() - 1 : this.currentPageIndex;
 };
 
 /**
