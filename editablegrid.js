@@ -1902,7 +1902,7 @@ EditableGrid.prototype.getCurrentPageIndex = function()
 	if (this.pageSize <= 0 && !this.serverSide) return 0;
 		
 	// if page index does not exist anymore, go to last page (without losing the information of the current page)
-	return this.currentPageIndex >= this.getPageCount() ? this.getPageCount() - 1 : this.currentPageIndex;
+	return Math.max(0, this.currentPageIndex >= this.getPageCount() ? this.getPageCount() - 1 : this.currentPageIndex);
 };
 
 /**
