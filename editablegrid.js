@@ -1208,7 +1208,7 @@ EditableGrid.prototype._insert = function(rowIndex, offset, rowId, cellValues, r
 EditableGrid.prototype.insert = function(rowIndex, rowId, cellValues, rowAttributes, dontSort)
 {
 	if (rowIndex < 0) rowIndex = 0;
-	if (rowIndex >= this.data.length) return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
+	if (rowIndex >= this.data.length && this.data.legth > 0) return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
 	return this._insert(rowIndex, 0, rowId, cellValues, rowAttributes, dontSort);
 };
 
