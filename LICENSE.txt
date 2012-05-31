@@ -1,0 +1,4 @@
+EditableGrid
+Copyright (c) 2012 Webismymind SPRL
+Dual licensed under the MIT or GPL Version 2 licenses.
+http://www.editablegrid.net/page/en/9/license.html

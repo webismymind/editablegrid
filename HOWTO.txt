@@ -1,19 +1,9 @@
-1/ Make an existing HTML table editable
+These are just some ideas that should go into the website FAQ...
 
-cf. demo "attach"
-
-2/ Saves changes back in database
-
-- cf. mails envoyés à 3 personnes je pense
-- cf. demo "database" à écrire (reprendre la db countries de Reports)
-
-3/ Make columns/rows/cells read-only
-
-- cf. github et mails
-- code snippet qui illustre ces explications
-
-4/ Make headers editable
-
-5/ Use custom row attributes
-
-6/ Use option label in a custom renderer
+*/ Make columns/rows/cells read-only
+   - cf. github et mails
+   - code snippet qui illustre ces explications
+*/ Make headers editable
+*/ Use custom row attributes
+*/ Use option label in a custom renderer
+*/ ...

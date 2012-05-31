@@ -1,89 +1,153 @@
-[21/10/2009] EditableGrid v1.0.0
+[24/04/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
 ================================
 
-First stable public release, including the following main features:
-- load grid from an XML file or attach to an existing HTML table
-- edit cells with a suitable editor (string, integer, double, boolean, email, date)
-- built-in renderers for dates, emails and numbers
-- built-in validators for numeric values, emails and dates
-- possibility to plug your own cell renderers, editors and validators 
-- possibility to declare a list of possible values for each column (static in XML, or dynamic in Javascript)
-- sort columns accordingly to their types, by clicking on the header
+WARNING:
+ EditableGrid currently suffers from a lack of documentation.
+ Please check the examples (examples/index.html) to learn how to use EditableGrid.
 
-This release has been successfully tested on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
+MAIN NEW FEATURES:
+* Full client-side pagination
+* Grid state saved and restored using localStorage (or cookies if localStorage is not supported by the browser)
+* Support for option groups in columns with enumerated values
+* Filtering is now done on the model (and hence on the charts)
+* JSON support (from an URL, a JSON string or a Javascript object)
+* LoadXMLFromString (contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com)
 
-[23/10/2009] EditableGrid v1.0.1
-================================
+NEW EXTENSIONS (need jQuery UI):
+* Support for date pickers: automatically enabled for date columns if jQuery UI is detected
+* Autocomplete editor (using official jQuery UI autocomplete)
 
-Changed the XML loading method on Firefox: we use XMLHttpRequest which seems more reliable than document.implementation.
+NEW CHART FEATURES:
+* Frequency pie charts: call renderPieChart with valueColumnIndex = labelColumnIndex to get a chart showing the frequency of values occuring in this column
+* Stacked bar charts: added function renderStackedBarChart
+* Added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set, this is the maximum number of rows taken into account for drawing the chart
 
-[02/11/2009] EditableGrid v1.0.2
-================================
+MISC.:
+* To avoid any issue with javascript not able to parse XML, ensure data is valid for encoding in EditableGrid.php wrapper (using iconv)
+* Callback tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
+* Function sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
+* Added column attributes: decimal_point, thousands_separator, unit_before_number.
+  All have a default value and can be overridden in the XML column type declaration, as follows:
+  datatype(unit, precision, decimal_point, thousands_separator, unit_before_number[, nanSymbol])
+  e.g. double(€, 2, comma, dot, 0, n/a)
+* Lots of other bugfixes and minor improvements!
 
-Several editable grids can now safely be put on the same page:
-- you have to give a name when creating the EditableGrid instance (this name is used to prefix the row ids in the DOM in order to keep them unique)
-- to retrieve the row id in database (ie. the row id you gave in your XML or HTML grid definition) you have to use the new method "getRowId"
+Version 2.0 comes with some compatibility breaks, but updating your code should be very easy:
 
-Bugfixes: 
-- if you edited a cell then went to another tab in Firefox, the previous value was put back into the cell.
+INCOMPATIBILITIES:
+- Attach mode: original HTML row ids are now preserved.
+  You may have to update your javascript code if you somehow relied on the modified row ids.
 
-[05/11/2009] EditableGrid v1.0.3
-================================
+DEPRECATED METHODS:
+- Charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object.
+  This "options" object should contain only options for which you do not want to use the default value.
+- Function addRow has been renamed as appendRow for more clarity (as insertRow is now also available).
+  Function addRow is still there but deprecated.
+- Function removeRow(rowId) is deprecated: use remove(rowIndex) instead.
+  Function remove takes a row index, for consistency with the rest of the API.
+  To get the row index from the row id you can use getRowIndex(rowId).
+- Function attachToHTMLTable: the second parameter (used to give the column definitions) is deprecated.
+  You should now use "load" to setup the metadata.
 
-The loadXML method now loads custom attributes that may have been set on the rows in the XML.
-The user can consult these attributes using the new method getRowAttribute(rowIndex, attributeName).
+[17/02/2011] EditableGrid v1.0.11
+=================================
+
+1) A new directory "extensions" has been created.
+   This directory will contain some interesting cell editors, renderers and validators.
+   It contains a subdirectory "jquery" with the jQuery library v1.4.2.
+   Extensions may indeed be based on jQuery, unlike the core library which stays jQuery-independent.
+
+2) Added two variants of an "AutocompleteCellEditor", each based on a different autocomplete jQuery plugin.
+   The model is updated (and the modelChanged event fired) when a suggestion is selected either by clicking or by pressing ENTER on it.
+   The demo uses AutocompleteCellEditor to add auto completion on column "FIRSTNAME".
+   For testing purposes, demo.html uses the first variant, and demo_attach.html the second one.
+   NB: This is based on an original idea by Jasper Visser.
+
+3) API:
+   - added function setRowAttribute
+   - added rowSelected callback
+   - some fixes in jsdoc comments
+
+[07/09/2010] EditableGrid v1.0.10 - [Released under the GNU GPL license]
+=================================
+
+API:
+- added optional parameters "bgColor", "alpha" and "gradientFill" to renderPieChart (defaults are: white / 0.5 / true)
+- added optional parameters "bgColor" and "alpha" renderBarChart (defaults are: white / 0.9)
+- added callback functions "tableRendered" and "chartRendered" called after a table or chart has been rendered
+- callback functions can now also be set globally by updating EditableGrid.prototype
+
+PHP wrapper:
+- get/renderXML is now able to handle any source of data: array, DB result set, Zend paginator (the row itself can be an array or an object)
+- does not output errors if there are some missing fields in the row (eg. 'id')
 
 Bugfixes:
-- fixed the removeRow method that had been broken in version 1.0.2
-- it is now possible to call loadXML several times: the table contents will be replaced when calling renderGrid
+- avoid negative padding when displaying an editor inside a cell
+- always apply the "number" class to numerical cells, but also to column headers
+- takes "colspan" attributes on column headers into account when using attachToTable (this way the header will be rendered using the correct column type).
 
-[22/12/2009] EditableGrid v1.0.4
+[01/08/2010] EditableGrid v1.0.9
 ================================
 
-1) The values stored in the model are converted according to the column type (boolean, integer and double).
-   This eg. means that your render functions will always get a real javascript Number or Boolean.
+Bugfixes:
+- the PHP wrapper replaces all special XML characters in column labels by the corresponding XML code (&, ', ", <, >)
+- getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority)
 
-2) Added a simple PHP wrapper that you can use to generate the grid XML data if you work with PHP on the server side.
-
-   This PHP class has two public methods:
-   - addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL)
-   - renderXML($rows, $customRowAttributes=array()) 
-
-   The $rows argument in renderXML can be an array of objects of an array of arrays. 
-
-3) You can more easily inherit from an built-in cell renderer, for example:
-     grid.setCellRenderer("mycolumn", new CheckboxCellRenderer({render: function(cell, value) {
-	   CheckboxCellRenderer.prototype.render.call(this, cell, value); // call base method
-	   // your code here
-     }}));
-
-   Also, if you inherit from CheckboxCellRenderer, your render function will now be called each time the checbox is (un)checked.
-
-4) Improved attaching to an existing HTML table:
-   - added a flag Column.renderable that can be used to prevent EditableGrid to call the render function for this column
-   - the row passed to modelChanged was incorrect if the TBODY contained other child nodes than TR
-   - fixed the example so that the action column is not editable
-
-5) Other minor fixes and improvements:
-   - added method getRowIndex(rowId)
-   - when using sortEnable=true (which is the default), the sort header is disabled for columns with type 'html'
-   - the checkboxes in boolean columns are now centered (ie. the css style named 'boolean' is applied)
-   - an error message is displayed if the XML cannot be loaded
-   - fixed error occuring when an editable grid was itself in a table
-   
-[12/01/2010] EditableGrid v1.0.5
-================================
- 
-- Replacing HTML special characters is not done when generating the XML, but before calling the cell renderers
-- Removed annoying effect when sorting: images used to indicate the sorting order are preloaded + only impacted colum headers are refreshed
-
-[05/02/2010] EditableGrid v1.0.6
+[26/07/2010] EditableGrid v1.0.8
 ================================
 
-- Error message "Could not load XML" is not displayed anymore because it can happen normally when leaving a page too quickly
-- We use htmlspecialchars instead of htmlentities for rendering string cells, it's sufficient
-- Fixed display of "&quot;" on Google Chrome
-- Custom XML attributes can be encoded in base64 by EditableGrid.php
+1) EditableGrid now allows you to create bar and pie charts from the grid data.
+   This makes use of OpenFlashCharts 2.0, which should thus be included in your client application.
+   See README.txt for details on how to setup, create and use charts.
+
+2) Improved the management of numerical values.
+   The values stored in the model is now always numbers, which can be NaN.
+   You can indicate in the type: the unit, the precision and the symbol to use for NaN values.
+   For example, double(€, 2, -) indicates that the unit is '€', the precision is 2 decimals and the symbol to use for NaN is '-' (see README.txt for details).
+   The unit and precision are used by the renderer to round and suffix the numerical value.
+   If the value is NaN, the specified NaN symbol will be displayed (as non bold) by the renderer (if no symbol is specified, an empty string will be used).
+   In the editor, an empty string will be displayed for NaN values.
+
+3) Bugfixes
+   - fixed getColumnIndex (and thus all methods relying on it) for column names which are valid numbers
+   - fixed bugs on Internet Explorer 8 and Safari 5 (editors etc.)
+   - fixed EnumCellRenderer: value 0 or null can be a valid choice
+   - fixed CheckboxCellRenderer to update the state of an existing checkbox (e.g. when a render is made)
+
+4) Editors
+   - the same font is used for the text input as for the cell contents
+   - fixed the right-alignment of numerical inputs in cases where there is a left padding
+   - improved the automatic detection of input width and height to fit in a cell
+   - the editor input is positioned with the same padding as the cell contents
+   - improved the detection of clicks on links: you can now include an image in a link if you want clicks on this image to be ignored
+   - corrected the scroll adjustment for numerical cells (the editor for numerical cells was misplaced when the grid was in a div having scrollbars)
+
+5) Renderers
+   - numerical cells get the 'white-space: nowrap' CSS style
+   - double spaces are replaced by "&nbsp; " before passing the value to the cell renderer
+   - right padding of 5px for numerical cells (in the default editablegrid.css which can of course be customized)
+   - NumberCellRenderer keeps existing CSS classes already applied on a cell
+
+6) PHP wrapper
+   - the wrapper takes the XML encoding as a parameter
+   - single and double quotes in columns labels are replaced by the corresponding XML code
+   - added method getXML (called internally by renderXML)
+
+7) API
+   - you can now pass your own attributes in the EditableGrid constructor
+   - added a configuration option "saveOnBlur", true by default (this option is relevant only if allowSimultaneousEdition is false)
+   - added method sort() without parameters, that can be used e.g. to re-sort the grid after some cell has been edited (i.e. in modelChanged)
+   - added method column.isNumerical() and EditableGrid.isColumnNumerical(columnIndexOrName)
+   - added method EditableGrid.setCaption (this caption is used to render the table's caption in renderGrid when XML is used)
+   - added a callback "tableSorted()" called immeditately after the table has been sorted (e.g. to update a bar or pie chart)
+   - added a callback "readonlyWarning(column)" called when a cell of a non editable column has been clicked
+   - added a callback "isHeaderEditable(rowIndex, columnIndex)" in order to avoid always testing rowIndex in "isEditable"
+   - the callback "modelChanged" is called only when needed (i.e. when the value really changed) + the real typed value is passed to "modelChanged"
+   - method getRowIndex accepts a row object as parameter + if an ID is given, the method will silently return -1 if a row with this ID doesn't exist
+   - method renderGrid accepts an additional optional parameter which is the ID to give to the generated HTML table
+   - method getValueAt checks the given column + this method returns the column label if rowIndex < 0
+   - method setValueAt returns the previous value
+   - TextCellEditor accepts a configuration object
 
 [01/04/2010] EditableGrid v1.0.7
 ================================
@@ -94,7 +158,7 @@ Bugfixes:
 - all editors of numeric cells are aligned to the right, as well as their content (ie. including the ones having enumerated values)
 - getTypedValue casts the value as a string if this is a string column: not doing so could lead to problems on Google Chrome (because "" == 0 returns true in Chrome)
 - fixed some incorrect parameter descriptions and comments in the generated html documentation
-- the bug in Google Chrome Linux that caused html select input to disappear when cliking on them (if allowSimultaneouEdition was false) has been fixed (I mean fixed in last version of Google!) 
+- the bug in Google Chrome Linux that caused html select input to disappear when cliking on them (if allowSimultaneouEdition was false) has been fixed (I mean fixed in last version of Google!)
 
 Features:
 - you can now redefine a cell editor like this: setCellEditor(new CellEditor({ getEditor: .... }));
@@ -116,153 +180,89 @@ Advanced:
 - the checkDate function also give a MySQL ready date yyyy-mm-dd ('dbDate' attribute)
 - you can now easily specify custom attributes in the constructor of CellRenderer, CellEditor and EnumProvider, eg. new CellRenderer { myAttribute: ..., render: ... }
 
-[26/07/2010] EditableGrid v1.0.8
+[05/02/2010] EditableGrid v1.0.6
 ================================
 
-1) EditableGrid now allows you to create bar and pie charts from the grid data.
-   This makes use of OpenFlashCharts 2.0, which should thus be included in your client application.
-   See README.txt for details on how to setup, create and use charts.
+- Error message "Could not load XML" is not displayed anymore because it can happen normally when leaving a page too quickly
+- We use htmlspecialchars instead of htmlentities for rendering string cells, it's sufficient
+- Fixed display of "&quot;" on Google Chrome
+- Custom XML attributes can be encoded in base64 by EditableGrid.php
 
-2) Improved the management of numerical values.
-   The values stored in the model is now always numbers, which can be NaN.
-   You can indicate in the type: the unit, the precision and the symbol to use for NaN values.
-   For example, double(€, 2, -) indicates that the unit is '€', the precision is 2 decimals and the symbol to use for NaN is '-' (see README.txt for details).
-   The unit and precision are used by the renderer to round and suffix the numerical value.
-   If the value is NaN, the specified NaN symbol will be displayed (as non bold) by the renderer (if no symbol is specified, an empty string will be used). 
-   In the editor, an empty string will be displayed for NaN values. 
-   
-3) Bugfixes
-   - fixed getColumnIndex (and thus all methods relying on it) for column names which are valid numbers
-   - fixed bugs on Internet Explorer 8 and Safari 5 (editors etc.)
-   - fixed EnumCellRenderer: value 0 or null can be a valid choice
-   - fixed CheckboxCellRenderer to update the state of an existing checkbox (e.g. when a render is made)
-   
-4) Editors
-   - the same font is used for the text input as for the cell contents
-   - fixed the right-alignment of numerical inputs in cases where there is a left padding
-   - improved the automatic detection of input width and height to fit in a cell
-   - the editor input is positioned with the same padding as the cell contents
-   - improved the detection of clicks on links: you can now include an image in a link if you want clicks on this image to be ignored
-   - corrected the scroll adjustment for numerical cells (the editor for numerical cells was misplaced when the grid was in a div having scrollbars) 
-
-5) Renderers
-   - numerical cells get the 'white-space: nowrap' CSS style
-   - double spaces are replaced by "&nbsp; " before passing the value to the cell renderer
-   - right padding of 5px for numerical cells (in the default editablegrid.css which can of course be customized)
-   - NumberCellRenderer keeps existing CSS classes already applied on a cell
-   
-6) PHP wrapper
-   - the wrapper takes the XML encoding as a parameter
-   - single and double quotes in columns labels are replaced by the corresponding XML code
-   - added method getXML (called internally by renderXML)
-
-7) API
-   - you can now pass your own attributes in the EditableGrid constructor
-   - added a configuration option "saveOnBlur", true by default (this option is relevant only if allowSimultaneousEdition is false)
-   - added method sort() without parameters, that can be used e.g. to re-sort the grid after some cell has been edited (i.e. in modelChanged)
-   - added method column.isNumerical() and EditableGrid.isColumnNumerical(columnIndexOrName)
-   - added method EditableGrid.setCaption (this caption is used to render the table's caption in renderGrid when XML is used)
-   - added a callback "tableSorted()" called immeditately after the table has been sorted (e.g. to update a bar or pie chart)
-   - added a callback "readonlyWarning(column)" called when a cell of a non editable column has been clicked
-   - added a callback "isHeaderEditable(rowIndex, columnIndex)" in order to avoid always testing rowIndex in "isEditable"
-   - the callback "modelChanged" is called only when needed (i.e. when the value really changed) + the real typed value is passed to "modelChanged"
-   - method getRowIndex accepts a row object as parameter + if an ID is given, the method will silently return -1 if a row with this ID doesn't exist
-   - method renderGrid accepts an additional optional parameter which is the ID to give to the generated HTML table 
-   - method getValueAt checks the given column + this method returns the column label if rowIndex < 0
-   - method setValueAt returns the previous value
-   - TextCellEditor accepts a configuration object
-   
-[01/08/2010] EditableGrid v1.0.9
+[12/01/2010] EditableGrid v1.0.5
 ================================
+
+- Replacing HTML special characters is not done when generating the XML, but before calling the cell renderers
+- Removed annoying effect when sorting: images used to indicate the sorting order are preloaded + only impacted colum headers are refreshed
+
+[22/12/2009] EditableGrid v1.0.4
+================================
+
+1) The values stored in the model are converted according to the column type (boolean, integer and double).
+   This eg. means that your render functions will always get a real javascript Number or Boolean.
+
+2) Added a simple PHP wrapper that you can use to generate the grid XML data if you work with PHP on the server side.
+
+   This PHP class has two public methods:
+   - addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL)
+   - renderXML($rows, $customRowAttributes=array())
+
+   The $rows argument in renderXML can be an array of objects of an array of arrays.
+
+3) You can more easily inherit from an built-in cell renderer, for example:
+     grid.setCellRenderer("mycolumn", new CheckboxCellRenderer({render: function(cell, value) {
+	   CheckboxCellRenderer.prototype.render.call(this, cell, value); // call base method
+	   // your code here
+     }}));
+
+   Also, if you inherit from CheckboxCellRenderer, your render function will now be called each time the checbox is (un)checked.
+
+4) Improved attaching to an existing HTML table:
+   - added a flag Column.renderable that can be used to prevent EditableGrid to call the render function for this column
+   - the row passed to modelChanged was incorrect if the TBODY contained other child nodes than TR
+   - fixed the example so that the action column is not editable
+
+5) Other minor fixes and improvements:
+   - added method getRowIndex(rowId)
+   - when using sortEnable=true (which is the default), the sort header is disabled for columns with type 'html'
+   - the checkboxes in boolean columns are now centered (ie. the css style named 'boolean' is applied)
+   - an error message is displayed if the XML cannot be loaded
+   - fixed error occuring when an editable grid was itself in a table
+
+[05/11/2009] EditableGrid v1.0.3
+================================
+
+The loadXML method now loads custom attributes that may have been set on the rows in the XML.
+The user can consult these attributes using the new method getRowAttribute(rowIndex, attributeName).
 
 Bugfixes:
-- the PHP wrapper replaces all special XML characters in column labels by the corresponding XML code (&, ', ", <, >)
-- getColumnIndex first checks if the given argument is a valid column index (ie. if the argument is at the same time a valid index and a valid name, index has priority)
+- fixed the removeRow method that had been broken in version 1.0.2
+- it is now possible to call loadXML several times: the table contents will be replaced when calling renderGrid
 
-[07/09/2010] EditableGrid v1.0.10 - [Released under the GNU GPL license]
-=================================
-
-API:
-- added optional parameters "bgColor", "alpha" and "gradientFill" to renderPieChart (defaults are: white / 0.5 / true)
-- added optional parameters "bgColor" and "alpha" renderBarChart (defaults are: white / 0.9)
-- added callback functions "tableRendered" and "chartRendered" called after a table or chart has been rendered
-- callback functions can now also be set globally by updating EditableGrid.prototype
-
-PHP wrapper:
-- get/renderXML is now able to handle any source of data: array, DB result set, Zend paginator (the row itself can be an array or an object)
-- does not output errors if there are some missing fields in the row (eg. 'id')
-
-Bugfixes:
-- avoid negative padding when displaying an editor inside a cell
-- always apply the "number" class to numerical cells, but also to column headers
-- takes "colspan" attributes on column headers into account when using attachToTable (this way the header will be rendered using the correct column type).
-
-[17/02/2011] EditableGrid v1.0.11
-=================================
-
-1) A new directory "extensions" has been created.
-   This directory will contain some interesting cell editors, renderers and validators.
-   It contains a subdirectory "jquery" with the jQuery library v1.4.2.
-   Extensions may indeed be based on jQuery, unlike the core library which stays jQuery-independent.
-
-2) Added two variants of an "AutocompleteCellEditor", each based on a different autocomplete jQuery plugin.
-   The model is updated (and the modelChanged event fired) when a suggestion is selected either by clicking or by pressing ENTER on it.
-   The demo uses AutocompleteCellEditor to add auto completion on column "FIRSTNAME".
-   For testing purposes, demo.html uses the first variant, and demo_attach.html the second one.
-   NB: This is based on an original idea by Jasper Visser.
-
-3) API:
-   - added function setRowAttribute
-   - added rowSelected callback
-   - some fixes in jsdoc comments
-   
-[24/04/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
+[02/11/2009] EditableGrid v1.0.2
 ================================
 
-WARNING:
- EditableGrid currently suffers from a lack of documentation.
- Please check the examples (examples/index.html) to learn how to use EditableGrid.
+Several editable grids can now safely be put on the same page:
+- you have to give a name when creating the EditableGrid instance (this name is used to prefix the row ids in the DOM in order to keep them unique)
+- to retrieve the row id in database (ie. the row id you gave in your XML or HTML grid definition) you have to use the new method "getRowId"
 
-MAIN NEW FEATURES:
-* Full client-side pagination
-* Grid state saved and restored using localStorage (or cookies if localStorage is not supported by the browser)
-* Support for option groups in columns with enumerated values
-* Filtering is now done on the model (and hence on the charts)
-* JSON support (from an URL, a JSON string or a Javascript object) 
-* LoadXMLFromString (contributed by Tim Consolazio of Tcoz Tech Services, tcoz@tcoz.com)
+Bugfixes:
+- if you edited a cell then went to another tab in Firefox, the previous value was put back into the cell.
 
-NEW EXTENSIONS (need jQuery UI):
-* Support for date pickers: automatically enabled for date columns if jQuery UI is detected
-* Autocomplete editor (using official jQuery UI autocomplete)
+[23/10/2009] EditableGrid v1.0.1
+================================
 
-NEW CHART FEATURES:
-* Frequency pie charts: call renderPieChart with valueColumnIndex = labelColumnIndex to get a chart showing the frequency of values occuring in this column 
-* Stacked bar charts: added function renderStackedBarChart 
-* Added an optional "limit" parameter to renderBarChart, renderStackedBarChart and renderPieChart: if set, this is the maximum number of rows taken into account for drawing the chart
+Changed the XML loading method on Firefox: we use XMLHttpRequest which seems more reliable than document.implementation.
 
-MISC.:
-* To avoid any issue with javascript not able to parse XML, ensure data is valid for encoding in EditableGrid.php wrapper (using iconv)
-* Callback tableRendered is called also when the table is refreshed (after sorting, filtering or changing the current page)
-* Function sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
-* Added column attributes: decimal_point, thousands_separator, unit_before_number.
-  All have a default value and can be overridden in the XML column type declaration, as follows:
-  datatype(unit, precision, decimal_point, thousands_separator, unit_before_number[, nanSymbol]) 
-  e.g. double(€, 2, comma, dot, 0, n/a)
-* Lots of other bugfixes and minor improvements!
- 
-Version 2.0 comes with some compatibility breaks, but updating your code should be very easy: 
+[21/10/2009] EditableGrid v1.0.0
+================================
 
-INCOMPATIBILITIES: 
-- Attach mode: original HTML row ids are now preserved.
-  You may have to update your javascript code if you somehow relied on the modified row ids.
+First stable public release, including the following main features:
+- load grid from an XML file or attach to an existing HTML table
+- edit cells with a suitable editor (string, integer, double, boolean, email, date)
+- built-in renderers for dates, emails and numbers
+- built-in validators for numeric values, emails and dates
+- possibility to plug your own cell renderers, editors and validators
+- possibility to declare a list of possible values for each column (static in XML, or dynamic in Javascript)
+- sort columns accordingly to their types, by clicking on the header
 
-DEPRECATED METHODS:
-- Charts: all optional parameters in renderBarChart, renderStackedBarChart and renderPieChart must now be given as an object. 
-  This "options" object should contain only options for which you do not want to use the default value.
-- Function addRow has been renamed as appendRow for more clarity (as insertRow is now also available).
-  Function addRow is still there but deprecated.
-- Function removeRow(rowId) is deprecated: use remove(rowIndex) instead.
-  Function remove takes a row index, for consistency with the rest of the API.
-  To get the row index from the row id you can use getRowIndex(rowId).
-- Function attachToHTMLTable: the second parameter (used to give the column definitions) is deprecated.
-  You should now use "load" to setup the metadata.
+This release has been successfully tested on: Firefox 3.0 and 3.5, Internet Explorer 7 and 8, Safari 4, Google Chrome
