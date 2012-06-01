@@ -342,6 +342,9 @@ EditableGrid.prototype.processXML = function()
 			processColumns();
 		}
 
+		// if no row id is provided, we create one since we need one
+		var defaultRowId = 1;
+		
 		// load content
 		var rows = xmlDoc.getElementsByTagName("row");
 		for (var i = 0; i < rows.length; i++) 
@@ -359,7 +362,7 @@ EditableGrid.prototype.processXML = function()
 			}
 
 			// for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
-			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : "" };  
+			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : defaultRowId++ };  
 			for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
 				var node = rows[i].attributes.item(attrIndex);
 				if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
@@ -506,6 +509,9 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		this.unfilteredRowCount = jsonData.paginator.unfilteredrowcount;
 	}
 	
+	// if no row id is provided, we create one since we need one
+	var defaultRowId = 1;
+
 	// load content
 	if (jsonData.data) for (var i = 0; i < jsonData.data.length; i++) 
 	{
@@ -520,7 +526,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		}
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
-		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : "" };  
+		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : defaultRowId++ };  
 		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
 
 		// get column values for this rows
