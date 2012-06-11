@@ -1477,12 +1477,13 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 					}
 					else {
 						displayed++;
-						var rowData = [];
 						var cols = rows[i].cells;
 						if (typeof rows[i].hidden_by_editablegrid != 'undefined' && rows[i].hidden_by_editablegrid) {
 							rows[i].style.display = '';
 							rows[i].hidden_by_editablegrid = false;
 						}
+						rows[i].rowId = getRowId(rowIndex);
+						rows[i].id = _getRowDOMId(rows[i].rowId);
 						for (var j = 0; j < cols.length && j < columns.length; j++) 
 							if (columns[j].renderable) columns[j].cellRenderer._render(rowIndex, j, cols[j], getValueAt(rowIndex,j));
 					}
