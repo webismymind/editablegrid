@@ -107,8 +107,12 @@ CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adj
 		// position editor input on the cell with the same padding as the actual cell content (and center vertically if vertical-align is set to "middle")
 		var paddingLeft = this.editablegrid.paddingLeft(element);
 		var paddingTop = this.editablegrid.paddingTop(element);
-		var offsetScrollX = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollLeft) : 0;
-		var offsetScrollY = this.editablegrid.table.parentNode ? parseInt(this.editablegrid.table.parentNode.scrollTop) : 0;
+
+		// find scroll offset
+		var offsetScrollX = this.editablegrid.getScrollXOffset(element);
+		var offsetScrollY = this.editablegrid.getScrollYOffset(element);
+
+		// position input
 		var vCenter = this.editablegrid.verticalAlign(element) == "middle" ? (element.offsetHeight - editorInput.offsetHeight) / 2 - paddingTop : 0;
 		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + paddingLeft + (adjustX ? adjustX : 0)) + "px";
 		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + paddingTop + vCenter + (adjustY ? adjustY : 0)) + "px";
