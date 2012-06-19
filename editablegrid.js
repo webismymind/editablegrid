@@ -1438,7 +1438,7 @@ EditableGrid.prototype.getCellY = function(oElement)
 EditableGrid.prototype.getScrollXOffset = function(oElement)
 {
 	var iReturnValue = 0;
-	while (oElement != null && typeof oElement.scrollLeft != 'undefined' && this.isStatic(oElement)) try {
+	while (oElement != null && typeof oElement.scrollLeft != 'undefined' && this.isStatic(oElement) && oElement != document.body) try {
 		iReturnValue += parseInt(oElement.scrollLeft);
 		oElement = oElement.parentNode;
 	} catch(err) { oElement = null; }
@@ -1452,7 +1452,7 @@ EditableGrid.prototype.getScrollXOffset = function(oElement)
 EditableGrid.prototype.getScrollYOffset = function(oElement)
 {
 	var iReturnValue = 0;
-	while (oElement != null && typeof oElement.scrollTop != 'undefined' && this.isStatic(oElement)) try {
+	while (oElement != null && typeof oElement.scrollTop != 'undefined' && this.isStatic(oElement) && oElement != document.body) try {
 		iReturnValue += parseInt(oElement.scrollTop);
 		oElement = oElement.parentNode;
 	} catch(err) { oElement = null; }
