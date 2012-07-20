@@ -583,6 +583,14 @@ EditableGrid.prototype.processColumns = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
+	// reset
+	column.unit = null;
+	column.precision = -1;
+	column.decimal_point = ',';
+	column.thousands_separator = '.';
+	column.unit_before_number = false;
+	column.nansymbol = '';
+
 	// extract precision, unit and number format from type if 6 given
 	if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
 		column.datatype = RegExp.$1;
