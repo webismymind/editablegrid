@@ -1478,6 +1478,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 {
 	with (this) {
 
+		lastSelectedRowIndex = -1;
 		_currentPageIndex = getCurrentPageIndex();
 					
 		// if we are already attached to an existing table, just update the cell contents
