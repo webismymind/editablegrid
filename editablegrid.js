@@ -341,6 +341,14 @@ EditableGrid.prototype.processXML = function()
 			// process columns
 			processColumns();
 		}
+	
+		// load server-side pagination data
+		var paginator = xmlDoc.getElementsByTagName("paginator");
+		if (paginator && paginator.length >= 1) {
+			this.pageCount = paginator[0].getAttribute('pagecount');
+			this.totalRowCount = paginator[0].getAttribute('totalrowcount');
+			this.unfilteredRowCount = paginator[0].getAttribute('unfilteredrowcount');
+		}
 
 		// if no row id is provided, we create one since we need one
 		var defaultRowId = 1;
