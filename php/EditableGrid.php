@@ -43,7 +43,7 @@ class EditableGrid {
 
 	/**
 	 * 
-	 * Set parameters needed for server-side pagination (supported only with JSON)
+	 * Set parameters needed for server-side pagination
 	 * @param integer $pageCount number of pages
 	 * @param integer $totalRowCount total numer of rows in all pages
 	 * @param integer $unfilteredRowCount total number of rows, not taking the filter into account
@@ -99,6 +99,10 @@ class EditableGrid {
 			$xml.= "</metadata>\n";
 		}
 
+		if ($this->pageCount !== null) {
+			$xml.= "<paginator pagecount='{$this->pageCount}' totalrowcount='{$this->totalRowCount}' unfilteredrowcount='{$this->unfilteredRowCount}' />\n";
+		}
+		
 		$xml.= "<data>\n";
 		if ($rows) {
 			$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
