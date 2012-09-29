@@ -1345,11 +1345,18 @@ EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvide
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
 	if (columnIndex < 0) alert("[setEnumProvider] Invalid column: " + columnIndexOrName);
-	else this.columns[columnIndex].enumProvider = enumProvider;
+	else {
+		var hadProviderAlready = this.columns[columnIndex].enumProvider != null;
+		this.columns[columnIndex].enumProvider = enumProvider;
 
-	// we must recreate the cell renderer and editor for this column
-	this._createCellRenderer(this.columns[columnIndex]);
-	this._createCellEditor(this.columns[columnIndex]);
+		// if needed, we recreate the cell renderer and editor for this column
+		// if the column had an enum provider already, the render/editor previously created by default is ok already
+		// ... and we don't want to erase a custom renderer/editor that may have been set before calling setEnumProvider
+		if (!hadProviderAlready) {
+			this._createCellRenderer(this.columns[columnIndex]);
+			this._createCellEditor(this.columns[columnIndex]);
+		}
+	}
 };
 
 /**

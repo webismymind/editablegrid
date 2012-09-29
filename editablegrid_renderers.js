@@ -21,6 +21,9 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 
 	// remove existing content	
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
+	
+	// clear isEditing (in case a currently editeed is being re-rendered by some external call)
+	element.isEditing = false;
 
 	// always apply the number style to numerical cells and column headers
 	if (this.column.isNumerical()) EditableGrid.prototype.addClassName(element, "number");
