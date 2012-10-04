@@ -5,15 +5,17 @@ class EditableGrid {
 	protected $columns;
 	protected $encoding;
 	protected $writeColumnNames; // write column names in XML and JSON (set to false to save bandwidth)
+	protected $formatXML;
 	protected $pageCount;
 	protected $totalRowCount;
 	protected $unfilteredRowCount;
 
-	function __construct($encoding = "utf-8", $writeColumnNames = false)
+	function __construct($encoding = "utf-8", $writeColumnNames = false, $formatXML = false)
 	{
 		$this->encoding = $encoding;
 		$this->columns = array();
 		$this->writeColumnNames = $writeColumnNames;
+		$this->formatXML = $formatXML;
 		$this->pageCount = null;
 		$this->totalRowCount = null;
 		$this->unfilteredRowCount = null;
@@ -56,9 +58,8 @@ class EditableGrid {
 	public function getXML($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
 	{
 		// document and root table node
-		$DOMDocument = new DOMDocument;
-		$DOMDocument->encoding = $this->encoding;
-		$DOMDocument->formatOutput = true;
+		$DOMDocument = new DOMDocument('1.0', $this->encoding);
+		$DOMDocument->formatOutput = $this->formatXML;
 		$DOMDocument->appendChild($rootNode = $DOMDocument->createElement('table'));
 
 		if ($includeMetadata) {
@@ -72,7 +73,7 @@ class EditableGrid {
 				$columnNode->setAttribute('name', $name);
 				$columnNode->setAttribute('label', @iconv($this->encoding, $this->encoding."//IGNORE", $info['label']));
 				$columnNode->setAttribute('datatype', $info['type']);
-				if ($info['bar']) $columnNode->setAttribute('bar', 'false');
+				if (!$info['bar']) $columnNode->setAttribute('bar', 'false');
 				$columnNode->setAttribute('editable', $info['editable'] ? "true" : "false");
 
 				if (is_array($info['values'])) {
@@ -110,7 +111,7 @@ class EditableGrid {
 		if ($this->pageCount !== null) {
 			$rootNode->appendChild($paginatorNode = $DOMDocument->createElement('paginator'));
 			$paginatorNode->setAttribute('pagecount', $this->pageCount);
-			$paginatorNode->setAttribute('totalrowcount', $this->totalrowcount);
+			$paginatorNode->setAttribute('totalrowcount', $this->totalRowCount);
 			$paginatorNode->setAttribute('unfilteredrowcount', $this->unfilteredRowCount);
 		}
 
@@ -134,7 +135,7 @@ class EditableGrid {
 		foreach ($this->columns as $name => $info) {
 			$field = $info['field'];
 			$rowNode->appendChild($columnNode = $DOMDocument->createElement('column'));
-			if ($this->writeColumnNames) $columnNode->setAttribute('name=', $name);
+			if ($this->writeColumnNames) $columnNode->setAttribute('name', $name);
 			$columnNode->appendChild($DOMDocument->createCDATASection($this->_getRowField($row, $field)));
 		}
 
