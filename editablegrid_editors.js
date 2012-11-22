@@ -291,6 +291,7 @@ function SelectCellEditor(config) {
 }
 
 SelectCellEditor.prototype = new CellEditor();
+SelectCellEditor.prototype.isValueSelected = function(htmlInput, optionValue, value) { return optionValue == value; };
 SelectCellEditor.prototype.getEditor = function(element, value)
 {
 	// create select list
@@ -321,7 +322,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 			    option.text = groupOptionValues[optionValue];
 			    option.value = optionValue;
 			    optgroup.appendChild(option); 
-		        if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
+				if (this.isValueSelected(htmlInput, optionValue, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
 		        index++;
 			}
 		}
@@ -332,7 +333,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 			option.value = optionValue;
 			// add does not work as expected in IE7 (cf. second arg)
 			try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
-			if (optionValue == value) { htmlInput.selectedIndex = index; valueFound = true; }
+			if (this.isValueSelected(htmlInput, optionValue, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
 			index++;
 		}
 	}
