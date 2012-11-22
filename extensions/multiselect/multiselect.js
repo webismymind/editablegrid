@@ -4,11 +4,23 @@
  * Drop down list based on checkboxes.
  * Uses the jQuery plugin ui.dropdownchecklist
  * 
+ * @constructor Accepts an option object containing the following properties: 
+ * - closeText: string
+ * - autoOpen: boolean
+ * 
  * @class Drop down list based on checkboxes.
  * @author Webismymind 
  */
 
-function MultiselectCellEditor(config) { this.init(config); };
+function MultiselectCellEditor(config)
+{ 
+	// default options
+	this.closeText = "Close";
+	this.autoOpen = true;
+	
+	// erase defaults with given options
+	this.init(config); 
+};
 
 // inherits SelectCellEditor functionalities
 MultiselectCellEditor.prototype = new SelectCellEditor();
@@ -36,6 +48,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	$(htmlInput).dropdownchecklist({
 		forceMultiple: true,
 		width: $(htmlInput).css('width'),
+		explicitClose: this.closeText,
 		onComplete: function(selector) {
 			
 			// when new values have been selected we apply them
@@ -61,6 +74,11 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 		'left': $(htmlInput).css('left'), 
 		'top': $(htmlInput).css('top')
 	});
+
+	if (this.autoOpen) {
+		htmlInput_multiselect_ = htmlInput;
+		setTimeout("$(htmlInput_multiselect_).siblings('span').trigger('click');", 0);
+	}
 };
 
 function MultiselectCellRenderer(config) { this.init(config); }
