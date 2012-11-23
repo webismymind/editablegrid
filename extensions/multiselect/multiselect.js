@@ -109,6 +109,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 function MultiselectCellRenderer(config)
 { 
 	// default options
+	this.noneText = "(none)";
 	this.minWidth = 100;
 	this.maxWidth = 150;
 	
@@ -122,6 +123,7 @@ MultiselectCellRenderer.prototype = new EnumCellRenderer();
 MultiselectCellRenderer.prototype.render = function(element, value)
 {
 	EnumCellRenderer.prototype.render.call(this, element, value);
+	if ($(element).html() == '') $(element).html("<i>" + this.noneText + "</i>"); 
 	$(element).css('min-width', this.minWidth + 'px').css('max-width', this.maxWidth + 'px');
 };
 
