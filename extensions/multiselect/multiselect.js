@@ -17,7 +17,10 @@ function MultiselectCellEditor(config)
 	// default options
 	this.closeText = "Close";
 	this.autoOpen = true;
-	this.maxHeight = 200; 
+	this.maxHeight = 215; 
+	this.maxWidth = 300;
+	this.titleIfEmpty = "Information";
+	this.messageIfEmpty = "There are no possible values to choose from!";
 	
 	// erase defaults with given options
 	this.init(config); 
@@ -42,6 +45,23 @@ MultiselectCellEditor.prototype.getEditor = function(element, value)
 // redefine displayEditor to setup drop down checkboxes
 MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput) 
 {
+	// check that we have values to choose from
+	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
+	var empty = true;
+	for (var optionValue in optionValues) { empty = false; break; }
+	if (empty) {
+		
+		$("<div class='jalert'>").html("<center>" + this.messageIfEmpty + "<center>").css('padding-top', '10px').dialog({
+			width: 350,
+			modal: !jQuery.browser.msie,
+			autoOpen : true,
+			buttons: { "OK": function() { $(this).dialog("close"); } },
+			title: this.titleIfEmpty 
+		});
+		
+		return true;
+	}
+	
 	// call base method
 	SelectCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
@@ -49,7 +69,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	$(htmlInput).dropdownchecklist({
 		forceMultiple: true,
 		maxDropHeight: this.maxHeight + 'px',
-		width: $(htmlInput).css('width'),
+		width: Math.min(this.maxWidth, parseInt($(htmlInput).css('width'))) + 'px',
 		explicitClose: this.closeText,
 		onComplete: function(selector) {
 			
@@ -77,6 +97,9 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 		'top': $(htmlInput).css('top')
 	});
 
+	// so that the dropdown does not cause a scrollbar in active accordion content
+	$('div.ui-accordion-content-active').css('overflow', 'visible');
+
 	if (this.autoOpen) {
 		htmlInput_multiselect_ = htmlInput;
 		setTimeout("$(htmlInput_multiselect_).siblings('span').trigger('click');", 0);
@@ -86,7 +109,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 function MultiselectCellRenderer(config)
 { 
 	// default options
-	this.minWidth = 150;
+	this.minWidth = 100;
 	this.maxWidth = 150;
 	
 	// erase defaults with given options
