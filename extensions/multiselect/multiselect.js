@@ -17,6 +17,7 @@ function MultiselectCellEditor(config)
 	// default options
 	this.closeText = "Close";
 	this.autoOpen = true;
+	this.maxHeight = 200; 
 	
 	// erase defaults with given options
 	this.init(config); 
@@ -47,6 +48,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	// setup setup drop down checkboxes
 	$(htmlInput).dropdownchecklist({
 		forceMultiple: true,
+		maxDropHeight: this.maxHeight + 'px',
 		width: $(htmlInput).css('width'),
 		explicitClose: this.closeText,
 		onComplete: function(selector) {
@@ -81,10 +83,24 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	}
 };
 
-function MultiselectCellRenderer(config) { this.init(config); }
+function MultiselectCellRenderer(config)
+{ 
+	// default options
+	this.minWidth = 150;
+	this.maxWidth = 150;
+	
+	// erase defaults with given options
+	this.init(config); 
+}
 
 // inherits EnumCellRenderer functionalities
 MultiselectCellRenderer.prototype = new EnumCellRenderer();
+
+MultiselectCellRenderer.prototype.render = function(element, value)
+{
+	EnumCellRenderer.prototype.render.call(this, element, value);
+	$(element).css('min-width', this.minWidth + 'px').css('max-width', this.maxWidth + 'px');
+};
 
 MultiselectCellRenderer.prototype.getLabel = function(rowIndex, value)
 {
