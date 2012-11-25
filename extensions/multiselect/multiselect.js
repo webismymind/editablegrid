@@ -48,7 +48,7 @@ MultiselectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	// check that we have values to choose from
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
 	var empty = true;
-	for (var optionValue in optionValues) { empty = false; break; }
+	for (var optionValue in optionValues) { if (typeof optionValues[optionValue] != 'function') empty = false; break; }
 	if (empty) {
 		
 		$("<div class='jalert'>").html("<center>" + this.messageIfEmpty + "<center>").css('padding-top', '10px').dialog({
