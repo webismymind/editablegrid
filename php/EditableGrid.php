@@ -330,8 +330,8 @@ class EditableGrid {
 			$pattern = "#";
 		}
 
-		// TODO: can't find how to use UTF8 into XLS number formats (for chinese currency symbol etc.)
-		$unit = $info['unit'] ? ($info['unit'] == '€' ? chr(128) : str_replace('?', '', @iconv($encoding, "latin1//TRANSLIT", $info['unit']))) : '';
+		// format is encoded in utf-8 for use in PHPExcel
+		$unit = $info['unit'] ? @iconv($encoding, "utf-8//TRANSLIT", $info['unit']) : '';
 		$before =  $unit && $info['unit_before_number'] ? "\"$unit \"" : '';
 		$after = $unit && $info['unit_before_number'] ? '' : "\" $unit\"";
 
