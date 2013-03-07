@@ -1161,7 +1161,7 @@ EditableGrid.prototype.append = function(rowId, cellValues, rowAttributes, dontS
 
 /**
  * Append row with given id and data
- * Deprecated: use appendRow instead
+ * Deprecated: use append instead
  * @param {Integer} rowId id of new row
  * @param {Integer} columns
  * @param {Boolean} dontSort
