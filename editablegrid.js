@@ -125,7 +125,7 @@ EditableGrid.prototype.dateFormat = "EU";
 EditableGrid.prototype.shortMonthNames = null;
 EditableGrid.prototype.smartColorsBar = ["#dc243c","#4040f6","#00f629","#efe100","#f93fb1","#6f8183","#111111"];
 EditableGrid.prototype.smartColorsPie = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
-EditableGrid.prototype.pageSize = 0; // client-side pagination
+EditableGrid.prototype.pageSize = 0; // client-side pagination, don't set this for server-side pagination!
 
 // server-side pagination, sorting and filtering
 EditableGrid.prototype.serverSide = false;
@@ -1754,7 +1754,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 		localset('sortColumnIndexOrName', columnIndexOrName);
 		localset('sortDescending', descending);
 
-		// if filtering is done on server-side, we are done here
+		// if sorting is done on server-side, we are done here
 		if (serverSide) return backOnFirstPage ? setPageIndex(0) : refreshGrid();
 
 		var columnIndex = columnIndexOrName;
@@ -1960,6 +1960,7 @@ EditableGrid.prototype.getPageCount = function()
  */
 EditableGrid.prototype.getCurrentPageIndex = function()
 {
+	// if pagination is handled on the server side, pageSize will (must) be 0
 	if (this.pageSize <= 0 && !this.serverSide) return 0;
 		
 	// if page index does not exist anymore, go to last page (without losing the information of the current page)
