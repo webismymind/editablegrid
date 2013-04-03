@@ -1,3 +1,13 @@
+[xx/04/2013] EditableGrid v3.0.0
+================================
+
+TODO: add all since Git tag "release-2.0.1"
+
+[24/04/2012] EditableGrid v2.0.1
+================================
+
+Fixed local storage support detection
+
 [24/04/2012] EditableGrid v2.0.0 - [Released under both the MIT and GNU GPL licenses]
 ================================
 
