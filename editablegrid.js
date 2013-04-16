@@ -434,10 +434,11 @@ EditableGrid.prototype._callback = function(type, url, callback)
 
 		// replace refreshGrid to enable server-side pagination, sorting and filtering
 		if (this.serverSide) {
-			this.refreshGrid = function() {
+			this.refreshGrid = function(baseUrl) {
 
 				// add pagination, filtering and sorting parameters to the last used url
-				var url = this.lastURL + (this.lastURL.indexOf('?') >= 0 ? '&' : '?')
+				baseUrl = baseUrl || this.lastURL; 
+				var url = baseUrl + (baseUrl.indexOf('?') >= 0 ? '&' : '?')
 				+ "page=" + (this.currentPageIndex + 1)
 				+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
 				+ "&sort=" + (this.sortedColumnName && this.sortedColumnName != -1 ? encodeURIComponent(this.sortedColumnName) : "")
