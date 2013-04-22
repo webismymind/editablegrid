@@ -1052,8 +1052,9 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 
 	// render new value
 	if (render) {
-		var renderer = rowIndex < 0 ? column.headerRenderer : column.cellRenderer;  
-		renderer._render(rowIndex, columnIndex, this.getCell(rowIndex, columnIndex), value);
+		var renderer = rowIndex < 0 ? column.headerRenderer : column.cellRenderer;
+		var cell = this.getCell(rowIndex, columnIndex);
+		if (cell) renderer._render(rowIndex, columnIndex, cell, value);
 	}
 
 	return previousValue;
