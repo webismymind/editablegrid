@@ -31,6 +31,7 @@ function Column(config)
 			cellValidators: [],
 			enumProvider: null,
 			optionValues: null,
+			optionValuesForRender: null,
 			columnIndex: -1
 	};
 
@@ -39,13 +40,21 @@ function Column(config)
 }
 
 Column.prototype.getOptionValuesForRender = function(rowIndex) { 
+	if (!this.enumProvider) {
+		console.log('getOptionValuesForRender called on column ' + this.name + ' but there is no EnumProvider');
+		return null;
+	}
 	var values = this.enumProvider.getOptionValuesForRender(this.editablegrid, this, rowIndex);
-	return values ? values : this.optionValues;
+	return values ? values : this.optionValuesForRender;
 };
 
 Column.prototype.getOptionValuesForEdit = function(rowIndex) { 
+	if (!this.enumProvider) {
+		console.log('getOptionValuesForEdit called on column ' + this.name + ' but there is no EnumProvider');
+		return null;
+	}
 	var values = this.enumProvider.getOptionValuesForEdit(this.editablegrid, this, rowIndex);
-	return values ? values : this.optionValues;
+	return values ? this.editablegrid._convertOptions(values) : this.optionValues;
 };
 
 Column.prototype.isValid = function(value) {
@@ -303,26 +312,34 @@ EditableGrid.prototype.processXML = function()
 				var datatype = col.getAttribute("datatype");
 
 				// get enumerated values if any
+				var optionValuesForRender = null;
 				var optionValues = null;
 				var enumValues = col.getElementsByTagName("values");
 				if (enumValues.length > 0) {
-					optionValues = {};
+					optionValues = [];
+					optionValuesForRender = {};
 
 					var enumGroups = enumValues[0].getElementsByTagName("group");
 					if (enumGroups.length > 0) {
 						for (var g = 0; g < enumGroups.length; g++) {
-							var groupOptionValues = {};
+							var groupOptionValues = [];
 							enumValues = enumGroups[g].getElementsByTagName("value");
 							for (var v = 0; v < enumValues.length; v++) {
-								groupOptionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+								var _value = enumValues[v].getAttribute("value");
+								var _label = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+								optionValuesForRender[_value] = _label; 
+								groupOptionValues.push({ value: _value, label: _label });
 							}
-							optionValues[enumGroups[g].getAttribute("label")] = groupOptionValues;
+							optionValues.push({ label: enumGroups[g].getAttribute("label"), values: groupOptionValues});
 						}
 					}
 					else {
 						enumValues = enumValues[0].getElementsByTagName("value");
 						for (var v = 0; v < enumValues.length; v++) {
-							optionValues[enumValues[v].getAttribute("value")] = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+							var _value = enumValues[v].getAttribute("value");
+							var _label = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
+							optionValuesForRender[_value] = _label; 
+							optionValues.push({ value: _value, label: _label });
 						}
 					}
 				}
@@ -334,6 +351,7 @@ EditableGrid.prototype.processXML = function()
 					datatype: (col.getAttribute("datatype") ? col.getAttribute("datatype") : "string"),
 					editable: col.getAttribute("editable") == "true",
 					bar: (col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true),
+					optionValuesForRender: optionValuesForRender,
 					optionValues: optionValues
 				}));
 			}
@@ -497,13 +515,33 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		this.columns = [];
 		for (var c = 0; c < jsonData.metadata.length; c++) {
 			var columndata = jsonData.metadata[c];
+
+			var optionValues = columndata.values ? this._convertOptions(columndata.values) : null;
+			var optionValuesForRender = null;
+			if (optionValues) {
+				
+				// build a fast lookup structure for rendering
+				var optionValuesForRender = {};
+				for (var optionIndex = 0; optionIndex < optionValues.length; optionIndex++) {
+					var optionValue = optionValues[optionIndex];
+					if (typeof optionValue.values == 'object') {
+						for (var groupOptionIndex = 0; groupOptionIndex < optionValue.values.length; groupOptionIndex++) {
+							var groupOptionValue = optionValue.values[groupOptionIndex];
+							optionValuesForRender[groupOptionValue.value] = groupOptionValue.label;
+						}
+					}
+					else optionValuesForRender[optionValue.value] = optionValue.label;
+				}
+			}
+			
 			this.columns.push(new Column({
 				name: columndata.name,
 				label: (columndata.label ? columndata.label : columndata.name),
 				datatype: (columndata.datatype ? columndata.datatype : "string"),
 				editable: (columndata.editable ? true : false),
 				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar ? true : false)),
-				optionValues: columndata.values ? columndata.values : null
+				optionValuesForRender: optionValuesForRender,
+				optionValues: optionValues
 			}));
 		}
 		

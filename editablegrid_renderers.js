@@ -58,8 +58,7 @@ EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 	var label = "";
 	if (typeof value != 'undefined') {
 		var optionValues = this.column.getOptionValuesForRender(rowIndex);
-		if (value in optionValues) label = optionValues[value];
-		for (var optionValue in optionValues) if (typeof optionValues[optionValue] == 'object' && value in optionValues[optionValue]) label = optionValues[optionValue][value];
+		if (optionValues && value in optionValues) label = optionValues[value];
 		if (label == "") {
 			var isNAN = typeof value == 'number' && isNaN(value);
 			label = isNAN ? "" : value;

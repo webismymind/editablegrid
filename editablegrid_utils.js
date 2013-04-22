@@ -1,3 +1,18 @@
+EditableGrid.prototype._convertOptions = function(optionValues)
+{
+	// option values should be an *ordered* array of value/label pairs, but to stay compatible with existing enum providers 
+	if ((!(optionValues instanceof Array)) && typeof optionValues == 'object') {
+		var _converted = []; 
+		for (var value in optionValues) {
+			if (typeof optionValues[value] == 'object') _converted.push({ label : value, values: this._convertOptions(optionValues[value])}); // group
+			else _converted.push({ value : value, label: optionValues[value]});
+		}
+		optionValues = _converted;
+	}
+	
+	return optionValues; 
+};
+
 EditableGrid.prototype.setCookie = function(c_name, value, exdays)
 {
 	var exdate = new Date();

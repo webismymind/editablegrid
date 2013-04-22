@@ -306,34 +306,34 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	
 	// add these options, selecting the current one
 	var index = 0, valueFound = false;
-	for (var optionValue in optionValues) {
+	for (var optionIndex = 0; optionIndex < optionValues.length; optionIndex++) {
+		var optionValue = optionValues[optionIndex];
 		
 		// if values are grouped
-		if (typeof optionValues[optionValue] == 'object') {
+		if (typeof optionValue.values == 'object') {
 
 			var optgroup = document.createElement('optgroup');
-			optgroup.label = optionValue; 
+			optgroup.label = optionValue.label; 
 			htmlInput.appendChild(optgroup); 
 
-			var groupOptionValues = optionValues[optionValue];
-			for (var optionValue in groupOptionValues) {
-
+			for (var groupOptionIndex = 0; groupOptionIndex < optionValue.values.length; groupOptionIndex++) {
+				var groupOptionValue = optionValue.values[groupOptionIndex];
 				var option = document.createElement('option');
-			    option.text = groupOptionValues[optionValue];
-			    option.value = optionValue;
+			    option.text = groupOptionValue.label;
+			    option.value = groupOptionValue.value;
 			    optgroup.appendChild(option); 
-				if (this.isValueSelected(htmlInput, optionValue, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
+				if (this.isValueSelected(htmlInput, groupOptionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
 		        index++;
 			}
 		}
 		else {
 
 			var option = document.createElement('option');
-			option.text = optionValues[optionValue];
-			option.value = optionValue;
+			option.text = optionValue.label;
+			option.value = optionValue.value;
 			// add does not work as expected in IE7 (cf. second arg)
 			try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
-			if (this.isValueSelected(htmlInput, optionValue, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
+			if (this.isValueSelected(htmlInput, optionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
 			index++;
 		}
 	}

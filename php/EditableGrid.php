@@ -77,16 +77,16 @@ class EditableGrid {
 				$columnNode->setAttribute('editable', $info['editable'] ? "true" : "false");
 
 				if (is_array($info['values'])) {
-						
+
 					// values
 					$columnNode->appendChild($valuesNode = $DOMDocument->createElement('values'));
 					foreach ($info['values'] as $key => $value) {
 						if (is_array($value)) {
-								
+
 							// group with attribute and content
 							$valuesNode->appendChild($groupNode = $DOMDocument->createElement('group'));
 							$groupNode->setAttribute('label', @iconv($this->encoding, $this->encoding."//IGNORE", $key));
-								
+
 							$values = $value;
 							foreach ($values as $key => $value) {
 
@@ -97,7 +97,7 @@ class EditableGrid {
 							}
 						}
 						else {
-								
+
 							// value with attribute and content
 							$valuesNode->appendChild($valueNode = $DOMDocument->createElement('value'));
 							$valueNode->setAttribute('value', $key);
@@ -148,6 +148,18 @@ class EditableGrid {
 		echo $this->getXML($rows, $customRowAttributes, $encodeCustomAttributes, $includeMetadata);
 	}
 
+	private static function _mapToArray($map)
+	{
+		// convert PHP's associative array in Javascript's array of objects
+		$array = array();
+		foreach ($map as $k => $v) {
+			if (is_array($v)) $array[] = array('label' => $k, 'values' => self::_mapToArray($v));
+			else $array[] = array('value' => $k, 'label' => $v);
+		}
+
+		return $array;
+	}
+
 	public function getJSON($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
 	{
 		$results = array();
@@ -162,7 +174,7 @@ class EditableGrid {
 				"datatype" => $info['type'],
 				"bar" => $info['bar'],
 				"editable" => $info['editable'],
-				"values" => $info['values']
+				"values" => is_array($info['values']) ? self::_mapToArray($info['values']) : NULL
 				);
 			}
 		}
