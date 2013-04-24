@@ -735,6 +735,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 	// process columns if given
 	if (_columns) {
 		this.columns = _columns;
+		for (var columnIndex = 0; columnIndex < this.columns.length; columnIndex++) this.columns[columnIndex].optionValues = this._convertOptions(this.columns[columnIndex].optionValues); // convert options from old format if needed
 		this.processColumns();
 	}
 
