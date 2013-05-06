@@ -45,6 +45,12 @@ EditableGrid.prototype._localset = function(key, value)
 	else this.setCookie(key, value, null);
 };
 
+EditableGrid.prototype._localunset = function(key) 
+{
+	if (this.has_local_storage()) localStorage.removeItem(key);
+	else this.setCookie(key, null, null);
+};
+
 EditableGrid.prototype._localget = function(key) 
 {
 	if (this.has_local_storage()) return localStorage.getItem(key);
@@ -60,6 +66,11 @@ EditableGrid.prototype._localisset = function(key)
 EditableGrid.prototype.localset = function(key, value) 
 {
 	if (this.enableStore) return this._localset(this.name + '_' + key, value);
+};
+
+EditableGrid.prototype.localunset = function(key) 
+{
+	if (this.enableStore) return this._localunset(this.name + '_' + key, value);
 };
 
 EditableGrid.prototype.localget = function(key) 
