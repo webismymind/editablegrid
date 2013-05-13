@@ -30,7 +30,7 @@ function MultiselectCellEditor(config)
 MultiselectCellEditor.prototype = new SelectCellEditor();
 
 // redefine isValueSelected
-MultiselectCellEditor.prototype.isValueSelected = function(htmlInput, optionValue, value) { $(htmlInput).attr('multiple', true); return $.inArray(optionValue, this.valueArray) > -1; };
+MultiselectCellEditor.prototype.isValueSelected = function(htmlInput, optionValue, value) { $(htmlInput).attr('multiple', true); return $.inArray(''+optionValue, this.valueArray) > -1; };
 
 // redefine getEditor
 MultiselectCellEditor.prototype.getEditor = function(element, value)
