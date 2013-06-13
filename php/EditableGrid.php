@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * php/EditableGrid.php
+ * 
+ * This file is part of EditableGrid.
+ * http://www.editablegrid.net
+ *
+ * Copyright (c) 2012 Webismymind SPRL
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://www.editablegrid.net/page/en/9/license.html
+ */
+
 class EditableGrid {
 
 	protected $columns;
@@ -52,7 +63,7 @@ class EditableGrid {
 		$value = is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
 
 		// to avoid any issue with javascript not able to parse XML, ensure data is valid for encoding
-		return @iconv($this->encoding, $this->encoding."//IGNORE", $value);
+		return @iconv($this->encoding, "utf-8//IGNORE", $value);
 	}
 
 	public function getXML($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
@@ -71,7 +82,7 @@ class EditableGrid {
 				// column with attributes
 				$metadataNode->appendChild($columnNode = $DOMDocument->createElement('column'));
 				$columnNode->setAttribute('name', $name);
-				$columnNode->setAttribute('label', @iconv($this->encoding, $this->encoding."//IGNORE", $info['label']));
+				$columnNode->setAttribute('label', @iconv($this->encoding, "utf-8//IGNORE", $info['label']));
 				$columnNode->setAttribute('datatype', $info['type']);
 				if (!$info['bar']) $columnNode->setAttribute('bar', 'false');
 				$columnNode->setAttribute('editable', $info['editable'] ? "true" : "false");
@@ -85,7 +96,7 @@ class EditableGrid {
 
 							// group with attribute and content
 							$valuesNode->appendChild($groupNode = $DOMDocument->createElement('group'));
-							$groupNode->setAttribute('label', @iconv($this->encoding, $this->encoding."//IGNORE", $key));
+							$groupNode->setAttribute('label', @iconv($this->encoding, "utf-8//IGNORE", $key));
 
 							$values = $value;
 							foreach ($values as $key => $value) {
@@ -93,7 +104,7 @@ class EditableGrid {
 								// value with attribute and content
 								$groupNode->appendChild($valueNode = $DOMDocument->createElement('value'));
 								$valueNode->setAttribute('value', $key);
-								$valueNode->appendChild($DOMDocument->createCDATASection(@iconv($this->encoding, $this->encoding."//IGNORE", $value)));
+								$valueNode->appendChild($DOMDocument->createCDATASection(@iconv($this->encoding, "utf-8//IGNORE", $value)));
 							}
 						}
 						else {
@@ -101,7 +112,7 @@ class EditableGrid {
 							// value with attribute and content
 							$valuesNode->appendChild($valueNode = $DOMDocument->createElement('value'));
 							$valueNode->setAttribute('value', $key);
-							$valueNode->appendChild($DOMDocument->createCDATASection(@iconv($this->encoding, $this->encoding."//IGNORE", $value)));
+							$valueNode->appendChild($DOMDocument->createCDATASection(@iconv($this->encoding, "utf-8//IGNORE", $value)));
 						}
 					}
 				}
@@ -170,7 +181,7 @@ class EditableGrid {
 			foreach ($this->columns as $name => $info) {
 				$results['metadata'][] = array(
 				"name" => $name,
-				"label" => @iconv($this->encoding, $this->encoding."//IGNORE", $info['label']),
+				"label" => @iconv($this->encoding, "utf-8//IGNORE", $info['label']),
 				"datatype" => $info['type'],
 				"bar" => $info['bar'],
 				"editable" => $info['editable'],
