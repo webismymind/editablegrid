@@ -159,12 +159,12 @@ class EditableGrid {
 		echo $this->getXML($rows, $customRowAttributes, $encodeCustomAttributes, $includeMetadata);
 	}
 
-	private static function _mapToArray($map)
+	public static function mapToArray($map)
 	{
 		// convert PHP's associative array in Javascript's array of objects
 		$array = array();
 		foreach ($map as $k => $v) {
-			if (is_array($v)) $array[] = array('label' => $k, 'values' => self::_mapToArray($v));
+			if (is_array($v)) $array[] = array('label' => $k, 'values' => self::mapToArray($v));
 			else $array[] = array('value' => $k, 'label' => $v);
 		}
 
@@ -185,7 +185,7 @@ class EditableGrid {
 				"datatype" => $info['type'],
 				"bar" => $info['bar'],
 				"editable" => $info['editable'],
-				"values" => is_array($info['values']) ? self::_mapToArray($info['values']) : NULL
+				"values" => is_array($info['values']) ? self::mapToArray($info['values']) : NULL
 				);
 			}
 		}
