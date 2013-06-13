@@ -83,7 +83,7 @@ class EditableGrid {
 				$metadataNode->appendChild($columnNode = $DOMDocument->createElement('column'));
 				$columnNode->setAttribute('name', $name);
 				$columnNode->setAttribute('label', @iconv($this->encoding, "utf-8//IGNORE", $info['label']));
-				$columnNode->setAttribute('datatype', $info['type']);
+				$columnNode->setAttribute('datatype', @iconv($this->encoding, "utf-8//IGNORE", $info['type']));
 				if (!$info['bar']) $columnNode->setAttribute('bar', 'false');
 				$columnNode->setAttribute('editable', $info['editable'] ? "true" : "false");
 
