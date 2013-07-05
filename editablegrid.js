@@ -209,6 +209,8 @@ EditableGrid.prototype.rowSelected = function(oldRowIndex, newRowIndex) {};
 EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };
 EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true; };
 EditableGrid.prototype.readonlyWarning = function() {};
+/** Notifies that a row has been deleted */
+EditableGrid.prototype.rowRemoved = function(oldRowIndex, rowId) {};
 
 /**
  * Load metadata and/or data from an XML url
@@ -1181,6 +1183,9 @@ EditableGrid.prototype.remove = function(rowIndex)
 	// delete row from data
 	this.data.splice(rowIndex, 1);
 	if (this.dataUnfiltered != null) for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == rowId) { this.dataUnfiltered.splice(r, 1); break; }
+
+	// callback
+	this.rowRemoved(rowIndex,rowId);
 
 	// refresh grid
 	this.refreshGrid();
