@@ -69,7 +69,8 @@ EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 
 EnumCellRenderer.prototype.render = function(element, value)
 {
-	element.innerHTML = this.getLabel(element.rowIndex, value);
+	var label = this.getLabel(element.rowIndex, value);
+	element.innerHTML = this.column.datatype != "html" ? htmlspecialchars(label, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : label; 
 };
 
 EnumCellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
