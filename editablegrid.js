@@ -111,6 +111,8 @@ function EnumProvider(config)
  * <li>smartColorsBar: colors used for rendering (stacked) bar charts</li>
  * <li>smartColorsPie: colors used for rendering pie charts</li>
  * <li>pageSize: maximum number of rows displayed (0 means we don't want any pagination, which is the default)</li>
+ * <li>sortIconDown: icon used to show desc order</li>
+ * <li>sortIconUp:  icon used to show asc order</li>
  * </ul>
  * @constructor
  * @class EditableGrid
@@ -179,9 +181,17 @@ EditableGrid.prototype.init = function (name, config)
 
 	if (this.enableSort) {
 		this.sortUpImage = new Image();
-		this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
+		if ( typeof config != "undefined" && typeof config['sortIconUp'] != "undefined" ) 
+          this.sortUpImage.src = config['sortIconUp'];
+        else
+          this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
+		
+		
 		this.sortDownImage = new Image();
-		this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
+        if ( typeof config != "undefined" && typeof config['sortIconDown'] != "undefined" ) 
+          this.sortDownImage.src = config['sortIconDown'];
+        else
+		  this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
 	}
 };
 
@@ -199,6 +209,8 @@ EditableGrid.prototype.rowSelected = function(oldRowIndex, newRowIndex) {};
 EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };
 EditableGrid.prototype.isEditable =function(rowIndex, columnIndex) { return true; };
 EditableGrid.prototype.readonlyWarning = function() {};
+/** Notifies that a row has been deleted */
+EditableGrid.prototype.rowRemoved = function(oldRowIndex, rowId) {};
 
 /**
  * Load metadata and/or data from an XML url
@@ -1171,6 +1183,9 @@ EditableGrid.prototype.remove = function(rowIndex)
 	// delete row from data
 	this.data.splice(rowIndex, 1);
 	if (this.dataUnfiltered != null) for (var r = 0; r < this.dataUnfiltered.length; r++) if (this.dataUnfiltered[r].id == rowId) { this.dataUnfiltered.splice(r, 1); break; }
+
+	// callback
+	this.rowRemoved(rowIndex,rowId);
 
 	// refresh grid
 	this.refreshGrid();

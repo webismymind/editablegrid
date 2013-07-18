@@ -115,6 +115,10 @@ EditableGrid.prototype.initializeGrid = function()
 			else displayMessage("Selected row has changed from '" + this.getRowId(oldRowIndex) + "' to '" + this.getRowId(newRowIndex) + "'");
 		};
 		
+		rowRemoved = function(oldRowIndex, rowId) {
+			displayMessage("Removed row '" + oldRowIndex + "' - ID = " + rowId);
+		};
+		
 		// render for the action column
 		setCellRenderer("action", new CellRenderer({render: function(cell, value) {
 			// this action will remove the row, so first find the ID of the row containing this cell 
