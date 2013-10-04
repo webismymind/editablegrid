@@ -383,7 +383,7 @@ DateCellEditor.prototype.displayEditor = function(element, htmlInput)
 	// call base method
 	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
-	$(htmlInput).datepicker({ 
+	jQuery(htmlInput).datepicker({ 
 		dateFormat: this.editablegrid.dateFormat == "EU" ? "dd/mm/yy" : "mm/dd/yy",
 		beforeShow: function() {
 			// the field cannot be blurred until the datepicker has gone away
