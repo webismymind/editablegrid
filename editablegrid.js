@@ -851,7 +851,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 		column.datatype == "boolean" ? null :
 		column.datatype == "email" ? new TextCellEditor(column.precision) :
 		column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
-		column.datatype == "date" ? (typeof $ == 'undefined' || typeof $.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
+		column.datatype == "date" ? (typeof jQuery == 'undefined' || typeof jQuery.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
 		new TextCellEditor(column.precision);  
 
 							// give access to the column from the cell editor
