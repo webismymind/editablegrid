@@ -466,8 +466,10 @@ EditableGrid.prototype._callback = function(type, url, callback)
 		if (this.serverSide) {
 			this.refreshGrid = function(baseUrl) {
 
+				baseUrl = baseUrl || this.lastURL;
+				this.lastURL = baseUrl; 
+
 				// add pagination, filtering and sorting parameters to the last used url
-				baseUrl = baseUrl || this.lastURL; 
 				var url = baseUrl + (baseUrl.indexOf('?') >= 0 ? '&' : '?')
 				+ "page=" + (this.currentPageIndex + 1)
 				+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
