@@ -2,7 +2,7 @@
 
 /*
  * php/EditableGrid.php
- * 
+ *
  * This file is part of EditableGrid.
  * http://www.editablegrid.net
  *
@@ -173,6 +173,11 @@ class EditableGrid {
 
 	public function getJSON($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
 	{
+		return json_encode($this->getPOJO($rows, $customRowAttributes, $encodeCustomAttributes, $includeMetadata));
+	}
+
+	public function getPOJO($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
+	{
 		$results = array();
 
 		if ($includeMetadata) {
@@ -199,14 +204,14 @@ class EditableGrid {
 		$results['data'] = array();
 		if ($rows) {
 			$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
-			if (!$fetchMethod) foreach ($rows as $row) $results['data'][] = $this->getRowJSON($row, $customRowAttributes, $encodeCustomAttributes);
-			else while ($row = call_user_func(array($rows, $fetchMethod))) $results['data'][] = $this->getRowJSON($row, $customRowAttributes, $encodeCustomAttributes);
+			if (!$fetchMethod) foreach ($rows as $row) $results['data'][] = $this->getRowPOJO($row, $customRowAttributes, $encodeCustomAttributes);
+			else while ($row = call_user_func(array($rows, $fetchMethod))) $results['data'][] = $this->getRowPOJO($row, $customRowAttributes, $encodeCustomAttributes);
 		}
 
-		return json_encode($results);
+		return $results;
 	}
 
-	private function getRowJSON($row, $customRowAttributes, $encodeCustomAttributes)
+	private function getRowPOJO($row, $customRowAttributes, $encodeCustomAttributes)
 	{
 		$data = array("id" => $this->_getRowField($row, 'id'), "values" => array());
 		if ($customRowAttributes) foreach ($customRowAttributes as $name => $field) $data[$name] = $encodeCustomAttributes ? base64_encode($this->_getRowField($row, $field)) : $this->_getRowField($row, $field);
