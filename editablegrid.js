@@ -1871,8 +1871,9 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 /**
  * Filter the content of the table
  * @param {String} filterString String string used to filter: all words must be found in the row
+ * @param {Array} cols Columns to sort.  If cols is not specified, the filter will be done on all columns
  */
-EditableGrid.prototype.filter = function(filterString)
+EditableGrid.prototype.filter = function(filterString, cols)
 {
 	with (this) {
 
@@ -1902,7 +1903,8 @@ EditableGrid.prototype.filter = function(filterString)
 		if (dataUnfiltered != null) data = dataUnfiltered;
 
 		var rowCount = getRowCount();
-		var columnCount = getColumnCount();
+		var columnCount = typeof cols != 'undefined' ? cols.length  : getColumnCount();
+
 		for (var r = 0; r < rowCount; r++) {
 			var row = data[r];
 			row.visible = true;
@@ -1911,10 +1913,11 @@ EditableGrid.prototype.filter = function(filterString)
 			// add column values
 			for (var c = 0; c < columnCount; c++) {
 				if (getColumnType(c) == 'boolean') continue;
-				var displayValue = getDisplayValueAt(r, c);
-				var value = getValueAt(r, c);
+				var displayValue = getDisplayValueAt(r, typeof cols != 'undefined'  ? cols[c] :  c);
+				var value = getValueAt(r, typeof cols != 'undefined'  ? cols[c] : c);
 				rowContent += displayValue + " " + (displayValue == value ? "" : value + " ");
 			}
+
 			
 			// add attribute values
 			for (var attributeName in row) {
@@ -1964,11 +1967,11 @@ EditableGrid.prototype.filter = function(filterString)
 				}
 				else {
 					word = word.substr(0, word.length - 1);
-					if (colindex >= 0) match = (''+getDisplayValueAt(r, colindex)).trim().toLowerCase() == word || (''+getValueAt(r, colindex)).trim().toLowerCase() == word;
-					else if (attributeName !== null) match = (''+getRowAttribute(r, attributeName)).trim().toLowerCase() == word;
+					if (colindex >= 0) match = (''+getDisplayValueAt(r, colindex)).trim().toLowerCase() == word || (''+getValueAt(r, colindex)).trim().toLowerCase() == word; 
+					else if (attributeName !== null) match = (''+getRowAttribute(r, attributeName)).trim().toLowerCase() == word; 
 					else for (var c = 0; c < columnCount; c++) {
-						if (getColumnType(c) == 'boolean') continue;
-						if ((''+getDisplayValueAt(r, c)).trim().toLowerCase() == word || (''+getValueAt(r, c)).trim().toLowerCase() == word) match = true;
+						if (getColumnType(typeof cols != 'undefined'  ? cols[c] : c) == 'boolean') continue;
+						if ((''+getDisplayValueAt(r, typeof cols != 'undefined'  ? cols[c] : c)).trim().toLowerCase() == word || (''+getValueAt(r, typeof cols != 'undefined'  ? cols[c] : c)).trim().toLowerCase() == word) match = true;
 					}
 				}
 
@@ -1989,6 +1992,8 @@ EditableGrid.prototype.filter = function(filterString)
 		tableFiltered();
 	}
 };
+
+
 
 /**
  * Sets the page size(pageSize of 0 means no pagination)
