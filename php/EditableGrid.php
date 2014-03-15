@@ -17,9 +17,7 @@ class EditableGrid {
 	protected $encoding;
 	protected $writeColumnNames; // write column names in XML and JSON (set to false to save bandwidth)
 	protected $formatXML;
-	protected $pageCount;
-	protected $totalRowCount;
-	protected $unfilteredRowCount;
+	protected $paginator;
 
 	function __construct($encoding = "utf-8", $writeColumnNames = false, $formatXML = false)
 	{
@@ -27,9 +25,7 @@ class EditableGrid {
 		$this->columns = array();
 		$this->writeColumnNames = $writeColumnNames;
 		$this->formatXML = $formatXML;
-		$this->pageCount = null;
-		$this->totalRowCount = null;
-		$this->unfilteredRowCount = null;
+		$this->paginator = null;
 	}
 
 	public function getColumnLabels()
@@ -51,11 +47,10 @@ class EditableGrid {
 	 * @param integer $totalRowCount total numer of rows in all pages
 	 * @param integer $unfilteredRowCount total number of rows, not taking the filter into account
 	 */
-	public function setPaginator($pageCount, $totalRowCount, $unfilteredRowCount)
+	public function setPaginator($pageCount, $totalRowCount, $unfilteredRowCount, $customAttributes = NULL)
 	{
-		$this->pageCount = $pageCount;
-		$this->totalRowCount = $totalRowCount;
-		$this->unfilteredRowCount = $unfilteredRowCount;
+		$this->paginator = array('pagecount' => $pageCount, 'totalrowcount' => $totalRowCount, 'unfilteredrowcount' => $unfilteredRowCount);
+		if (is_array($customAttributes)) foreach ($customAttributes as $key => $value) $this->paginator[$key] = $value;
 	}
 
 	private function _getRowField($row, $field)
@@ -119,11 +114,9 @@ class EditableGrid {
 			}
 		}
 
-		if ($this->pageCount !== null) {
+		if ($this->paginator !== null) {
 			$rootNode->appendChild($paginatorNode = $DOMDocument->createElement('paginator'));
-			$paginatorNode->setAttribute('pagecount', $this->pageCount);
-			$paginatorNode->setAttribute('totalrowcount', $this->totalRowCount);
-			$paginatorNode->setAttribute('unfilteredrowcount', $this->unfilteredRowCount);
+			foreach ($this->paginator as $key => $value) $paginatorNode->setAttribute($key, $value);
 		}
 
 		// data
@@ -195,11 +188,7 @@ class EditableGrid {
 			}
 		}
 
-		if ($this->pageCount !== null) $results['paginator'] = array(
-			"pagecount" => $this->pageCount,
-			"totalrowcount" => $this->totalRowCount,
-			"unfilteredrowcount" => $this->unfilteredRowCount
-		);
+		if ($this->paginator !== null) $results['paginator'] = $this->paginator;
 
 		$results['data'] = array();
 		if ($rows) {

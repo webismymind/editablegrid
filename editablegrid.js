@@ -143,6 +143,7 @@ EditableGrid.prototype.serverSide = false;
 EditableGrid.prototype.pageCount = 0;
 EditableGrid.prototype.totalRowCount = 0;
 EditableGrid.prototype.unfilteredRowCount = 0;
+EditableGrid.prototype.paginatorAttributes = null;
 EditableGrid.prototype.lastURL = null;
 
 EditableGrid.prototype.init = function (name, config)
@@ -375,6 +376,7 @@ EditableGrid.prototype.processXML = function()
 		// load server-side pagination data
 		var paginator = xmlDoc.getElementsByTagName("paginator");
 		if (paginator && paginator.length >= 1) {
+			this.paginatorAttributes = null; // TODO: paginator[0].getAllAttributesAsPOJO;
 			this.pageCount = paginator[0].getAttribute('pagecount');
 			this.totalRowCount = paginator[0].getAttribute('totalrowcount');
 			this.unfilteredRowCount = paginator[0].getAttribute('unfilteredrowcount');
@@ -565,6 +567,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 	// load server-side pagination data
 	if (jsonData.paginator) {
+		this.paginatorAttributes = jsonData.paginator;
 		this.pageCount = jsonData.paginator.pagecount;
 		this.totalRowCount = jsonData.paginator.totalrowcount;
 		this.unfilteredRowCount = jsonData.paginator.unfilteredrowcount;
