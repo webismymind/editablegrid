@@ -1,40 +1,32 @@
 
-================================================================================================================
-= WARNING                                                                                                      =
-================================================================================================================
-= Documentation below is NOT up to date as it does not contain the latest features added in EditableGrid 2.0.  = 
-= We currently have no time to update the documentation properly, so we chose to release version 2.0 as-is.    = 
-= The best way to learn using EditableGrid is to play with the fairly complete examples (examples/index.html). = 
-================================================================================================================
+# WARNING                                                                                                      
+**Documentation below is NOT up to date as it does not contain the latest features added in EditableGrid 2.0.  We currently have no time to update the documentation properly, so we chose to release version 2.0 as-is.** 
 
-========================
-= EditableGrid v1.0.11 =
-========================
+**The best way to learn using EditableGrid is to play with the fairly complete examples (examples/index.html).** 
 
-Introduction
-------------
+# EditableGrid v1.0.11 
+
+## Introduction
 
 EditableGrid is a Javascript library that allows you to make the tables in your web sites and applications editable.
 EditableGrid focuses on simplicity: only a few lines of code are required to get your first table up and running.
 
 You can use the EditableGrid library in two ways:
 
-1) Hook up to an existing HTML table. 
+* Hook up to an existing HTML table. 
    This approach can be very useful for plugging EditableGrid on an existing web application.
 
-2) Build your grid from an XML description of the table structure and contents.
+* Build your grid from an XML description of the table structure and contents.
    This approach is recommended if you're writing a new web application (or if you are want to improve an existing web application).
 
 This only influences the way you create your editable grid.
 The way you can customize and use your grid afterwards is identical in both cases.
 
-API documentation
------------------
+## API documentation
 
 In directory doc/jsdoc you will find a reference documentation of all classes and functions available in this library.
 
-A first example
----------------
+## A first example
 
 This library is very simple to use, so the best way to start is just to check out an example.
 First, let's have a look at the result: open up examples/demo.html in your favorite browser.
@@ -46,18 +38,19 @@ In file demo.html at line 12, you just have to replace "demo.js" with "demo_simp
 What you'll see is the same editable grid, but with some features removed.
 
 Now let's see the source code behind this demo:
-1) demo.html/css: main html page and a stylesheet to make our table prettier
-2) demo.xml: xml file containing the table structure and contents
-3) demo_simple.js: javascript source to create our editable grid
+
+* demo.html/css: main html page and a stylesheet to make our table prettier
+* demo.xml: xml file containing the table structure and contents
+* demo_simple.js: javascript source to create our editable grid
 
 Let's analyze each file in more details:
 
-1) The HTML page is very simple: all it does is include the necessary javascript and css files and create some divs.
+1. The HTML page is very simple: all it does is include the necessary javascript and css files and create some divs.
    The CSS file is a very simple and classical stylesheet.
 
-2) The XML file contains two parts:
+2. The XML file contains two parts:
 
-   a) The table structure, enclosed in the <metadata> tag:
+   a. The table structure, enclosed in the <metadata> tag:
 
       Declaring the structure of your table consists in declaring a list of columns and give the following information for each column:
       - name: this name can for example be the name of the corresponding field in a database (or anything else you may find useful to know which data has been modified)
@@ -82,7 +75,7 @@ Let's analyze each file in more details:
       You can also specify a list of predefined values for each column.
       In this case, when a cell is edited, the user will be presented with a drop-down list containing these predefined values.  
 
-   b) The table contents, enclosed in the <data> tag:
+   b. The table contents, enclosed in the <data> tag:
 
       This is basically a list of rows, each row containing a value for each column.
       It is recommended to name your columns: this way you can declare them in any order and skip some columns if you want. 
@@ -105,54 +98,58 @@ Let's analyze each file in more details:
 
 That's it for the basics of using EditableGrid.
 
-Improving our first example
----------------------------
+## Improving our first example
 
-You remember we asked you to replace "demo.js" with "demo_simple.js" in demo.html.
+
+You remember we asked you to replace **demo.js** with **demo_simple.js** in demo.html.
 Well now that you are ready to see the real power of EditableGrid, you can use "demo.js" again.
 
 In this part, we'll see how to further customize our editable grid, using mainly 3 mechanisms:
-- cell and header renderers that allow you to customize the way values are displayed
-- cell validators that will allow you to tell when a value entered by the user is valid or not
-- enumeration providers that will allow you to dynamically build the list of possible values for a column
+
+* cell and header renderers that allow you to customize the way values are displayed
+* cell validators that will allow you to tell when a value entered by the user is valid or not
+* enumeration providers that will allow you to dynamically build the list of possible values for a column
  
 The file "demo.js" will bring the following new features to our first example:
-1) show more details when a cell has been modified
-2) add a validator to check that the age must be inside the bounds [16, 100[
-3) display the unit in the HEIGHT column
-4) use a flag image to display the selected country
-5) propose a list of countries that depends on the selected continent
-6) clear the selected country when another continent is selected
-7) display an information icon in the table header for some columns
-8) possibility to attach to an existing HTML table (see file demo_attach.html)
+
+1. show more details when a cell has been modified
+2. add a validator to check that the age must be inside the bounds [16, 100[
+3. display the unit in the HEIGHT column
+4. use a flag image to display the selected country
+5. propose a list of countries that depends on the selected continent
+6. clear the selected country when another continent is selected
+7. display an information icon in the table header for some columns
+8. possibility to attach to an existing HTML table (see file demo_attach.html)
 
 Let's see how each feature has been implemented in our example:
 
-1) The modelChanged callback function receives as parameters: rowIndex, columnIndex, oldValue, newValue, row.
+1. The modelChanged callback function receives as parameters: rowIndex, columnIndex, oldValue, newValue, row.
    The last parameter "row" can be used to get the row id that was specified in the XML file.  
    In our example, we display a message composed as follows:
-   "Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'"
+   
+       "Value for '" + this.getColumnName(columnIndex) + "' in row " + row.id + " has changed from '" + oldValue + "' to '" + newValue + "'"
 
-2) To associate a custom validation with a column, you can use the addCellValidator function which takes a CellValidator object, like this:
+2. To associate a custom validation with a column, you can use the addCellValidator function which takes a CellValidator object, like this:
  
-   addCellValidator("age", new CellValidator({
+       addCellValidator("age", new CellValidator({
        isValid: function(value) { return value == "" || (parseInt(value) >= 16 && parseInt(value) < 100); }
-   }));
+       }));
  
-3) To customize the way cells in a particular column are displayed you must associate a CellRenderer, using the function setCellRenderer:
+3. To customize the way cells in a particular column are displayed you must associate a CellRenderer, using the function setCellRenderer:
 
-   setCellRenderer("height", new CellRenderer({
+       setCellRenderer("height", new CellRenderer({
        render: function(cell, value) { new NumberCellRenderer().render(cell, value ? value + " m" : ""); }
-   })); 
+       })); 
 
-4) Here again, to display a flag for the country we associate a custom CellRenderer with the column 'country':
+4. Here again, to display a flag for the country we associate a custom CellRenderer with the column 'country':
 
-   setCellRenderer("country", new CellRenderer({
+       setCellRenderer("country", new CellRenderer({
       render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
-   })); 
+       })); 
 
-5) To achieve this, we must associate a custom EnumProvider with our column, using the function setEnumProvider:
+5. To achieve this, we must associate a custom EnumProvider with our column, using the function setEnumProvider:
 
+```
    setEnumProvider("country", new EnumProvider({ 
        getOptionValues: function (grid, column, rowIndex) {
            var continent = grid.getValueAt(rowIndex, 4);
@@ -162,30 +159,38 @@ Let's see how each feature has been implemented in our example:
            return null;
        }
    }));
+```
+
 
    The function getOptionValues is called each time the cell must be edited.
    Here we do only client-side Javascript processing, but you could use Ajax here to communicate with your server.
    If you do, then don't forget to use Ajax in synchronous mode. 
 
-6) In the modeChanged function we can check the modified column: if it is the continent then we clear the country in the same row, like this:  
+6. In the modeChanged function we can check the modified column: if it is the continent then we clear the country in the same row, like this:  
 
-   if (this.getColumnName(columnIndex) == "continent") this.setValueAt(rowIndex, this.getColumnIndex("country"), "");
+```
+   if (this.getColumnName(columnIndex) == "continent") 
+		this.setValueAt(rowIndex, this.getColumnIndex("country"), "");
+```
 
-7) To achieve this, we will use the method setHeaderRenderer that allows us to customize the way column headers are rendered.
+7. To achieve this, we will use the method setHeaderRenderer that allows us to customize the way column headers are rendered.
    Since we want to use the same renderer for several column, we are going to declare a class InfoHeaderRenderer which extends CellRenderer, like this:
 
+```
    function InfoHeaderRenderer(message) { this.message = message; };
    InfoHeaderRenderer.prototype = new CellRenderer();
    InfoHeaderRenderer.prototype.render = function(cell, value) { /* create the icon, see demo.js for the code */ }
-
+```
    We use this class with setHeaderRender as follows:
-	    
+   
+```	    
    setHeaderRenderer("age", new InfoHeaderRenderer("The age must be an integer between 16 and 99"));
    setHeaderRenderer("height", new InfoHeaderRenderer("The height is given in meters"));
-   
-8) To attach to an existing HTML table you won't use the loadXML function as before.
+```
+8. To attach to an existing HTML table you won't use the loadXML function as before.
    Instead you will use the function attachToHTMLTable, as follows:
-   
+
+```   
    	editableGrid.attachToHTMLTable($('htmlgrid'), 
 		[ new Column({ name: "name", datatype: "string(24)" }),
 		  new Column({ name: "firstname", datatype: "string" }),
@@ -195,27 +200,28 @@ Let's see how each feature has been implemented in our example:
 		  new Column({ name: "country", datatype: "string" }),
 		  new Column({ name: "email", datatype: "email(26)" }),
 		  new Column({ name: "freelance", datatype: "boolean" }) ]);
-   
+```   
    As you can guess, the HTML table you're attaching to will define the contents of the table.
    But since we don't have the XML metadata to define the table columns, you must declare these columns using Javascript as shown above.
    Of course, in this case you don't have to register the callback method "tableLoaded" since nothing has to be loaded.
  
-PHP helper class
-----------------
+## PHP helper class
+
  
 If you work with PHP on the server side, you can make use of the simple class EditableGrid.php to ease the creation and rendering of the XML data.
  
-Charts
-------
+## Charts
+
  
 EditableGrid allows you to create bar and pie charts from the grid data.
 
 This makes use of OpenFlashCharts 2.0, which you should include by yourself in your client application.
 The following javascript files must be included (all can be found in the official OpenFlashChart 2.0 download):
-- openflashchart/js-ofc-library/open_flash_chart.min.js
-- openflashchart/js-ofc-library/ofc.js
-- openflashchart/js/swfobject.js
-- openflashchart/js/json/json2.js
+
+* openflashchart/js-ofc-library/open_flash_chart.min.js
+* openflashchart/js-ofc-library/ofc.js
+* openflashchart/js/swfobject.js
+* openflashchart/js/json/json2.js
  
 If any of these files is missing, trying to use the charting methods will display an error indicating the missing library.
 The SWF file must be named "open-flash-chart.swf" and must be placed in the "openflashchart" directory: it will then be detected automatically. 
@@ -227,7 +233,7 @@ Otherwise some default dimensions will be used (500*200px).
  
 Then according to the type of chart you want, you just have to call one of the following methods:
  
-1) renderBarChart(divId, title, labelColumnIndexOrName, legend)
+1. renderBarChart(divId, title, labelColumnIndexOrName, legend)
  
    This method will create a bar chart: labelColumnIndexOrName is the name or index of the column that will be used for the chart categories.
    For each category, you will have one bar per numerical column having the "bar" attribute set to true (which is the default).
@@ -237,15 +243,17 @@ Then according to the type of chart you want, you just have to call one of the f
 
    Example: Imagine you have the following data giving the number of kilometers done by person and by year
  
+```
 	name    2009   2010
 	--------------------
 	John    40000  30000
  	Jack    60000  20000
  	Paul    20000  50000
- 	
+``` 	
    Calling renderBarChart(divId, "Kilometers", "name") will produce the following chart:
  
-             # 2009  * 2010
+```
+	# 2009  * 2010
              
      60,000           #
      50,000           #          *
@@ -257,12 +265,14 @@ Then according to the type of chart you want, you just have to call one of the f
           0  John     Jack     Paul
           
                    Person	   
+```
  
-2) renderPieChart(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
+2. renderPieChart(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, startAngle) 
 
    This method will create a pie chart: 
-   - valueColumnIndexOrName is the name or index of the column that will be used as the value for each pie part
-   - labelColumnIndexOrName is the name or index of the column that will be used as the label for each pie part
+   
+   * valueColumnIndexOrName is the name or index of the column that will be used as the value for each pie part
+   * labelColumnIndexOrName is the name or index of the column that will be used as the label for each pie part
  
    In other words, you can display the distribution of the values of "valueColumnIndexOrName" as a pie, using "labelColumnIndexOrName" to label each value.
    The percentage of each value w.r.t. the column's total will also be displayed in the label.
@@ -276,12 +286,12 @@ Updating a chart is very fast, which gives a very nice effect: when sorting or e
 If your grid has a row displaying e.g. the total, you can ignore it in the charts by setting EditableGrid.ignoreLastRow to true.
 In this case, this last row will also be ignored when sorting the grid data.
 
-Extensions
-----------
+## Extensions
 
 The directory "extensions" is there for interesting cell editors, renderers and validators.
 It contains a subdirectory "jquery" with the jQuery library v1.4.2.
 Extensions may indeed be based on jQuery, unlike the core library which stays jQuery-independent.
 
 Current extensions:
-- two variants of "AutocompleteCellEditor", each based on a different autocomplete jQuery plugin
+
+* two variants of "AutocompleteCellEditor", each based on a different autocomplete jQuery plugin
