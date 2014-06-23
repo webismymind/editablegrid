@@ -194,6 +194,11 @@ EditableGrid.prototype.init = function (name, config)
         else
 		  this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
 	}
+	
+	// restore stored parameters, or use default values if nothing stored
+	this.sortedColumnName = this.localisset('sortColumnIndexOrName') && this.hasColumn(this.localget('sortColumnIndexOrName')) ? this.localget('sortColumnIndexOrName') : -1;
+	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
+	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
 };
 
 /**
