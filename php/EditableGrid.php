@@ -58,7 +58,7 @@ class EditableGrid {
 		$value = is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
 
 		// to avoid any issue with javascript not able to parse XML, ensure data is valid for encoding
-		return @iconv($this->encoding, "utf-8//IGNORE", $value);
+		return is_string($value) ? @iconv($this->encoding, "utf-8//IGNORE", $value) : $value;
 	}
 
 	public function getXML($rows=false, $customRowAttributes=false, $encodeCustomAttributes=false, $includeMetadata=true)
@@ -157,8 +157,8 @@ class EditableGrid {
 		// convert PHP's associative array in Javascript's array of objects
 		$array = array();
 		foreach ($map as $k => $v) {
-			if (is_array($v)) $array[] = array('label' => $k, 'values' => self::mapToArray($v));
-			else $array[] = array('value' => $k, 'label' => $v);
+			if (is_array($v)) $array[] = array('label' => (string) $k, 'values' => self::mapToArray($v));
+			else $array[] = array('value' => (string) $k, 'label' => $v);
 		}
 
 		return $array;
