@@ -163,6 +163,11 @@ EditableGrid.prototype.init = function (name, config)
 			MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
 	};
 
+	if (typeof this.detectDir != 'function') {
+		var error = new Error();
+		alert("Who is calling me now ? " + error.stack);
+	}
+
 	// private data
 	this.name = name;
 	this.columns = [];
