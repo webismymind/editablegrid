@@ -166,7 +166,6 @@ EditableGrid.prototype.init = function (name, config)
 	if (typeof this.detectDir != 'function') {
 		var error = new Error();
 		alert("Who is calling me now ? " + error.stack);
-		alert("And setCookie ? " + this.setCookie);
 	}
 
 	// private data
