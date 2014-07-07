@@ -35,6 +35,27 @@ class EditableGrid {
 		return $labels;
 	}
 
+	public function getColumnFields()
+	{
+		$fields = array();
+		foreach ($this->columns as $name => $column) $fields[$name] = $column['field'];
+		return $fields;
+	}
+
+	public function getColumnTypes()
+	{
+		$types = array();
+		foreach ($this->columns as $name => $column) $types[$name] = $column['type'];
+		return $types;
+	}
+
+	public function getColumnValues()
+	{
+		$values = array();
+		foreach ($this->columns as $name => $column) $values[$name] = $column['values'];
+		return $values;
+	}
+
 	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $bar = true)
 	{
 		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "bar" => $bar, "values" => $values );
