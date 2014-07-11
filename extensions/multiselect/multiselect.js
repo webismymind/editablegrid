@@ -36,7 +36,7 @@ MultiselectCellEditor.prototype.isValueSelected = function(htmlInput, optionValu
 MultiselectCellEditor.prototype.getEditor = function(element, value)
 {
 	// keep array of values
-	this.valueArray = value.split(",");
+	this.valueArray = value ? value.split(",") : [];
 	
 	// call base method
 	return SelectCellEditor.prototype.getEditor.call(this, element, value);
@@ -128,7 +128,7 @@ MultiselectCellRenderer.prototype.render = function(element, value)
 MultiselectCellRenderer.prototype.getLabel = function(rowIndex, value)
 {
 	var label = "";
-	var values = value.split(",");
+	var values = value ? value.split(",") : [];
 	for (var i = 0; i < values.length; i++) {
 		if (label != "") label += ", ";
 		label += EnumCellRenderer.prototype.getLabel.call(this, rowIndex, values[i]);

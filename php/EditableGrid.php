@@ -76,7 +76,7 @@ class EditableGrid {
 
 	private function _getRowField($row, $field)
 	{
-		$value = is_array($row) ? (isset($row[$field]) ? $row[$field] : '') : (isset($row->$field) ? $row->$field : '');
+		$value = is_array($row) ? (isset($row[$field]) ? $row[$field] : NULL) : (isset($row->$field) ? $row->$field : NULL);
 
 		// to avoid any issue with javascript not able to parse XML, ensure data is valid for encoding
 		return is_string($value) ? @iconv($this->encoding, "utf-8//IGNORE", $value) : $value;

@@ -32,7 +32,7 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	if (this.column.datatype == 'boolean') EditableGrid.prototype.addClassName(element, "boolean");
 		
 	// call the specialized render method
-	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : value);
+	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ')) : value);
 };
 
 CellRenderer.prototype.render = function(element, value) 
@@ -57,6 +57,7 @@ EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 {
 	var label = "";
 	if (typeof value != 'undefined') {
+		value = value ? value : '';
 		var optionValues = this.column.getOptionValuesForRender(rowIndex);
 		if (optionValues && value in optionValues) label = optionValues[value];
 		if (label == "") {
@@ -70,7 +71,7 @@ EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 EnumCellRenderer.prototype.render = function(element, value)
 {
 	var label = this.getLabel(element.rowIndex, value);
-	element.innerHTML = this.column.datatype != "html" ? htmlspecialchars(label, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : label; 
+	element.innerHTML = label ? (this.column.datatype != "html" ? htmlspecialchars(label, 'ENT_NOQUOTES').replace(/\s\s/g, '&nbsp; ') : label) : ''; 
 };
 
 EnumCellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
@@ -91,7 +92,7 @@ NumberCellRenderer.prototype.render = function(element, value)
 {
 	var column = this.column || {}; // in case somebody calls new NumberCellRenderer().render(..)
 
-	var isNAN = typeof value == 'number' && isNaN(value);
+	var isNAN = value === null || (typeof value == 'number' && isNaN(value));
 	var displayValue = isNAN ? (column.nansymbol || "") : value;
 	if (typeof displayValue == 'number') {
 		

@@ -739,11 +739,14 @@ EditableGrid.prototype.parseColumnType = function(column)
 
 EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue) 
 {
+	if (cellValue === null) return cellValue;
+
 	var colType = this.getColumnType(columnIndex);
 	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
 	if (colType == 'integer') { cellValue = parseInt(cellValue, 10); } 
 	if (colType == 'double') { cellValue = parseFloat(cellValue); }
 	if (colType == 'string') { cellValue = "" + cellValue; }
+
 	return cellValue;
 };
 
