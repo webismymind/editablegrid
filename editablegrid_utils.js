@@ -59,7 +59,7 @@ EditableGrid.prototype._localget = function(key)
 
 EditableGrid.prototype._localisset = function(key) 
 {
-	if (this.has_local_storage()) return localStorage.getItem(key) !== null;
+	if (this.has_local_storage()) return localStorage.getItem(key) !== null && localStorage.getItem(key) != 'undefined';
 	return this.getCookie(key) !== null;
 };
 
