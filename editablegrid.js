@@ -138,7 +138,7 @@ EditableGrid.prototype.smartColorsBar = ["#dc243c","#4040f6","#00f629","#efe100"
 EditableGrid.prototype.smartColorsPie = ["#FF0000","#00FF00","#0000FF","#FFD700","#FF00FF","#00FFFF","#800080"];
 EditableGrid.prototype.pageSize = 0; // client-side pagination, don't set this for server-side pagination!
 
-// server-side pagination, sorting and filtering
+//server-side pagination, sorting and filtering
 EditableGrid.prototype.serverSide = false;
 EditableGrid.prototype.pageCount = 0;
 EditableGrid.prototype.totalRowCount = 0;
@@ -188,20 +188,20 @@ EditableGrid.prototype.init = function (name, config)
 	if (this.enableSort) {
 		this.sortUpImage = new Image();
 		if ( typeof config != "undefined" && typeof config['sortIconUp'] != "undefined" ) 
-          this.sortUpImage.src = config['sortIconUp'];
-        else
-          this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
-		
-		
+			this.sortUpImage.src = config['sortIconUp'];
+		else
+			this.sortUpImage.src = this.baseUrl + "/images/bullet_arrow_up.png";
+
+
 		this.sortDownImage = new Image();
-        if ( typeof config != "undefined" && typeof config['sortIconDown'] != "undefined" ) 
-          this.sortDownImage.src = config['sortIconDown'];
-        else
-		  this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
+		if ( typeof config != "undefined" && typeof config['sortIconDown'] != "undefined" ) 
+			this.sortDownImage.src = config['sortIconDown'];
+		else
+			this.sortDownImage.src = this.baseUrl + "/images/bullet_arrow_down.png";
 	}
-	
+
 	// restore stored parameters, or use default values if nothing stored
-	this.sortedColumnName = this.localisset('sortColumnIndexOrName') && this.hasColumn(this.localget('sortColumnIndexOrName')) ? this.localget('sortColumnIndexOrName') : -1;
+	this.sortedColumnName = this.localisset('sortColumnIndexOrName') ? this.localget('sortColumnIndexOrName') : -1;
 	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
 	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
 };
@@ -227,64 +227,58 @@ EditableGrid.prototype.rowRemoved = function(oldRowIndex, rowId) {};
  * Load metadata and/or data from an XML url
  * The callback "tableLoaded" is called when loading is complete.
  */
-EditableGrid.prototype.loadXML = function(url, callback)
+EditableGrid.prototype.loadXML = function(url, callback, dataOnly)
 {
-	// we use a trick to avoid getting an old version from the browser's cache
-	var orig_url = url;
-	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
-	url += sep + Math.floor(Math.random() * 100000);
-
+	this.lastURL = url; 
 	var self = this;
-	with (this) {
 
-		// IE
-		if (window.ActiveXObject) 
-		{
-			xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-			xmlDoc.onreadystatechange = function() {
-				if (xmlDoc.readyState == 4) {
-					processXML();
-					_callback('xml', orig_url, callback);
-				}
-			};
-			xmlDoc.load(url);
-		}
-
-		// Safari
-		else if (/*Browser.WebKit && */ window.XMLHttpRequest) 
-		{
-			xmlDoc = new XMLHttpRequest();
-			xmlDoc.onreadystatechange = function () {
-				if (this.readyState == 4) {
-					xmlDoc = this.responseXML;
-					if (!xmlDoc) { /* alert("Could not load XML from url '" + orig_url + "'"); */ return false; }
-					processXML();
-					_callback('xml', orig_url, callback);
-				}
-			};
-			xmlDoc.open("GET", url, true);
-			xmlDoc.send("");
-		}
-
-		// Firefox (and other browsers) 
-		else if (document.implementation && document.implementation.createDocument) 
-		{
-			xmlDoc = document.implementation.createDocument("", "", null);
-			xmlDoc.onload = function() {
-				processXML();
-				_callback('xml', orig_url, callback);
-			};
-			xmlDoc.load(url);
-		}
-
-		// should never happen
-		else { 
-			alert("Cannot load a XML url with this browser!"); 
-			return false;
-		}
-
-		return true;
+	// IE
+	if (window.ActiveXObject) 
+	{
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.onreadystatechange = function() {
+			if (xmlDoc.readyState == 4) {
+				self.processXML();
+				self._callback('xml', callback);
+			}
+		};
+		xmlDoc.load(this._addUrlParameters(url, dataOnly));
 	}
+
+	// generic Ajax
+	else if (window.XMLHttpRequest) 
+	{
+		xmlDoc = new XMLHttpRequest();
+		xmlDoc.onreadystatechange = function () {
+			if (this.readyState == 4) {
+				xmlDoc = this.responseXML;
+				if (!xmlDoc) { /* alert("Could not load XML from url '" + url + "'"); */ return false; }
+				self.processXML();
+				self._callback('xml', callback);
+			}
+		};
+		xmlDoc.open("GET", this._addUrlParameters(url, dataOnly), true);
+		xmlDoc.send("");
+	}
+
+	// Firefox (and some other browsers) 
+	else if (document.implementation && document.implementation.createDocument) 
+	{
+		xmlDoc = document.implementation.createDocument("", "", null);
+		xmlDoc.onload = function() {
+			self.processXML();
+			self._callback('xml', callback);
+		};
+		xmlDoc.load(this._addUrlParameters(url, dataOnly));
+	}
+
+	// should never happen
+	else { 
+		alert("Cannot load a XML url with this browser!"); 
+		return false;
+	}
+
+	return true;
 };
 
 /**
@@ -382,7 +376,7 @@ EditableGrid.prototype.processXML = function()
 			// process columns
 			processColumns();
 		}
-	
+
 		// load server-side pagination data
 		var paginator = xmlDoc.getElementsByTagName("paginator");
 		if (paginator && paginator.length >= 1) {
@@ -394,7 +388,7 @@ EditableGrid.prototype.processXML = function()
 
 		// if no row id is provided, we create one since we need one
 		var defaultRowId = 1;
-		
+
 		// load content
 		var rows = xmlDoc.getElementsByTagName("row");
 		for (var i = 0; i < rows.length; i++) 
@@ -437,12 +431,10 @@ EditableGrid.prototype.processXML = function()
  * Load metadata and/or data from a JSON url
  * The callback "tableLoaded" is called when loading is complete.
  */
-EditableGrid.prototype.loadJSON = function(url, callback)
+EditableGrid.prototype.loadJSON = function(url, callback, dataOnly)
 {
-	// we use a trick to avoid getting an old version from the browser's cache
-	var orig_url = url;
-	var sep = url.indexOf('?') >= 0 ? '&' : '?'; 
-	url += sep + Math.floor(Math.random() * 100000);
+	this.lastURL = url; 
+	var self = this;
 
 	// should never happen
 	if (!window.XMLHttpRequest) {
@@ -450,54 +442,53 @@ EditableGrid.prototype.loadJSON = function(url, callback)
 		return false;
 	}
 
-	var self = this;
-	with (this) {
+	var ajaxRequest = new XMLHttpRequest();
+	ajaxRequest.onreadystatechange = function () {
+		if (this.readyState == 4) {
+			if (!this.responseText) { /* alert("Could not load JSON from url '" + url + "'"); */ return false; }
+			if (!self.processJSON(this.responseText)) { alert("Invalid JSON data obtained from url '" + url + "'"); return false; }
+			self._callback('json', callback);
+		}
+	};
 
-		var ajaxRequest = new XMLHttpRequest();
-		ajaxRequest.onreadystatechange = function () {
-			if (this.readyState == 4) {
-				if (!this.responseText) { /* alert("Could not load JSON from url '" + orig_url + "'"); */ return false; }
-				if (!processJSON(this.responseText))  { alert("Invalid JSON data obtained from url '" + orig_url + "'"); return false; }
-				_callback('json', orig_url, callback);
-			}
-		};
-
-		ajaxRequest.open("GET", url, true);
-		ajaxRequest.send("");
-	}
+	ajaxRequest.open("GET", this._addUrlParameters(url, dataOnly), true);
+	ajaxRequest.send("");
 
 	return true;
 };
 
-EditableGrid.prototype._callback = function(type, url, callback)
+EditableGrid.prototype._addUrlParameters = function(baseUrl, dataOnly)
+{
+	// we add a dummy timestamp parameter to avoid getting an old version from the browser's cache
+	var sep = baseUrl.indexOf('?') >= 0 ? '&' : '?'; 
+	baseUrl += sep + (new Date().getTime());
+
+	if (!this.serverSide) return baseUrl;
+
+	// add pagination, filtering and sorting parameters to the base url
+	return baseUrl
+	+ "&page=" + (this.currentPageIndex + 1)
+	+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
+	+ "&sort=" + (this.sortedColumnName && this.sortedColumnName != -1 ? encodeURIComponent(this.sortedColumnName) : "")
+	+ "&asc=" + (this.sortDescending ? 0 : 1)
+	+ (dataOnly ? '' : '&metadata=1');
+};
+
+EditableGrid.prototype._callback = function(type, callback)
 {
 	if (callback) callback.call(this); 
 	else {
 
-		// replace refreshGrid to enable server-side pagination, sorting and filtering
 		if (this.serverSide) {
+
+			// deferred refreshGrid: first load the updated data from the server then call the original refreshGrid
 			this.refreshGrid = function(baseUrl) {
-
-				baseUrl = baseUrl || this.lastURL;
-				this.lastURL = baseUrl; 
-
-				// add pagination, filtering and sorting parameters to the last used url
-				var url = baseUrl + (baseUrl.indexOf('?') >= 0 ? '&' : '?')
-				+ "page=" + (this.currentPageIndex + 1)
-				+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
-				+ "&sort=" + (this.sortedColumnName && this.sortedColumnName != -1 ? encodeURIComponent(this.sortedColumnName) : "")
-				+ "&asc=" + (this.sortDescending ? 0 : 1);
-
-				// the original refreshGrid will be called after ajax request is done (ie. after updated data have been loaded)
 				var callback = function() { EditableGrid.prototype.refreshGrid.call(this); };
-
-				// load data using the parameterized url
-				if (type == 'xml') this.loadXML(url, callback);
-				else this.loadJSON(url, callback);
+				var load = type == 'xml' ? this.loadXML : this.loadJSON;
+				load.call(this, baseUrl || this.lastURL, callback, true);
 			};
 		}
 
-		this.lastURL = url; 
 		this.tableLoaded();
 	}
 };
@@ -545,7 +536,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 			var optionValues = columndata.values ? this._convertOptions(columndata.values) : null;
 			var optionValuesForRender = null;
 			if (optionValues) {
-				
+
 				// build a fast lookup structure for rendering
 				var optionValuesForRender = {};
 				for (var optionIndex = 0; optionIndex < optionValues.length; optionIndex++) {
@@ -559,7 +550,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 					else optionValuesForRender[optionValue.value] = optionValue.label;
 				}
 			}
-			
+
 			this.columns.push(new Column({
 				name: columndata.name,
 				label: (columndata.label ? columndata.label : columndata.name),
@@ -570,7 +561,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 				optionValues: optionValues
 			}));
 		}
-		
+
 		// process columns
 		this.processColumns();
 	}
@@ -582,7 +573,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		this.totalRowCount = jsonData.paginator.totalrowcount;
 		this.unfilteredRowCount = jsonData.paginator.unfilteredrowcount;
 	}
-	
+
 	// if no row id is provided, we create one since we need one
 	var defaultRowId = 1;
 
@@ -826,19 +817,19 @@ EditableGrid.prototype._createCellRenderer = function(column)
 {
 	column.cellRenderer = 
 		column.enumProvider && column.datatype == "list" && typeof MultiselectCellRenderer != 'undefined' ? new MultiselectCellRenderer() :
-		column.enumProvider ? new EnumCellRenderer() :
-		column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
-		column.datatype == "boolean" ? new CheckboxCellRenderer() : 
-		column.datatype == "email" ? new EmailCellRenderer() : 
-		column.datatype == "website" || column.datatype == "url" ? new WebsiteCellRenderer() : 
-		column.datatype == "date" ? new DateCellRenderer() :
-		new CellRenderer();
+			column.enumProvider ? new EnumCellRenderer() :
+				column.datatype == "integer" || column.datatype == "double" ? new NumberCellRenderer() :
+					column.datatype == "boolean" ? new CheckboxCellRenderer() : 
+						column.datatype == "email" ? new EmailCellRenderer() : 
+							column.datatype == "website" || column.datatype == "url" ? new WebsiteCellRenderer() : 
+								column.datatype == "date" ? new DateCellRenderer() :
+									new CellRenderer();
 
-							// give access to the column from the cell renderer
-							if (column.cellRenderer) {
-								column.cellRenderer.editablegrid = this;
-								column.cellRenderer.column = column;
-							}
+								// give access to the column from the cell renderer
+								if (column.cellRenderer) {
+									column.cellRenderer.editablegrid = this;
+									column.cellRenderer.column = column;
+								}
 };
 
 /**
@@ -864,19 +855,19 @@ EditableGrid.prototype._createCellEditor = function(column)
 {
 	column.cellEditor = 
 		column.enumProvider && column.datatype == "list" && typeof MultiselectCellEditor != 'undefined' ? new MultiselectCellEditor() :
-		column.enumProvider ? new SelectCellEditor() :
-		column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
-		column.datatype == "boolean" ? null :
-		column.datatype == "email" ? new TextCellEditor(column.precision) :
-		column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
-		column.datatype == "date" ? (typeof jQuery == 'undefined' || typeof jQuery.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
-		new TextCellEditor(column.precision);  
+			column.enumProvider ? new SelectCellEditor() :
+				column.datatype == "integer" || column.datatype == "double" ? new NumberCellEditor(column.datatype) :
+					column.datatype == "boolean" ? null :
+						column.datatype == "email" ? new TextCellEditor(column.precision) :
+							column.datatype == "website" || column.datatype == "url" ? new TextCellEditor(column.precision) :
+								column.datatype == "date" ? (typeof jQuery == 'undefined' || typeof jQuery.datepicker == 'undefined' ? new TextCellEditor(column.precision, 10) : new DateCellEditor({ fieldSize: column.precision, maxLength: 10 })) :
+									new TextCellEditor(column.precision);  
 
-							// give access to the column from the cell editor
-							if (column.cellEditor) {
-								column.cellEditor.editablegrid = this;
-								column.cellEditor.column = column;
-							}
+								// give access to the column from the cell editor
+								if (column.cellEditor) {
+									column.cellEditor.editablegrid = this;
+									column.cellEditor.column = column;
+								}
 };
 
 /**
@@ -909,7 +900,7 @@ EditableGrid.prototype.getUnfilteredRowCount = function()
 {
 	// given if server-side filtering is involved
 	if (this.unfilteredRowCount > 0) return this.unfilteredRowCount;
-	
+
 	var _data = this.dataUnfiltered == null ? this.data : this.dataUnfiltered; 
 	return _data.length;
 };
@@ -921,7 +912,7 @@ EditableGrid.prototype.getTotalRowCount = function()
 {
 	// different from getRowCount only is server-side pagination is involved
 	if (this.totalRowCount > 0) return this.totalRowCount;
-	
+
 	return this.getRowCount();
 };
 
@@ -1571,7 +1562,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 
 		lastSelectedRowIndex = -1;
 		_currentPageIndex = getCurrentPageIndex();
-					
+
 		// if we are already attached to an existing table, just update the cell contents
 		if (typeof table != "undefined" && table != null) {
 
@@ -1628,6 +1619,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 		// we must render a whole new table
 		else {
 
+			if (!containerid) return alert("The container ID not specified (renderGrid not called yet ?)");
 			if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
 
 			currentContainerid = containerid;
@@ -1709,23 +1701,19 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 {
 	// restore stored parameters, or use default values if nothing stored
-	var pageIndex = this.localisset('pageIndex') ? parseInt(this.localget('pageIndex')) : 0;
+	this.currentPageIndex = this.localisset('pageIndex') ? parseInt(this.localget('pageIndex')) : 0;
 	this.sortedColumnName = this.localisset('sortColumnIndexOrName') && this.hasColumn(this.localget('sortColumnIndexOrName')) ? this.localget('sortColumnIndexOrName') : -1;
 	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
 	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
-	
+
 	// actually render grid
-	this.currentPageIndex = 0;
 	this._rendergrid(containerid, className, tableid);
 
-	// sort and filter table
+	// if client side: sort and filter
 	if (!this.serverSide) {
 		this.sort() ;
 		this.filter();
 	}
-	
-	// go to stored page (or first if nothing stored)
-	this.setPageIndex(pageIndex < 0 ? 0 : pageIndex);
 };
 
 /**
@@ -1900,7 +1888,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 
 		// if filtering is done on server-side, we are done here
 		if (serverSide) return setPageIndex(0);
-		
+
 		// un-filter if no or empty filter set
 		if (currentFilter == null || currentFilter == "") {
 			if (dataUnfiltered != null) {
@@ -1925,7 +1913,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 			var row = data[r];
 			row.visible = true;
 			var rowContent = ""; 
-			
+
 			// add column values
 			for (var c = 0; c < columnCount; c++) {
 				if (getColumnType(c) == 'boolean') continue;
@@ -1934,12 +1922,12 @@ EditableGrid.prototype.filter = function(filterString, cols)
 				rowContent += displayValue + " " + (displayValue == value ? "" : value + " ");
 			}
 
-			
+
 			// add attribute values
 			for (var attributeName in row) {
 				if (attributeName != "visible" && attributeName != "originalIndex" && attributeName != "columns") rowContent += row[attributeName];
 			}
-			
+
 			// if row contents do not match one word in the filter, hide the row
 			for (var i = 0; i < words.length; i++) {
 				var word = words[i];
@@ -1948,7 +1936,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 				// a word starting with "!" means that we want a NON match
 				var invertMatch = word.startsWith("!");
 				if (invertMatch) word = word.substr(1);
-				
+
 				// if word is of the form "colname/attributename=value" or "colname/attributename!=value", only this column/attribute is used
 				var colindex = -1;
 				var attributeName = null;
@@ -2041,7 +2029,7 @@ EditableGrid.prototype.getCurrentPageIndex = function()
 {
 	// if pagination is handled on the server side, pageSize will (must) be 0
 	if (this.pageSize <= 0 && !this.serverSide) return 0;
-		
+
 	// if page index does not exist anymore, go to last page (without losing the information of the current page)
 	return Math.max(0, this.currentPageIndex >= this.getPageCount() ? this.getPageCount() - 1 : this.currentPageIndex);
 };
