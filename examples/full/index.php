@@ -53,9 +53,9 @@
 			}; 
 		</script>
 		
-		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['php'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadJSON("datasource/demo.php"); } </script> <? } ?>	
-		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['xml'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadXML("datasource/<?php echo isset($_GET['php']) ? "demo.php?xml" : "demo.xml" ?>"); } </script> <? } ?>	
-		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadHTML("htmlgrid"); } </script> <? } ?>	
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['php'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadJSON("datasource/demo.php"); } </script> <?php } ?>	
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['xml'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadXML("datasource/<?php echo isset($_GET['php']) ? "demo.php?xml" : "demo.xml" ?>"); } </script> <?php } ?>	
+		<!-- [DO NOT DEPLOY] --> <?php if (isset($_GET['attach'])) { ?><script type="text/javascript">window.onload = function() { editableGrid.onloadHTML("htmlgrid"); } </script> <?php } ?>	
 	</head>
 	
 	<body>
