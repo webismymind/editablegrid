@@ -513,6 +513,44 @@ EditableGrid.prototype.load = function(object)
 };
 
 /**
+ * Update and render data for given rows from a Javascript object
+ */
+EditableGrid.prototype.update = function(object)
+{
+	if (object.data) for (var i = 0; i < object.data.length; i++) 
+	{
+		var row = object.data[i];
+		if (!row.id || !row.values) continue;
+
+		// get row to update in our model
+		var rowIndex = this.getRowIndex(row.id);
+		var rowData = this.data[rowIndex];
+
+		// row values can be given as an array (same order as columns) or as an object (associative array)
+		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
+		else {
+			cellValues = {};
+			for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
+		}
+
+		// set all attributes that may have been set in the JSON
+		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
+
+		// get column values for this rows
+		rowData.columns = [];
+		for (var c = 0; c < this.columns.length; c++) {
+			var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
+			rowData.columns.push(this.getTypedValue(c, cellValue));
+		}
+
+		// render row
+		var tr = this.getRow(rowIndex);
+		for (var j = 0; j < tr.cells.length && j < this.columns.length; j++)  if (this.columns[j].renderable) this.columns[j].cellRenderer._render(rowIndex, j, tr.cells[j], this.getValueAt(rowIndex,j));
+		this.tableRendered(this.currentContainerid, this.currentClassName, this.currentTableid);
+	}
+};
+
+/**
  * Process the JSON content
  * @private
  */
