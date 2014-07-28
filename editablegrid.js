@@ -472,7 +472,7 @@ EditableGrid.prototype._addUrlParameters = function(baseUrl, dataOnly)
 	+ "&filter=" + (this.currentFilter ? encodeURIComponent(this.currentFilter) : "")
 	+ "&sort=" + (this.sortedColumnName && this.sortedColumnName != -1 ? encodeURIComponent(this.sortedColumnName) : "")
 	+ "&asc=" + (this.sortDescending ? 0 : 1)
-	+ (dataOnly ? '' : '&metadata=1');
+	+ (dataOnly ? '&data_only=1' : '');
 };
 
 EditableGrid.prototype._callback = function(type, callback)
