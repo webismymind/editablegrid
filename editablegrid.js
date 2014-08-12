@@ -253,7 +253,7 @@ EditableGrid.prototype.loadXML = function(url, callback, dataOnly)
 		xmlDoc.onreadystatechange = function () {
 			if (this.readyState == 4) {
 				xmlDoc = this.responseXML;
-				if (!xmlDoc) { /* alert("Could not load XML from url '" + url + "'"); */ return false; }
+				if (!xmlDoc) { console.error("Could not load XML from url '" + url + "'"); return false; }
 				self.processXML();
 				self._callback('xml', callback);
 			}
@@ -400,7 +400,7 @@ EditableGrid.prototype.processXML = function()
 			for (var j = 0; j < cols.length; j++) {
 				var colname = cols[j].getAttribute("name");
 				if (!colname) {
-					if (j >= columns.length) alert("You defined too many columns for row " + (i+1));
+					if (j >= columns.length) console.error("You defined too many columns for row " + (i+1));
 					else colname = columns[j].name; 
 				}
 				cellValues[colname] = cols[j].firstChild ? cols[j].firstChild.nodeValue : "";
@@ -446,8 +446,8 @@ EditableGrid.prototype.loadJSON = function(url, callback, dataOnly)
 	var ajaxRequest = new XMLHttpRequest();
 	ajaxRequest.onreadystatechange = function () {
 		if (this.readyState == 4) {
-			if (!this.responseText) { /* alert("Could not load JSON from url '" + url + "'"); */ return false; }
-			if (!self.processJSON(this.responseText)) { alert("Invalid JSON data obtained from url '" + url + "'"); return false; }
+			if (!this.responseText) { console.error("Could not load JSON from url '" + url + "'"); return false; }
+			if (!self.processJSON(this.responseText)) { console.error("Invalid JSON data obtained from url '" + url + "'"); return false; }
 			self._callback('json', callback);
 		}
 	};
@@ -801,7 +801,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 
 	// get pointers to table components
 	this.table = typeof _table == 'string' ? _$(_table) : _table ;
-	if (!this.table) alert("Invalid table given: " + _table);
+	if (!this.table) console.error("Invalid table given: " + _table);
 	this.tHead = this.table.tHead;
 	this.tBody = this.table.tBodies[0];
 
@@ -979,7 +979,7 @@ EditableGrid.prototype.hasColumn = function(columnIndexOrName)
 EditableGrid.prototype.getColumn = function(columnIndexOrName)
 {
 	var colIndex = this.getColumnIndex(columnIndexOrName);
-	if (colIndex < 0) { alert("[getColumn] Column not found with index or name " + columnIndexOrName); return null; }
+	if (colIndex < 0) { console.error("[getColumn] Column not found with index or name " + columnIndexOrName); return null; }
 	return this.columns[colIndex];
 };
 
@@ -1056,13 +1056,13 @@ EditableGrid.prototype.isColumnNumerical = function(columnIndexOrName)
 EditableGrid.prototype.getValueAt = function(rowIndex, columnIndex)
 {
 	// check and get column
-	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[getValueAt] Invalid column index " + columnIndex); return null; }
+	if (columnIndex < 0 || columnIndex >= this.columns.length) { console.error("[getValueAt] Invalid column index " + columnIndex); return null; }
 	var column = this.columns[columnIndex];
 
 	// get value in model
 	if (rowIndex < 0) return column.label;
 
-	if (typeof this.data[rowIndex] == 'undefined') { alert("[getValueAt] Invalid row index " + rowIndex); return null; }
+	if (typeof this.data[rowIndex] == 'undefined') { console.error("[getValueAt] Invalid row index " + rowIndex); return null; }
 	var rowData = this.data[rowIndex]['columns'];
 	return rowData ? rowData[columnIndex] : null;
 };
@@ -1097,7 +1097,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 	var previousValue = null;;
 
 	// check and get column
-	if (columnIndex < 0 || columnIndex >= this.columns.length) { alert("[setValueAt] Invalid column index " + columnIndex); return null; }
+	if (columnIndex < 0 || columnIndex >= this.columns.length) { console.error("[setValueAt] Invalid column index " + columnIndex); return null; }
 	var column = this.columns[columnIndex];
 
 	// set new value in model
@@ -1147,7 +1147,7 @@ EditableGrid.prototype.getColumnIndex = function(columnIndexOrName)
 EditableGrid.prototype.getRow = function(rowIndex)
 {
 	if (rowIndex < 0) return this.tHead.rows[rowIndex + this.nbHeaderRows];
-	if (typeof this.data[rowIndex] == 'undefined') { alert("[getRow] Invalid row index " + rowIndex); return null; }
+	if (typeof this.data[rowIndex] == 'undefined') { console.error("[getRow] Invalid row index " + rowIndex); return null; }
 	return _$(this._getRowDOMId(this.data[rowIndex].id));
 };
 
@@ -1362,7 +1362,7 @@ EditableGrid.prototype.insertAfter = function(rowIndex, rowId, cellValues, rowAt
 EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRenderer)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setHeaderRenderer] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[setHeaderRenderer] Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
 		column.headerRenderer = (this.enableSort && column.datatype != "html") ? new SortHeaderRenderer(column.name, cellRenderer) : cellRenderer;
@@ -1387,7 +1387,7 @@ EditableGrid.prototype.setHeaderRenderer = function(columnIndexOrName, cellRende
 EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRenderer)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setCellRenderer] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[setCellRenderer] Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
 		column.cellRenderer = cellRenderer;
@@ -1408,7 +1408,7 @@ EditableGrid.prototype.setCellRenderer = function(columnIndexOrName, cellRendere
 EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setCellEditor] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[setCellEditor] Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
 		column.cellEditor = cellEditor;
@@ -1429,7 +1429,7 @@ EditableGrid.prototype.setCellEditor = function(columnIndexOrName, cellEditor)
 EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setHeaderEditor] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[setHeaderEditor] Invalid column: " + columnIndexOrName);
 	else {
 		var column = this.columns[columnIndex];
 		column.headerEditor = cellEditor;
@@ -1450,7 +1450,7 @@ EditableGrid.prototype.setHeaderEditor = function(columnIndexOrName, cellEditor)
 EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvider)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[setEnumProvider] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[setEnumProvider] Invalid column: " + columnIndexOrName);
 	else {
 		var hadProviderAlready = this.columns[columnIndex].enumProvider != null;
 		this.columns[columnIndex].enumProvider = enumProvider;
@@ -1472,7 +1472,7 @@ EditableGrid.prototype.setEnumProvider = function(columnIndexOrName, enumProvide
 EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[clearCellValidators] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[clearCellValidators] Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators = [];
 };
 
@@ -1483,7 +1483,7 @@ EditableGrid.prototype.clearCellValidators = function(columnIndexOrName)
 EditableGrid.prototype.addDefaultCellValidators = function(columnIndexOrName)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[addDefaultCellValidators] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[addDefaultCellValidators] Invalid column: " + columnIndexOrName);
 	return this._addDefaultCellValidators(this.columns[columnIndex]);
 };
 
@@ -1507,7 +1507,7 @@ EditableGrid.prototype._addDefaultCellValidators = function(column)
 EditableGrid.prototype.addCellValidator = function(columnIndexOrName, cellValidator)
 {
 	var columnIndex = this.getColumnIndex(columnIndexOrName);
-	if (columnIndex < 0) alert("[addCellValidator] Invalid column: " + columnIndexOrName);
+	if (columnIndex < 0) console.error("[addCellValidator] Invalid column: " + columnIndexOrName);
 	else this.columns[columnIndex].cellValidators.push(cellValidator);
 };
 
@@ -1528,7 +1528,7 @@ EditableGrid.prototype.setCaption = function(caption)
 EditableGrid.prototype.getCell = function(rowIndex, columnIndex)
 {
 	var row = this.getRow(rowIndex);
-	if (row == null) { alert("[getCell] Invalid row index " + rowIndex); return null; }
+	if (row == null) { console.error("[getCell] Invalid row index " + rowIndex); return null; }
 	return row.cells[columnIndex];
 };
 
@@ -1658,8 +1658,8 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 		// we must render a whole new table
 		else {
 
-			if (!containerid) return alert("The container ID not specified (renderGrid not called yet ?)");
-			if (!_$(containerid)) return alert("Unable to get element [" + containerid + "]");
+			if (!containerid) return console.error("The container ID not specified (renderGrid not called yet ?)");
+			if (!_$(containerid)) return console.error("Unable to get element [" + containerid + "]");
 
 			currentContainerid = containerid;
 			currentClassName = className;
@@ -1856,7 +1856,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 		if (parseInt(columnIndex, 10) !== -1) {
 			columnIndex = this.getColumnIndex(columnIndexOrName);
 			if (columnIndex < 0) {
-				alert("[sort] Invalid column: " + columnIndexOrName);
+				console.error("[sort] Invalid column: " + columnIndexOrName);
 				return false;
 			}
 		}
@@ -2051,7 +2051,7 @@ EditableGrid.prototype.getPageCount = function()
 {
 	if (this.getRowCount() == 0) return 0;
 	if (this.pageCount > 0) return this.pageCount; // server side pagination
-	else if (this.pageSize <= 0) { alert("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	else if (this.pageSize <= 0) { console.error("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
 	return Math.ceil(this.getRowCount() / this.pageSize);
 };
 
@@ -2134,7 +2134,7 @@ EditableGrid.prototype.canGoForward = function()
 
 /**
  * Returns an interval { startPageIndex: ..., endPageIndex: ... } so that a window of the given size is visible around the current page (hence the 'sliding').
- * If pagination is not enabled this method displays an alert and returns null.
+ * If pagination is not enabled this method displays an error and returns null.
  * If pagination is enabled but there is only one page this function returns null (wihtout error).
  * @param slidingWindowSize size of the visible window
  * @return
