@@ -21,16 +21,22 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 
 	// remove existing content	
 	while (element.hasChildNodes()) element.removeChild(element.firstChild);
-	
+
 	// clear isEditing (in case a currently editeed is being re-rendered by some external call)
 	element.isEditing = false;
 
-	// always apply the number style to numerical cells and column headers
+	// always apply the number class to numerical cells and column headers
 	if (this.column.isNumerical()) EditableGrid.prototype.addClassName(element, "number");
 
-	// always apply the boolean style to boolean column headers
+	// always apply the boolean class to boolean column headers
 	if (this.column.datatype == 'boolean') EditableGrid.prototype.addClassName(element, "boolean");
-		
+
+	// apply a css class corresponding to the column name
+	EditableGrid.prototype.addClassName(element, "editablegrid-" + this.column.name);
+
+	// add a data-title attribute used for responsiveness
+	element.setAttribute('data-title', this.column.label);
+
 	// call the specialized render method
 	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, ' &nbsp;')) : value);
 };
@@ -95,18 +101,18 @@ NumberCellRenderer.prototype.render = function(element, value)
 	var isNAN = value === null || (typeof value == 'number' && isNaN(value));
 	var displayValue = isNAN ? (column.nansymbol || "") : value;
 	if (typeof displayValue == 'number') {
-		
+
 		if (column.precision !== null) {
 			// displayValue = displayValue.toFixed(column.precision);
 			displayValue = number_format(displayValue, column.precision, column.decimal_point, column.thousands_separator);
 		}
-		
+
 		if (column.unit !== null) {
 			if (column.unit_before_number) displayValue = column.unit + ' ' + displayValue;
 			else displayValue = displayValue + ' ' + column.unit;
 		}
 	}
-	
+
 	element.innerHTML = displayValue;
 	element.style.fontWeight = isNAN ? "normal" : "";
 };
@@ -130,6 +136,12 @@ CheckboxCellRenderer.prototype._render = function(rowIndex, columnIndex, element
 	element.rowIndex = rowIndex; 
 	element.columnIndex = columnIndex;
 
+	// apply a css class corresponding to the column name
+	EditableGrid.prototype.addClassName(element, "editablegrid-" + this.column.name);
+
+	// add a data-title attribute used for responsiveness
+	element.setAttribute('data-title', this.column.label);
+
 	// call the specialized render method
 	return this.render(element, value);
 };
@@ -141,7 +153,7 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 
 	// if check box already created, just update its state
 	if (element.firstChild) { element.firstChild.checked = value; return; }
-	
+
 	// create and initialize checkbox
 	var htmlInput = document.createElement("input"); 
 	htmlInput.setAttribute("type", "checkbox");
@@ -163,8 +175,8 @@ CheckboxCellRenderer.prototype.render = function(element, value)
 	element.appendChild(htmlInput);
 	htmlInput.checked = value;
 	htmlInput.disabled = (!this.column.editable || !this.editablegrid.isEditable(element.rowIndex, element.columnIndex));
-	
-	element.className = "boolean";
+
+	EditableGrid.prototype.addClassName(element, "boolean");
 };
 
 /**
@@ -222,7 +234,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 {
 	if (!value) { if (this.cellRenderer) this.cellRenderer.render(cell, value); }
 	else {
-						
+
 		// create a link that will sort (alternatively ascending/descending)
 		var link = document.createElement("a");
 		cell.appendChild(link);
@@ -237,7 +249,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 				var cols = tHead.rows[0].cells;
 				var clearPrevious = -1;
 				var backOnFirstPage = false;
-				
+
 				if (sortedColumnName != this.columnName) {
 					clearPrevious = sortedColumnName;
 					sortedColumnName = this.columnName;
@@ -253,7 +265,7 @@ SortHeaderRenderer.prototype.render = function(cell, value)
 						backOnFirstPage = true;
 					}
 				} 
-				
+
 				// render header for previous sort column (not needed anymore since the grid is now fully refreshed after a sort - cf. possible pagination)
 				// var j = getColumnIndex(clearPrevious);
 				// if (j >= 0) columns[j].headerRenderer._render(-1, j, cols[j], columns[j].label);
