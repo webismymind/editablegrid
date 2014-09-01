@@ -236,41 +236,41 @@ EditableGrid.prototype.loadXML = function(url, callback, dataOnly)
 	// IE
 	if (window.ActiveXObject) 
 	{
-		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-		xmlDoc.onreadystatechange = function() {
-			if (xmlDoc.readyState == 4) {
+		this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		this.xmlDoc.onreadystatechange = function() {
+			if (self.xmlDoc.readyState == 4) {
 				self.processXML();
 				self._callback('xml', callback);
 			}
 		};
-		xmlDoc.load(this._addUrlParameters(url, dataOnly));
+		this.xmlDoc.load(this._addUrlParameters(url, dataOnly));
 	}
 
 	// generic Ajax
 	else if (window.XMLHttpRequest) 
 	{
-		xmlDoc = new XMLHttpRequest();
-		xmlDoc.onreadystatechange = function () {
+		this.xmlDoc = new XMLHttpRequest();
+		this.xmlDoc.onreadystatechange = function () {
 			if (this.readyState == 4) {
-				xmlDoc = this.responseXML;
-				if (!xmlDoc) { console.error("Could not load XML from url '" + url + "'"); return false; }
+				self.xmlDoc = this.responseXML;
+				if (!self.xmlDoc) { console.error("Could not load XML from url '" + url + "'"); return false; }
 				self.processXML();
 				self._callback('xml', callback);
 			}
 		};
-		xmlDoc.open("GET", this._addUrlParameters(url, dataOnly), true);
-		xmlDoc.send("");
+		this.xmlDoc.open("GET", this._addUrlParameters(url, dataOnly), true);
+		this.xmlDoc.send("");
 	}
 
 	// Firefox (and some other browsers) 
 	else if (document.implementation && document.implementation.createDocument) 
 	{
-		xmlDoc = document.implementation.createDocument("", "", null);
-		xmlDoc.onload = function() {
+		this.xmlDoc = document.implementation.createDocument("", "", null);
+		this.xmlDoc.onload = function() {
 			self.processXML();
 			self._callback('xml', callback);
 		};
-		xmlDoc.load(this._addUrlParameters(url, dataOnly));
+		this.xmlDoc.load(this._addUrlParameters(url, dataOnly));
 	}
 
 	// should never happen
