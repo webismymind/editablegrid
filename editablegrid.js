@@ -216,6 +216,7 @@ EditableGrid.prototype.chartRendered = function() {};
 EditableGrid.prototype.tableRendered = function(containerid, className, tableid) {};
 EditableGrid.prototype.tableSorted = function(columnIndex, descending) {};
 EditableGrid.prototype.tableFiltered = function() {};
+EditableGrid.prototype.openedCellEditor = function(rowIndex, columnIndex) {};
 EditableGrid.prototype.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {};
 EditableGrid.prototype.rowSelected = function(oldRowIndex, newRowIndex) {};
 EditableGrid.prototype.isHeaderEditable = function(rowIndex, columnIndex) { return false; };

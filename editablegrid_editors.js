@@ -131,6 +131,10 @@ CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adj
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
 		editorzone.appendChild(editorInput);
 	}
+
+	if (element && element.isEditing && this.editablegrid.openedCellEditor) {
+		this.editablegrid.openedCellEditor(element.rowIndex, element.columnIndex);
+	}
 };
 
 CellEditor.prototype._clearEditor = function(element) 
