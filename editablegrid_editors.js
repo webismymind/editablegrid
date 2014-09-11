@@ -257,7 +257,11 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
  * @class Class to edit a numeric cell with an HTML text input 
  */
 
-function NumberCellEditor(type) { this.type = type; }
+function NumberCellEditor(type, config) { 
+	this.type = type;
+	this.init(config);
+}
+
 NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
 //editorValue is called in getEditor to initialize field
