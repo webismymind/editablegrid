@@ -56,9 +56,14 @@ class EditableGrid {
 		return $values;
 	}
 
-	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $bar = true)
+	public function addColumn($name, $label, $type, $values = NULL, $editable = true, $field = NULL, $bar = true, $hidden = false)
 	{
-		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "bar" => $bar, "values" => $values );
+		$this->columns[$name] = array("field" => $field ? $field : $name, "label" => $label, "type" => $type, "editable" => $editable, "bar" => $bar, "hidden" => $hidden, "values" => $values);
+	}
+
+	public function setHiddenColumns($columns)
+	{
+		foreach ($columns as $column) if (isset($this->columns[$column])) $this->columns[$column]['hidden'] = true;
 	}
 
 	/**
@@ -101,6 +106,7 @@ class EditableGrid {
 				$columnNode->setAttribute('label', @iconv($this->encoding, "utf-8//IGNORE", $info['label']));
 				$columnNode->setAttribute('datatype', @iconv($this->encoding, "utf-8//IGNORE", $info['type']));
 				if (!$info['bar']) $columnNode->setAttribute('bar', 'false');
+				if ($info['hidden']) $columnNode->setAttribute('hidden', 'true');
 				$columnNode->setAttribute('editable', $info['editable'] ? "true" : "false");
 
 				if (is_array($info['values'])) {
@@ -203,6 +209,7 @@ class EditableGrid {
 				"label" => @iconv($this->encoding, "utf-8//IGNORE", $info['label']),
 				"datatype" => $info['type'],
 				"bar" => $info['bar'],
+				"hidden" => $info['hidden'],
 				"editable" => $info['editable'],
 				"values" => is_array($info['values']) ? self::mapToArray($info['values']) : NULL
 				);
