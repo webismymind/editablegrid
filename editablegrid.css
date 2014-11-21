@@ -5,6 +5,10 @@ td.number {
 	white-space: nowrap;
 }
 
+th.number {
+	text-align: right;
+}
+
 td.boolean {
 	text-align: center;
 }

@@ -93,8 +93,8 @@ EditableGrid.prototype.unsort = function(a,b)
 
 EditableGrid.prototype.sort_numeric = function(a,b) 
 {
-	aa = isNaN(a[0]) ? 0 : parseFloat(a[0]);
-	bb = isNaN(b[0]) ? 0 : parseFloat(b[0]);
+	aa = isNaN(parseFloat(a[0])) ? 0 : parseFloat(a[0]);
+	bb = isNaN(parseFloat(b[0])) ? 0 : parseFloat(b[0]);
 	return aa-bb;
 };
 
