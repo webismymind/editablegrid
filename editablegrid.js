@@ -1181,6 +1181,11 @@ EditableGrid.prototype.getRowIndex = function(rowId)
  */
 EditableGrid.prototype.getRowAttribute = function(rowIndex, attributeName)
 {
+	if (typeof this.data[rowIndex] == 'undefined') {
+		console.error('Invalid rowindex ' + rowIndex);
+		return null;
+	}
+
 	return this.data[rowIndex][attributeName];
 };
 

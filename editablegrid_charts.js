@@ -352,7 +352,10 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 
 		// reload or create new swf chart
 		var swf = findSWF(divId);
-		if (swf && typeof swf.load == "function") swf.load(JSON.stringify(chart));
+		if (swf && typeof swf.load == "function") {
+			try { swf.load(JSON.stringify(chart)); }
+			catch (ex) { console.error(ex); }
+		}
 		else {
 			var div = _$(divId);
 			EditableGrid_pending_charts[divId] = chart;

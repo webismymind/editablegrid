@@ -43,7 +43,8 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 
 CellRenderer.prototype.render = function(element, value) 
 {
-	element.innerHTML = value ? value : "";
+	var _value = typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, ' &nbsp;')) : value;
+	element.innerHTML = _value ? _value : "";
 };
 
 CellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
