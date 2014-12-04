@@ -1,27 +1,18 @@
-var EditableGrid_pending_charts = {};
 var EditableGrid_check_lib = true;
-
-function EditableGrid_loadChart(divId)
-{
-	var swf = findSWF(divId);
-	if (swf && typeof swf.load == "function") swf.load(JSON.stringify(EditableGrid_pending_charts[divId]));
-	else setTimeout("EditableGrid_loadChart('"+divId+"');", 100);
-}
-
-function EditableGrid_get_chart_data(divId) 
-{
-	setTimeout("EditableGrid_loadChart('"+divId+"');", 100);
-	return JSON.stringify(EditableGrid_pending_charts[divId]);
-}
 
 EditableGrid.prototype.checkChartLib = function()
 {
 	EditableGrid_check_lib = false;
-	if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
-	else if (typeof findSWF == 'undefined') { alert('This method needs the open flash chart javascript library (findSWF)'); return false; }
-	else if (typeof ofc_chart == 'undefined') { alert('This method needs the open flash chart javascript library (ofc_chart)'); return false; }
-	else if (typeof swfobject == 'undefined') { alert('This method needs the swfobject javascript library'); return false; }
-	else return true;
+	// TODO: check HighCharts presence
+	// if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
+	return true;
+};
+
+EditableGrid.prototype.hex2rgba = function(hexColor, alpha)
+{
+	if (typeof alpha == 'undefined') alpha = 1.0;
+	var color = {red: parseInt(hexColor.substr(1,2),16), green: parseInt(hexColor.substr(3,2),16), blue:  parseInt(hexColor.substr(5,2),16)};
+	return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 };
 
 /**
@@ -30,99 +21,107 @@ EditableGrid.prototype.checkChartLib = function()
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.9), limit (0), bar3d (true), rotateXLabels (0) 
+ * @param options: legend (label of labelColumnIndexOrName), bgColor (transparent), alpha (0.9), limit (0), bar3d (true), rotateXLabels (0) 
  * @return
  */
+
 EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
+	// default options
+	this.legend = null;
+	this.bgColor = null; // transparent
+	this.alpha = 0.9;
+	this.limit = 0;
+	this.bar3d = false;
+	this.rotateXLabels = 0;
+
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
-		// default options
-		this.legend = null;
-		this.bgColor = "#ffffff";
-		this.alpha = 0.9;
-		this.limit = 0;
-		this.bar3d = true;
-		this.rotateXLabels = 0;
-
 		// override default options with the ones given
 		if (options) for (var p in options) this[p] = options[p];
 
+		// get useful values
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
-
-		var chart = new ofc_chart();
-		chart.bg_colour = bgColor;
-		chart.set_title({text: title || '', style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
-
 		var columnCount = getColumnCount();
 		var rowCount = getRowCount() - (ignoreLastRow ? 1 : 0);
 		if (limit > 0 && rowCount > limit) rowCount = limit;
 
+		// base chart
+		var chart = {
+
+				chart: {
+					type: 'column',
+					backgroundColor: bgColor,
+					plotBackgroundColor: bgColor,
+					options3d: { 
+						enabled: bar3d
+					}
+				},
+
+				credits: {
+					enabled: false
+				},
+
+				title: {
+					text: title
+				},
+
+				tooltip: {
+					pointFormat: '{series.name}: <b>{point.formattedValue}</b>'
+				}
+		};
+
+		// xaxis with legend and rotation
+		chart.xAxis = { 
+				title: { text:  legend || getColumnLabel(labelColumnIndexOrName) }, 
+				labels: { rotation: rotateXLabels } 
+		};
+
+		// on category for each row
+		chart.xAxis.categories = []; 
+		for (var r = 0; r < rowCount; r++) {
+			if (getRowAttribute(r, "skip") == "1") continue;
+			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
+			chart.xAxis.categories.push(label ? label : getValueAt(r, cLabel));
+		}
+
+		// one serie for each bar column
+		chart.series = [];
+		var minvalue = 0;
 		var maxvalue = 0;
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
-			var bar = new ofc_element(bar3d ? "bar_3d" : "bar");
-			bar.alpha = alpha;
-			bar.colour = smartColorsBar[chart.elements.length % smartColorsBar.length];
-			bar.fill = "transparent";
-			bar.text = getColumnLabel(c);
+
+			// serie's name and color
+			var serie = { 
+					name: getColumnLabel(c), 
+					color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
+					data: []
+			};
+
+			// data: one value per row
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
 				if (value > maxvalue) maxvalue = value; 
-				bar.values.push(value);
+				if (value < minvalue) minvalue = value; 
+				serie.data.push({ y: value, formattedValue: getCell(r,c).innerHTML });
 			}
-			chart.add_element(bar);
+
+			chart.series.push(serie);
 		}
 
-		// round the y max value
-		var ymax = 10;
-		while (ymax < maxvalue) ymax *= 10;
-		var dec_step = ymax / 10;
-		while (ymax - dec_step > maxvalue) ymax -= dec_step;
-
-		var xLabels = [];
-		for (var r = 0; r < rowCount; r++) {
-			if (getRowAttribute(r, "skip") == "1") continue;
-			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
-			xLabels.push(label ? label : getValueAt(r,cLabel));
-		}
-
-		chart.x_axis = {
-				stroke: 1,
-				tick_height:  10,
-				colour: "#E2E2E2",
-				"grid-colour": "#E2E2E2",
-				labels: { rotate: rotateXLabels, labels: xLabels },
-				"3d": 5
+		// y axis with no title and min/max value
+		chart.yAxis = {
+				min: (minvalue < 0 ? minvalue : 0),
+				max: maxvalue,
+				title: { text: "" } 
 		};
 
-		chart.y_axis = {
-				stroke: 4,
-				tick_length: 3,
-				colour: "#428BC7",
-				"grid-colour": "#E2E2E2",
-				offset: 0,
-				steps: ymax / 10.0,
-				max: ymax
-		};
-
-		// chart.num_decimals = 0;
-
-		chart.x_legend = {
-				text: legend || getColumnLabel(labelColumnIndexOrName),
-				style: "{font-size: 11px; color: #000033}"
-		};
-
-		chart.y_legend = {
-				text: "",
-				style: "{font-size: 11px; color: #000033}"
-		};
-
-		updateChart(divId, chart);
+		$('#' + divId).highcharts(chart);
 	}
 };
 
@@ -132,110 +131,12 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.8), limit (0), rotateXLabels (0) 
+ * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.9), limit (0), rotateXLabels (0) 
  * @return
  */
 EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
-	with (this) {
-
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
-
-		// default options
-		this.legend = null;
-		this.bgColor = "#ffffff";
-		this.alpha = 0.8;
-		this.limit = 0;
-		this.rotateXLabels = 0;
-
-		// override default options with the ones given
-		if (options) for (var p in options) this[p] = options[p];
-
-		labelColumnIndexOrName = labelColumnIndexOrName || 0;
-		var cLabel = getColumnIndex(labelColumnIndexOrName);
-
-		var chart = new ofc_chart();
-		chart.bg_colour = bgColor;
-		chart.set_title({text: title || '', style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
-
-		var columnCount = getColumnCount();
-		var rowCount = getRowCount() - (ignoreLastRow ? 1 : 0);
-		if (limit > 0 && rowCount > limit) rowCount = limit;
-
-		var maxvalue = 0;
-		var bar = new ofc_element("bar_stack");
-		bar.alpha = alpha;
-		bar.colours = smartColorsBar;
-		bar.fill = "transparent";
-		bar.keys = [];
-
-		for (var c = 0; c < columnCount; c++) {
-			if (!isColumnBar(c)) continue;
-			bar.keys.push({ colour: smartColorsBar[bar.keys.length % smartColorsBar.length], text: getColumnLabel(c), "font-size": '13' });
-		}
-
-		for (var r = 0; r < rowCount; r++) {
-			if (getRowAttribute(r, "skip") == "1") continue;
-			var valueRow = [];
-			var valueStack = 0;
-			for (var c = 0; c < columnCount; c++) {
-				if (!isColumnBar(c)) continue;
-				var value = getValueAt(r,c);
-				value = isNaN(value) ? 0 : value;
-				valueStack += value;
-				valueRow.push(value);
-			}
-			if (valueStack > maxvalue) maxvalue = valueStack; 
-			bar.values.push(valueRow);
-		}
-
-		chart.add_element(bar);
-
-		// round the y max value
-		var ymax = 10;
-		while (ymax < maxvalue) ymax *= 10;
-		var dec_step = ymax / 10;
-		while (ymax - dec_step > maxvalue) ymax -= dec_step;
-
-		var xLabels = [];
-		for (var r = 0; r < rowCount; r++) {
-			if (getRowAttribute(r, "skip") == "1") continue;
-			xLabels.push("aa " + getValueAt(r,cLabel));
-		}
-
-		chart.x_axis = {
-				stroke: 1,
-				tick_height:  10,
-				colour: "#E2E2E2",
-				"grid-colour": "#E2E2E2",
-				labels: { rotate: rotateXLabels, labels: xLabels },
-				"3d": 5
-		};
-
-		chart.y_axis = {
-				stroke: 4,
-				tick_length: 3,
-				colour: "#428BC7",
-				"grid-colour": "#E2E2E2",
-				offset: 0,
-				steps: ymax / 10.0,
-				max: ymax
-		};
-
-		// chart.num_decimals = 0;
-
-		chart.x_legend = {
-				text: legend || getColumnLabel(labelColumnIndexOrName),
-				style: "{font-size: 11px; color: #000033}"
-		};
-
-		chart.y_legend = {
-				text: "",
-				style: "{font-size: 11px; color: #000033}"
-		};
-
-		updateChart(divId, chart);
-	}
+	// TODO
 };
 
 /**
@@ -244,49 +145,80 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
  * @param title
  * @param valueColumnIndexOrName
  * @param labelColumnIndexOrName: if same as valueColumnIndexOrName, the chart will display the frequency of values in this column 
- * @param options: startAngle (0), bgColor (#ffffff), alpha (0.5), limit (0), gradientFill (true) 
+ * @param options: startAngle (0), bgColor (transparent), alpha (0.9), limit (0), gradientFill (true) 
  * @return
  */
 EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) 
 {
+	// default options
+	this.startAngle = 0;
+	this.bgColor = null; // transparent
+	this.alpha = 0.9;
+	this.limit = 0;
+	this.pie3d = false,
+	this.gradientFill = true;
+
+	// override default options with the ones given
+	if (options) for (var p in options) this[p] = options[p];
+
 	with (this) {
 
 		if (EditableGrid_check_lib && !checkChartLib()) return false;
 
-		// default options
-		this.startAngle = 0;
-		this.bgColor = "#ffffff";
-		this.alpha = 0.5;
-		this.limit = 0;
-		this.gradientFill = true;
-
-		// override default options with the ones given
-		if (options) for (var p in options) this[p] = options[p];
-
-		var type = getColumnType(valueColumnIndexOrName);
-		if (type != "double" && type != "integer" && valueColumnIndexOrName != labelColumnIndexOrName) return;
-
+		// useful values
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
 		title = (typeof title == 'undefined' || title === null) ? getColumnLabel(valueColumnIndexOrName) : title;
-
 		var cValue = getColumnIndex(valueColumnIndexOrName);
 		var cLabel = getColumnIndex(labelColumnIndexOrName);
-
-		var chart = new ofc_chart();
-		chart.bg_colour = bgColor;
-		chart.set_title({text: title, style: "{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}"});
-
 		var rowCount = getRowCount() - (ignoreLastRow ? 1 : 0);
 		if (limit > 0 && rowCount > limit) rowCount = limit;
 
-		var pie = new ofc_element("pie");
-		pie.colours = smartColorsPie;
-		pie.alpha = alpha;
-		pie['gradient-fill'] = gradientFill;
+		// check the column is numerical
+		var type = getColumnType(valueColumnIndexOrName);
+		if (type != "double" && type != "integer" && cValue != cLabel) return false;
 
-		if (typeof startAngle != 'undefined' && startAngle !== null) pie['start-angle'] = startAngle;
+		// base chart
+		var chart = {
 
-		if (valueColumnIndexOrName == labelColumnIndexOrName) {
+				chart: {
+					type: 'pie',
+					backgroundColor: bgColor,
+					plotBackgroundColor: bgColor,
+					plotBorderWidth: 0,
+					options3d: { 
+						enabled: pie3d,
+						alpha: 45
+					}
+
+				},
+
+				credits: {
+					enabled: false
+				},
+
+				title: {
+					text: title
+				},
+
+				tooltip: {
+					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+				},
+
+				plotOptions: {
+					pie: {
+						dataLabels: {
+							format: '<b>{point.name}</b><br/>{point.formattedValue}'
+						},
+						startAngle: startAngle
+					}
+				}
+		};
+
+		chart.series = [];
+		var serie = { name: title, data: [] };
+		chart.series.push(serie);
+
+		if (cValue == cLabel) {
 
 			// frequency pie chart
 			var distinctValues = {}; 
@@ -299,83 +231,32 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 
 			for (var value in distinctValues) {
 				var occurences = distinctValues[value];
-				pie.values.push({value : occurences, label: value + ' (' + (100 * (occurences / rowCount)).toFixed(1) + '%)'});
+				serie.data.push({ 
+					y : occurences, 
+					name: value,
+					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
+					dataLabels: { enabled: (occurences > 0) }
+				});
 			}
+			chart.series.push(serie);
 		}
 		else {
-
-			var total = 0; 
-			for (var r = 0; r < rowCount; r++) {
-				if (getRowAttribute(r, "skip") == "1") continue;
-				var rowValue = getValueAt(r,cValue);
-				total += isNaN(rowValue) ? 0 : rowValue;
-			}
 
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,cValue);
-				var label = getValueAt(r,cLabel);
-				if (!isNaN(value)) pie.values.push({value : value, label: label + ' (' + (100 * (value / total)).toFixed(1) + '%)'});
+				if (!isNaN(value)) serie.data.push({ 
+					y : value, 
+					name: getValueAt(r,cLabel),
+					formattedValue: getCell(r,cValue).innerHTML,
+					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
+					dataLabels: { enabled: (value != 0) }
+				});
 			}
 		}
 
-		chart.add_element(pie);
-
-		if (pie.values.length > 0) updateChart(divId, chart);
-		return pie.values.length;
-	}
-};
-
-/**
- * updateChart
- * @param divId
- * @param chart
- * @return
- */
-EditableGrid.prototype.updateChart = function(divId, chart) 
-{
-	if (typeof this.ofcSwf == 'undefined' || !this.ofcSwf) {
-
-		// detect openflashchart swf location
-		this.ofcSwf = 'open-flash-chart.swf'; // defaults to current directory
-		var e = document.getElementsByTagName('script');
-		for (var i = 0; i < e.length; i++) {
-			var index = e[i].src.indexOf('openflashchart');
-			if (index != -1) {
-				this.ofcSwf = e[i].src.substr(0, index + 15) + this.ofcSwf;
-				break;
-			}
-		};
-	}
-
-	with (this) {
-
-		// reload or create new swf chart
-		var swf = findSWF(divId);
-		if (swf && typeof swf.load == "function") {
-			try { swf.load(JSON.stringify(chart)); }
-			catch (ex) { console.error(ex); }
-		}
-		else {
-			var div = _$(divId);
-			EditableGrid_pending_charts[divId] = chart;
-
-			// get chart dimensions
-			var w = parseInt(getStyle(div, 'width'));
-			var h = parseInt(getStyle(div, 'height'));
-			w = Math.max(isNaN(w)?0:w, div.offsetWidth);
-			h = Math.max(isNaN(h)?0:h, div.offsetHeight);
-
-			swfobject.embedSWF(this.ofcSwf, 
-					divId, 
-					"" + (w || 500), 
-					"" + (h || 200), 
-					"9.0.0", "expressInstall.swf", { "get-data": "EditableGrid_get_chart_data", "id": divId }, null, 
-					{ wmode: "Opaque", salign: "l", AllowScriptAccess:"always"}
-			);
-		}
-
-		chartRendered();
+		$('#' + divId).highcharts(chart);
+		return serie.data.length;
 	}
 };
 
@@ -386,5 +267,5 @@ EditableGrid.prototype.updateChart = function(divId, chart)
  */
 EditableGrid.prototype.clearChart = function(divId) 
 {
-	// how ?
+	$('#' + divId).html('');
 };
