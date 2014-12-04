@@ -1096,11 +1096,6 @@ EditableGrid.prototype.getDisplayValueAt = function(rowIndex, columnIndex)
  */
 EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, render)
 {
-	if (typeof this.data[rowIndex] == 'undefined') {
-		console.error('Invalid rowindex ' + rowIndex);
-		return null;
-	}
-
 	if (typeof render == "undefined") render = true;
 	var previousValue = null;;
 
@@ -1114,6 +1109,12 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 		column.label = value;
 	}
 	else {
+		
+		if (typeof this.data[rowIndex] == 'undefined') {
+			console.error('Invalid rowindex ' + rowIndex);
+			return null;
+		}
+
 		var rowData = this.data[rowIndex]['columns'];
 		previousValue = rowData[columnIndex];
 		if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, value);
