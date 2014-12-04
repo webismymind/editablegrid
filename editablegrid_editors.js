@@ -388,18 +388,21 @@ DateCellEditor.prototype.displayEditor = function(element, htmlInput)
 	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
 	jQuery(htmlInput).datepicker({ 
-		dateFormat: this.editablegrid.dateFormat == "EU" ? "dd/mm/yy" : "mm/dd/yy",
-				beforeShow: function() {
-					// the field cannot be blurred until the datepicker has gone away
-					// otherwise we get the "missing instance data" exception
-					this.onblur_backup = this.onblur;
-					this.onblur = null;
-				},
-				onClose: function(dateText) {
-					// apply date if any, otherwise call original onblur event
-					if (dateText != '') this.celleditor.applyEditing(htmlInput.element, dateText);
-					else if (this.onblur_backup != null) this.onblur_backup();
+		dateFormat: (this.editablegrid.dateFormat == "EU" ? "dd/mm/yy" : "mm/dd/yy"),
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "c-100:c+10",
+		beforeShow: function() {
+			// the field cannot be blurred until the datepicker has gone away
+			// otherwise we get the "missing instance data" exception
+			this.onblur_backup = this.onblur;
+			this.onblur = null;
+		},
+		onClose: function(dateText) {
+			// apply date if any, otherwise call original onblur event
+			if (dateText != '') this.celleditor.applyEditing(htmlInput.element, dateText);
+			else if (this.onblur_backup != null) this.onblur_backup();
 
-				}
+		}
 	}).datepicker('show');
 };
