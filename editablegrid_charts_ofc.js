@@ -1,5 +1,4 @@
 var EditableGrid_pending_charts = {};
-var EditableGrid_check_lib = true;
 
 function EditableGrid_loadChart(divId)
 {
@@ -14,7 +13,7 @@ function EditableGrid_get_chart_data(divId)
 	return JSON.stringify(EditableGrid_pending_charts[divId]);
 }
 
-EditableGrid.prototype.checkChartLib = function()
+EditableGrid.prototype.checkChartLib_OFC = function()
 {
 	EditableGrid_check_lib = false;
 	if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
@@ -33,11 +32,11 @@ EditableGrid.prototype.checkChartLib = function()
  * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.9), limit (0), bar3d (true), rotateXLabels (0) 
  * @return
  */
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, options)
+EditableGrid.prototype.renderBarChart_OFC = function(divId, title, labelColumnIndexOrName, options)
 {
 	with (this) {
 
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
+		if (EditableGrid_check_lib && !checkChartLib_OFC()) return false;
 
 		// default options
 		this.legend = null;
@@ -135,11 +134,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.8), limit (0), rotateXLabels (0) 
  * @return
  */
-EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
+EditableGrid.prototype.renderStackedBarChart_OFC = function(divId, title, labelColumnIndexOrName, options)
 {
 	with (this) {
 
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
+		if (EditableGrid_check_lib && !checkChartLib_OFC()) return false;
 
 		// default options
 		this.legend = null;
@@ -251,7 +250,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 {
 	with (this) {
 
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
+		if (EditableGrid_check_lib && !checkChartLib_OFC()) return false;
 
 		// default options
 		this.startAngle = 0;
@@ -377,14 +376,4 @@ EditableGrid.prototype.updateChart = function(divId, chart)
 
 		chartRendered();
 	}
-};
-
-/**
- * clearChart
- * @param divId
- * @return
- */
-EditableGrid.prototype.clearChart = function(divId) 
-{
-	// how ?
 };
