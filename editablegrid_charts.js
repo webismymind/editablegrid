@@ -229,6 +229,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				plotOptions: {
 					pie: {
 						dataLabels: {
+							enabled: true,
 							format: '<b>{point.name}</b><br/>{point.formattedValue}'
 						},
 						startAngle: startAngle
@@ -257,8 +258,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 					y : occurences, 
 					name: value,
 					formattedValue: value,
-					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
-					dataLabels: { enabled: (occurences > 0) }
+					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
 			}
 			chart.series.push(serie);
@@ -268,12 +268,11 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,cValue);
-				if (!isNaN(value)) serie.data.push({ 
+				if (value !== null && !isNaN(value)) serie.data.push({ 
 					y : value, 
 					name: getValueAt(r,cLabel),
 					formattedValue: this.getFormattedValue(r, cValue, value),
-					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
-					dataLabels: { enabled: (value != 0) }
+					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
 			}
 		}
