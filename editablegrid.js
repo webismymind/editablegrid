@@ -1672,7 +1672,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 		// we must render a whole new table
 		else {
 
-			if (!containerid) return console.error("The container ID not specified (renderGrid not called yet ?)");
+			if (!containerid) return console.warn("The container ID not specified (renderGrid not called yet ?)");
 			if (!_$(containerid)) return console.error("Unable to get element [" + containerid + "]");
 
 			currentContainerid = containerid;
