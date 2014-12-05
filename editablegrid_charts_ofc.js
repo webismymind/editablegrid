@@ -246,7 +246,7 @@ EditableGrid.prototype.renderStackedBarChart_OFC = function(divId, title, labelC
  * @param options: startAngle (0), bgColor (#ffffff), alpha (0.5), limit (0), gradientFill (true) 
  * @return
  */
-EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) 
+EditableGrid.prototype.renderPieChart_OFC = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) 
 {
 	with (this) {
 
