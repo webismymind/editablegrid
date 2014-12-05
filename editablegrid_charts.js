@@ -15,6 +15,22 @@ EditableGrid.prototype.hex2rgba = function(hexColor, alpha)
 	return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 };
 
+EditableGrid.prototype.getFormattedValue = function(rowIndex, columnIndex, value)
+{
+	try {
+
+		// let the renderer work on a dummy element
+		var element = document.createElement('div');
+		var renderer = this.getColumn(columnIndex).cellRenderer;
+		renderer._render(rowIndex, columnIndex, element, value);
+		return element.innerHTML;
+
+	} catch (ex) {
+		return value;
+	}
+};
+
+
 /**
  * renderBarChart
  * Render open flash bar chart for the data contained in the table model
@@ -108,7 +124,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				var value = getValueAt(r,c);
 				if (value > maxvalue) maxvalue = value; 
 				if (value < minvalue) minvalue = value; 
-				serie.data.push({ y: value, formattedValue: getCell(r,c).innerHTML });
+				serie.data.push({ y: value, formattedValue: this.getFormattedValue(r, c, value) });
 			}
 
 			chart.series.push(serie);
@@ -234,6 +250,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				serie.data.push({ 
 					y : occurences, 
 					name: value,
+					formattedValue: value,
 					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
 					dataLabels: { enabled: (occurences > 0) }
 				});
@@ -248,7 +265,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				if (!isNaN(value)) serie.data.push({ 
 					y : value, 
 					name: getValueAt(r,cLabel),
-					formattedValue: getCell(r,cValue).innerHTML,
+					formattedValue: this.getFormattedValue(r, cValue, value),
 					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha), 
 					dataLabels: { enabled: (value != 0) }
 				});
