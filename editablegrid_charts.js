@@ -3,8 +3,14 @@ var EditableGrid_check_lib = true;
 EditableGrid.prototype.checkChartLib = function()
 {
 	EditableGrid_check_lib = false;
-	// TODO: check HighCharts presence
-	// if (typeof JSON.stringify == 'undefined') { alert('This method needs the JSON javascript library'); return false; }
+	try {
+		$('dummy').highcharts();
+	}
+	catch (e) {
+		alert('HighCharts library not loaded!');
+		return false;
+	}
+
 	return true;
 };
 
