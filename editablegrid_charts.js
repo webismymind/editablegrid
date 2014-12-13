@@ -83,6 +83,14 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					}
 				},
 
+				plotOptions: {
+					column: {
+						groupPadding: 0.1,
+						pointPadding: 0.1,
+						borderWidth: 0
+					}
+				},
+
 				credits: {
 					enabled: false
 				},
