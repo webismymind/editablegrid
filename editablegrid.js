@@ -488,7 +488,7 @@ EditableGrid.prototype._callback = function(type, callback)
 			this.refreshGrid = function(baseUrl) {
 				var callback = function() { EditableGrid.prototype.refreshGrid.call(this); };
 				var load = type == 'xml' ? this.loadXML : this.loadJSON;
-				load.call(this, this.lastURL, callback, true);
+				load.call(this, baseUrl || this.lastURL, callback, true);
 			};
 		}
 
