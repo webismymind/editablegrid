@@ -488,7 +488,7 @@ EditableGrid.prototype._callback = function(type, callback)
 			this.refreshGrid = function(baseUrl) {
 				var callback = function() { EditableGrid.prototype.refreshGrid.call(this); };
 				var load = type == 'xml' ? this.loadXML : this.loadJSON;
-				load.call(this, baseUrl || this.lastURL, callback, true);
+				load.call(this, this.lastURL, callback, true);
 			};
 		}
 
@@ -511,6 +511,8 @@ EditableGrid.prototype.loadJSONFromString = function(json)
  */
 EditableGrid.prototype.load = function(object)
 {
+	console.log('loading data');
+	console.log(object);
 	return this.processJSON(object);
 };
 
@@ -1763,6 +1765,7 @@ EditableGrid.prototype.renderGrid = function(containerid, className, tableid)
 	}
 };
 
+
 /**
  * Refreshes the grid
  * @return
@@ -1840,6 +1843,51 @@ EditableGrid.prototype.mouseClicked = function(e)
 		}
 	}
 };
+
+
+/**
+ * Moves columns around (added by JRE)
+ * @param {array[strings]} an array of class names of the headers
+ * returns boolean based on success
+*/
+EditableGrid.prototype.sortColumns = function(headerArray){
+	with (this){
+		newColumns = [];
+		newColumnIndeces = [];
+
+		for (var i = 0; i < headerArray.length; i++) {
+
+			columnIndex = this.getColumnIndex(headerArray[i]);
+
+			if(columnIndex == -1){//a column could not be found. can't reorder anything or data may be lost
+				console.error("[sortColumns] Invalid column: " + columnIndex);
+				return false;
+			}
+				
+			newColumns[i] = this.columns[columnIndex];
+			newColumnIndeces[i] = columnIndex;
+		}
+
+		//rearrance headers
+		this.columns = newColumns;
+
+		//need to rearrange all of the data elements as well
+		for (var i = 0; i < this.data.length; i++) {
+			var myData = this.data[i];
+			var myDataColumns = myData.columns;
+			var newDataColumns = [];
+
+			for (var j = 0; j < myDataColumns.length; j++) {
+				newIndex = newColumnIndeces[j];
+				newDataColumns[j] = myDataColumns[newIndex];
+			}
+			
+			this.data[i].columns = newDataColumns;
+		}
+
+		return true;
+	}
+}
 
 /**
  * Sort on a column
