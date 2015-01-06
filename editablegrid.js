@@ -511,8 +511,6 @@ EditableGrid.prototype.loadJSONFromString = function(json)
  */
 EditableGrid.prototype.load = function(object)
 {
-	console.log('loading data');
-	console.log(object);
 	return this.processJSON(object);
 };
 
