@@ -1,8 +1,7 @@
-var EditableGrid_check_lib = true;
+var EditableGrid_check_lib = null;
 
 EditableGrid.prototype.checkChartLib = function()
 {
-	EditableGrid_check_lib = false;
 	try {
 		$('dummy').highcharts();
 	}
@@ -59,7 +58,8 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 	with (this) {
 
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
+		if (EditableGrid_check_lib === null) EditableGrid_check_lib = checkChartLib();
+		if (!EditableGrid_check_lib) return false;
 
 		// override default options with the ones given
 		if (options) for (var p in options) this[p] = options[p];
@@ -193,7 +193,8 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 
 	with (this) {
 
-		if (EditableGrid_check_lib && !checkChartLib()) return false;
+		if (EditableGrid_check_lib === null) EditableGrid_check_lib = checkChartLib();
+		if (!EditableGrid_check_lib) return false;
 
 		// useful values
 		labelColumnIndexOrName = labelColumnIndexOrName || 0;
@@ -238,7 +239,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 					pie: {
 						dataLabels: {
 							enabled: true,
-							format: '<b>{point.name}</b><br/>{point.formattedValue}'
+							format: cValue == cLabel ? '<b>{point.name}</b>' : '<b>{point.name}</b><br/>{point.formattedValue}'
 						},
 						startAngle: startAngle
 					}
