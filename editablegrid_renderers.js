@@ -38,12 +38,12 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 	element.setAttribute('data-title', this.column.label);
 
 	// call the specialized render method
-	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, ' &nbsp;')) : value);
+	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/  /g, ' &nbsp;')) : value);
 };
 
 CellRenderer.prototype.render = function(element, value, escapehtml) 
 {
-	var _value = escapehtml ? (typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/\s\s/g, ' &nbsp;')) : value) : value;
+	var _value = escapehtml ? (typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/  /g, ' &nbsp;')) : value) : value;
 	element.innerHTML = _value ? _value : "";
 };
 
