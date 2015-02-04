@@ -277,9 +277,10 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,cValue);
+				var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
 				if (value !== null && !isNaN(value)) serie.data.push({ 
 					y : value, 
-					name: getValueAt(r,cLabel),
+					name: (label ? label : getValueAt(r,cLabel)),
 					formattedValue: this.getFormattedValue(r, cValue, value),
 					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
