@@ -85,6 +85,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 				plotOptions: {
 					column: {
+						stacking: options['stacking'] || '',
 						groupPadding: 0.1,
 						pointPadding: 0.1,
 						borderWidth: 0
@@ -128,6 +129,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			// serie's name and color
 			var serie = { 
 					name: getColumnLabel(c), 
+					stack: getColumnStack(c),
 					color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
 					data: []
 			};
@@ -145,9 +147,12 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		}
 
 		// y axis with no title and min/max value
-		chart.yAxis = {
+		if (!options['stacking']) chart.yAxis = {
 				min: (minvalue < 0 ? minvalue : 0),
 				max: maxvalue,
+				title: { text: "" } 
+		};
+		else chart.yAxis = {
 				title: { text: "" } 
 		};
 
@@ -166,7 +171,9 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  */
 EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
-	// TODO
+	options = options || {};
+	options.stacking = 'normal';
+	return this.renderBarChart(divId, title, labelColumnIndexOrName, options);
 };
 
 /**

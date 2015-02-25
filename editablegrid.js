@@ -597,7 +597,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 				label: (columndata.label ? columndata.label : columndata.name),
 				datatype: (columndata.datatype ? columndata.datatype : "string"),
 				editable: (columndata.editable ? true : false),
-				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar ? true : false)),
+				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar || false)),
 				hidden: (typeof columndata.hidden == 'undefined' ? false : (columndata.hidden ? true : false)),
 				optionValuesForRender: optionValuesForRender,
 				optionValues: optionValues
@@ -1042,6 +1042,17 @@ EditableGrid.prototype.isColumnBar = function(columnIndexOrName)
 };
 
 /**
+ * Returns the stack of a column (for stacked bar charts)
+ * @param {Object} columnIndexOrName index or name of the column
+ */
+EditableGrid.prototype.getColumnStack = function(columnIndexOrName)
+{
+	var column = this.getColumn(columnIndexOrName);
+	return column.isNumerical() ? column.bar : '';
+};
+
+
+/**
  * Returns true if the column is numerical (double or integer)
  * @param {Object} columnIndexOrName index or name of the column
  */
@@ -1109,7 +1120,7 @@ EditableGrid.prototype.setValueAt = function(rowIndex, columnIndex, value, rende
 		column.label = value;
 	}
 	else {
-		
+
 		if (typeof this.data[rowIndex] == 'undefined') {
 			console.error('Invalid rowindex ' + rowIndex);
 			return null;
@@ -1847,7 +1858,7 @@ EditableGrid.prototype.mouseClicked = function(e)
  * Moves columns around (added by JRE)
  * @param {array[strings]} an array of class names of the headers
  * returns boolean based on success
-*/
+ */
 EditableGrid.prototype.sortColumns = function(headerArray){
 	with (this){
 		newColumns = [];
@@ -1861,7 +1872,7 @@ EditableGrid.prototype.sortColumns = function(headerArray){
 				console.error("[sortColumns] Invalid column: " + columnIndex);
 				return false;
 			}
-				
+
 			newColumns[i] = this.columns[columnIndex];
 			newColumnIndeces[i] = columnIndex;
 		}
@@ -1879,7 +1890,7 @@ EditableGrid.prototype.sortColumns = function(headerArray){
 				newIndex = newColumnIndeces[j];
 				newDataColumns[j] = myDataColumns[newIndex];
 			}
-			
+
 			this.data[i].columns = newDataColumns;
 		}
 
