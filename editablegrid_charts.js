@@ -106,7 +106,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		};
 
 		// xaxis with legend and rotation
-		chart.xAxis = { 
+		chart.xAxis = {
 				title: { text:  legend || getColumnLabel(labelColumnIndexOrName) }, 
 				labels: { rotation: rotateXLabels } 
 		};
@@ -153,7 +153,8 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				title: { text: "" } 
 		};
 		else chart.yAxis = {
-				title: { text: "" } 
+				title: { text: "" },
+				reversedStacks: typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks'])
 		};
 
 		$('#' + divId).highcharts(chart);
