@@ -38,7 +38,7 @@ EditableGrid.prototype.getFormattedValue = function(rowIndex, columnIndex, value
 
 /**
  * renderBarChart
- * Render open flash bar chart for the data contained in the table model
+ * Render Highcharts column chart for the data contained in the table model
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
@@ -75,7 +75,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		var chart = {
 
 				chart: {
-					type: 'column',
+					type: options['type'] || 'column',
 					backgroundColor: bgColor,
 					plotBackgroundColor: bgColor,
 					options3d: { 
@@ -121,16 +121,33 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 		// one serie for each bar column
 		chart.series = [];
-		var minvalue = 0;
-		var maxvalue = 0;
+		chart.yAxis = [];
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
 
-			// serie's name and color
+			// get/create axis for column unit
+			var yAxisIndex = -1;
+			var unit = getColumnUnit(c);
+			for (var cy = 0; cy < chart.yAxis.length; cy++) if (chart.yAxis[cy].unit == unit) yAxisIndex = cy;
+			if (yAxisIndex < 0) {
+
+				// not found: create new axis with no title and unit
+				yAxisIndex = chart.yAxis.length;
+				chart.yAxis.push({ 
+					unit: unit, 
+					title: { text: "" },
+					labels: { format: '{value} ' + unit },
+					reversedStacks: typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks'])
+				});
+			}
+
+			// serie's name, stack and color
 			var serie = { 
 					name: getColumnLabel(c), 
 					stack: getColumnStack(c),
-					color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
+					yAxis: yAxisIndex, 
+					// let Highcharts handle smart colors
+					// color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
 					data: []
 			};
 
@@ -138,24 +155,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
-				if (value > maxvalue) maxvalue = value; 
-				if (value < minvalue) minvalue = value; 
 				serie.data.push({ y: value, formattedValue: this.getFormattedValue(r, c, value) });
 			}
 
 			chart.series.push(serie);
 		}
-
-		// y axis with no title and min/max value
-		if (!options['stacking']) chart.yAxis = {
-				min: (minvalue < 0 ? minvalue : 0),
-				max: maxvalue,
-				title: { text: "" } 
-		};
-		else chart.yAxis = {
-				title: { text: "" },
-				reversedStacks: typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks'])
-		};
 
 		$('#' + divId).highcharts(chart);
 	}
@@ -274,8 +278,9 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				serie.data.push({ 
 					y : occurences, 
 					name: value,
-					formattedValue: value,
-					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
+					formattedValue: value
+					// let Highcharts handle smart colors
+					// color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
 			}
 			chart.series.push(serie);
@@ -289,8 +294,9 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				if (value !== null && !isNaN(value)) serie.data.push({ 
 					y : value, 
 					name: (label ? label : getValueAt(r,cLabel)),
-					formattedValue: this.getFormattedValue(r, cValue, value),
-					color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
+					formattedValue: this.getFormattedValue(r, cValue, value)
+					// let Highcharts handle smart colors
+					// color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
 			}
 		}
