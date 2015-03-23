@@ -20,14 +20,14 @@ EditableGrid.prototype.hex2rgba = function(hexColor, alpha)
 	return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 };
 
-EditableGrid.prototype.getFormattedValue = function(rowIndex, columnIndex, value)
+EditableGrid.prototype.getFormattedValue = function(columnIndex, value)
 {
 	try {
 
 		// let the renderer work on a dummy element
 		var element = document.createElement('div');
 		var renderer = this.getColumn(columnIndex).cellRenderer;
-		renderer._render(rowIndex, columnIndex, element, value);
+		renderer._render(0, columnIndex, element, value);
 		return element.innerHTML;
 
 	} catch (ex) {
@@ -48,6 +48,8 @@ EditableGrid.prototype.getFormattedValue = function(rowIndex, columnIndex, value
 
 EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, options)
 {
+	var self = this;
+
 	// default options
 	this.legend = null;
 	this.bgColor = null; // transparent
@@ -72,10 +74,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		if (limit > 0 && rowCount > limit) rowCount = limit;
 
 		// base chart
+		var type = options['type'] || 'column';
 		var chart = {
 
 				chart: {
-					type: options['type'] || 'column',
+					type: type,
 					backgroundColor: bgColor,
 					plotBackgroundColor: bgColor,
 					options3d: { 
@@ -89,7 +92,21 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 						groupPadding: 0.1,
 						pointPadding: 0.1,
 						borderWidth: 0
+					},
+					bar: {
+						stacking: options['stacking'] || '',
+						groupPadding: 0.1,
+						pointPadding: 0.1,
+						borderWidth: 0
 					}
+
+				},
+
+				legend: {
+					align: 'center',
+					verticalAlign: (type == 'bar' ? 'top' : 'bottom'),
+					margin: (type == 'bar' ? 40 : 12),
+					floating: false
 				},
 
 				credits: {
@@ -101,7 +118,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				},
 
 				tooltip: {
-					pointFormat: '{series.name}: <b>{point.formattedValue}</b>'
+					pointFormatter: function() { return this.series.name + '<b>: ' + self.getFormattedValue(this.series.options.colIndex, this.y) + '</b>'; }
 				}
 		};
 
@@ -146,6 +163,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					name: getColumnLabel(c), 
 					stack: getColumnStack(c),
 					yAxis: yAxisIndex, 
+					colIndex: c, // for pointFormatter
 					// let Highcharts handle smart colors
 					// color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
 					data: []
@@ -155,7 +173,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
-				serie.data.push({ y: value, formattedValue: this.getFormattedValue(r, c, value) });
+				serie.data.push(value);
 			}
 
 			chart.series.push(serie);
@@ -294,7 +312,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 				if (value !== null && !isNaN(value)) serie.data.push({ 
 					y : value, 
 					name: (label ? label : getValueAt(r,cLabel)),
-					formattedValue: this.getFormattedValue(r, cValue, value)
+					formattedValue: this.getFormattedValue(cValue, value)
 					// let Highcharts handle smart colors
 					// color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
 				});
