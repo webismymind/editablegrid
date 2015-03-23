@@ -153,7 +153,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				chart.yAxis.push({ 
 					unit: unit, 
 					title: { text: "" },
-					labels: { format: '{value} ' + unit },
+					labels: { format: '{value} ' + (unit ? unit : '') },
 					reversedStacks: typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks'])
 				});
 			}
