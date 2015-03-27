@@ -5,6 +5,11 @@ td.number {
 	white-space: nowrap;
 }
 
+td.number.nan {
+	font-weight: normal;
+	color: #AAA;
+}
+
 th.number {
 	text-align: right;
 }

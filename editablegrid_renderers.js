@@ -115,7 +115,8 @@ NumberCellRenderer.prototype.render = function(element, value)
 	}
 
 	element.innerHTML = displayValue;
-	element.style.fontWeight = isNAN ? "normal" : "";
+	if (isNAN) EditableGrid.prototype.addClassName(element, "nan");
+	else EditableGrid.prototype.removeClassName(element, "nan");
 };
 
 /**
