@@ -9,7 +9,7 @@ EditableGrid.prototype._convertOptions = function(optionValues)
 		}
 		optionValues = _converted;
 	}
-	
+
 	return optionValues; 
 };
 
@@ -89,6 +89,25 @@ EditableGrid.prototype.unsort = function(a,b)
 	aa = isNaN(a[2]) ? 0 : parseFloat(a[2]);
 	bb = isNaN(b[2]) ? 0 : parseFloat(b[2]);
 	return aa-bb;
+};
+
+//returns a sort function handling elements which are arrays with two elements: sort value, sort index if sort value equal
+//used to sort a tree where only the first level must be actually sorted
+//TODO: generalize this and be able to sort on several columns and/or attributes (each with a specific sort function: numeric, date, boolean, alpha)
+EditableGrid.prototype.sort_under = function(sort_function) 
+{
+	return function (a, b) {
+		var sort = sort_function(a[0], b[0]);
+		if (sort != 0) return sort;
+		return a[0][1] - b[0][1];
+	};
+};
+
+EditableGrid.prototype.sort_desc = function(sort_function) 
+{
+	return function (a, b) {
+		return sort_function(b, a);
+	};
 };
 
 EditableGrid.prototype.sort_numeric = function(a,b) 
@@ -239,7 +258,7 @@ EditableGrid.prototype.detectDir = function()
 			return srcAbs.toString();
 		}
 	}
-	
+
 	return false;
 };
 
@@ -275,27 +294,27 @@ String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").repl
 String.prototype.contains = function(str) { return (this.match(str)==str); };
 String.prototype.startsWith = function(str) { return (this.match("^"+str)==str); };
 String.prototype.endsWith = function(str) { return (this.match(str+"$")==str); };
-	
-// Accepted formats: (for EU just switch month and day)
-//
-// mm-dd-yyyy
-// mm/dd/yyyy
-// mm.dd.yyyy
-// mm dd yyyy
-// mmm dd yyyy
-// mmddyyyy
-//
-// m-d-yyyy
-// m/d/yyyy
-// m.d.yyyy,
-// m d yyyy
-// mmm d yyyy
-//
-// // m-d-yy
-// // m/d/yy
-// // m.d.yy
-// // m d yy,
-// // mmm d yy (yy is 20yy) 
+
+//Accepted formats: (for EU just switch month and day)
+
+//mm-dd-yyyy
+//mm/dd/yyyy
+//mm.dd.yyyy
+//mm dd yyyy
+//mmm dd yyyy
+//mmddyyyy
+
+//m-d-yyyy
+//m/d/yyyy
+//m.d.yyyy,
+//m d yyyy
+//mmm d yyyy
+
+////m-d-yy
+////m/d/yy
+////m.d.yy
+////m d yy,
+////mmm d yy (yy is 20yy) 
 
 /**
  * Checks validity of a date string 
@@ -305,7 +324,7 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 {
 	strDatestyle = strDatestyle || this.dateFormat;
 	strDatestyle = strDatestyle || "EU";
-	
+
 	var strDate;
 	var strDateArray;
 	var strDay;
@@ -318,10 +337,10 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	var strSeparatorArray = new Array("-"," ","/",".");
 	var intElementNr;
 	var err = 0;
-	
+
 	var strMonthArray = this.shortMonthNames;
 	strMonthArray = strMonthArray || ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-	
+
 	if (!strDate || strDate.length < 1) return 0;
 
 	for (intElementNr = 0; intElementNr < strSeparatorArray.length; intElementNr++) {
@@ -336,7 +355,7 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 			booFound = true;
 		}
 	}
-	
+
 	if (booFound == false) {
 		if (strDate.length <= 5) return 1;
 		strDay = strDate.substr(0, 2);
@@ -352,7 +371,7 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 		strDay = strMonth;
 		strMonth = strTemp;
 	}
-	
+
 	// get and check day
 	intday = parseInt(strDay, 10);
 	if (isNaN(intday)) return 2;
@@ -377,7 +396,7 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	if (intYear < 70) { intYear = 2000 + intYear; strYear = '' + intYear; } // 70 become 1970, 69 becomes 1969, as with PHP's date_parse_from_format
 	if (intYear < 100) { intYear = 1900 + intYear; strYear = '' + intYear; }
 	if (intYear < 1900 || intYear > 2100) return 11;
-	
+
 	// check day in month
 	if ((intMonth == 1 || intMonth == 3 || intMonth == 5 || intMonth == 7 || intMonth == 8 || intMonth == 10 || intMonth == 12) && (intday > 31 || intday < 1)) return 6;
 	if ((intMonth == 4 || intMonth == 6 || intMonth == 9 || intMonth == 11) && (intday > 30 || intday < 1)) return 7;
@@ -402,7 +421,7 @@ function LeapYear(intYear)
 	return false;
 }
 
-// See RFC3986
+//See RFC3986
 URI = function(uri) 
 { 
 	this.scheme = null;
@@ -509,252 +528,252 @@ URI = function(uri)
 };
 
 function get_html_translation_table (table, quote_style) {
-    // http://kevin.vanzonneveld.net
-    // +   original by: Philip Peterson
-    // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +   bugfixed by: noname
-    // +   bugfixed by: Alex
-    // +   bugfixed by: Marco
-    // +   bugfixed by: madipta
-    // +   improved by: KELAN
-    // +   improved by: Brett Zamir (http://brett-zamir.me)
-    // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: Frank Forte
-    // +   bugfixed by: T.Wild
-    // +      input by: Ratheous
-    // %          note: It has been decided that we're not going to add global
-    // %          note: dependencies to php.js, meaning the constants are not
-    // %          note: real constants, but strings instead. Integers are also supported if someone
-    // %          note: chooses to create the constants themselves.
-    // *     example 1: get_html_translation_table('HTML_SPECIALCHARS');
-    // *     returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
-    
-    var entities = {}, hash_map = {}, decimal = 0, symbol = '';
-    var constMappingTable = {}, constMappingQuoteStyle = {};
-    var useTable = {}, useQuoteStyle = {};
-    
-    // Translate arguments
-    constMappingTable[0]      = 'HTML_SPECIALCHARS';
-    constMappingTable[1]      = 'HTML_ENTITIES';
-    constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
-    constMappingQuoteStyle[2] = 'ENT_COMPAT';
-    constMappingQuoteStyle[3] = 'ENT_QUOTES';
+	// http://kevin.vanzonneveld.net
+	// +   original by: Philip Peterson
+	// +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	// +   bugfixed by: noname
+	// +   bugfixed by: Alex
+	// +   bugfixed by: Marco
+	// +   bugfixed by: madipta
+	// +   improved by: KELAN
+	// +   improved by: Brett Zamir (http://brett-zamir.me)
+	// +   bugfixed by: Brett Zamir (http://brett-zamir.me)
+	// +      input by: Frank Forte
+	// +   bugfixed by: T.Wild
+	// +      input by: Ratheous
+	// %          note: It has been decided that we're not going to add global
+	// %          note: dependencies to php.js, meaning the constants are not
+	// %          note: real constants, but strings instead. Integers are also supported if someone
+	// %          note: chooses to create the constants themselves.
+	// *     example 1: get_html_translation_table('HTML_SPECIALCHARS');
+	// *     returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
 
-    useTable       = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
-    useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
+	var entities = {}, hash_map = {}, decimal = 0, symbol = '';
+	var constMappingTable = {}, constMappingQuoteStyle = {};
+	var useTable = {}, useQuoteStyle = {};
 
-    if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
-        throw new Error("Table: "+useTable+' not supported');
-        // return false;
-    }
+	// Translate arguments
+	constMappingTable[0]      = 'HTML_SPECIALCHARS';
+	constMappingTable[1]      = 'HTML_ENTITIES';
+	constMappingQuoteStyle[0] = 'ENT_NOQUOTES';
+	constMappingQuoteStyle[2] = 'ENT_COMPAT';
+	constMappingQuoteStyle[3] = 'ENT_QUOTES';
 
-    if (useTable === 'HTML_ENTITIES') {
-        entities['160'] = '&nbsp;';
-        entities['161'] = '&iexcl;';
-        entities['162'] = '&cent;';
-        entities['163'] = '&pound;';
-        entities['164'] = '&curren;';
-        entities['165'] = '&yen;';
-        entities['166'] = '&brvbar;';
-        entities['167'] = '&sect;';
-        entities['168'] = '&uml;';
-        entities['169'] = '&copy;';
-        entities['170'] = '&ordf;';
-        entities['171'] = '&laquo;';
-        entities['172'] = '&not;';
-        entities['173'] = '&shy;';
-        entities['174'] = '&reg;';
-        entities['175'] = '&macr;';
-        entities['176'] = '&deg;';
-        entities['177'] = '&plusmn;';
-        entities['178'] = '&sup2;';
-        entities['179'] = '&sup3;';
-        entities['180'] = '&acute;';
-        entities['181'] = '&micro;';
-        entities['182'] = '&para;';
-        entities['183'] = '&middot;';
-        entities['184'] = '&cedil;';
-        entities['185'] = '&sup1;';
-        entities['186'] = '&ordm;';
-        entities['187'] = '&raquo;';
-        entities['188'] = '&frac14;';
-        entities['189'] = '&frac12;';
-        entities['190'] = '&frac34;';
-        entities['191'] = '&iquest;';
-        entities['192'] = '&Agrave;';
-        entities['193'] = '&Aacute;';
-        entities['194'] = '&Acirc;';
-        entities['195'] = '&Atilde;';
-        entities['196'] = '&Auml;';
-        entities['197'] = '&Aring;';
-        entities['198'] = '&AElig;';
-        entities['199'] = '&Ccedil;';
-        entities['200'] = '&Egrave;';
-        entities['201'] = '&Eacute;';
-        entities['202'] = '&Ecirc;';
-        entities['203'] = '&Euml;';
-        entities['204'] = '&Igrave;';
-        entities['205'] = '&Iacute;';
-        entities['206'] = '&Icirc;';
-        entities['207'] = '&Iuml;';
-        entities['208'] = '&ETH;';
-        entities['209'] = '&Ntilde;';
-        entities['210'] = '&Ograve;';
-        entities['211'] = '&Oacute;';
-        entities['212'] = '&Ocirc;';
-        entities['213'] = '&Otilde;';
-        entities['214'] = '&Ouml;';
-        entities['215'] = '&times;';
-        entities['216'] = '&Oslash;';
-        entities['217'] = '&Ugrave;';
-        entities['218'] = '&Uacute;';
-        entities['219'] = '&Ucirc;';
-        entities['220'] = '&Uuml;';
-        entities['221'] = '&Yacute;';
-        entities['222'] = '&THORN;';
-        entities['223'] = '&szlig;';
-        entities['224'] = '&agrave;';
-        entities['225'] = '&aacute;';
-        entities['226'] = '&acirc;';
-        entities['227'] = '&atilde;';
-        entities['228'] = '&auml;';
-        entities['229'] = '&aring;';
-        entities['230'] = '&aelig;';
-        entities['231'] = '&ccedil;';
-        entities['232'] = '&egrave;';
-        entities['233'] = '&eacute;';
-        entities['234'] = '&ecirc;';
-        entities['235'] = '&euml;';
-        entities['236'] = '&igrave;';
-        entities['237'] = '&iacute;';
-        entities['238'] = '&icirc;';
-        entities['239'] = '&iuml;';
-        entities['240'] = '&eth;';
-        entities['241'] = '&ntilde;';
-        entities['242'] = '&ograve;';
-        entities['243'] = '&oacute;';
-        entities['244'] = '&ocirc;';
-        entities['245'] = '&otilde;';
-        entities['246'] = '&ouml;';
-        entities['247'] = '&divide;';
-        entities['248'] = '&oslash;';
-        entities['249'] = '&ugrave;';
-        entities['250'] = '&uacute;';
-        entities['251'] = '&ucirc;';
-        entities['252'] = '&uuml;';
-        entities['253'] = '&yacute;';
-        entities['254'] = '&thorn;';
-        entities['255'] = '&yuml;';
-    }
+	useTable       = !isNaN(table) ? constMappingTable[table] : table ? table.toUpperCase() : 'HTML_SPECIALCHARS';
+	useQuoteStyle = !isNaN(quote_style) ? constMappingQuoteStyle[quote_style] : quote_style ? quote_style.toUpperCase() : 'ENT_COMPAT';
 
-    if (useQuoteStyle !== 'ENT_NOQUOTES') {
-        entities['34'] = '&quot;';
-    }
-    if (useQuoteStyle === 'ENT_QUOTES') {
-        entities['39'] = '&#39;';
-    }
-    entities['60'] = '&lt;';
-    entities['62'] = '&gt;';
+	if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
+		throw new Error("Table: "+useTable+' not supported');
+		// return false;
+	}
+
+	if (useTable === 'HTML_ENTITIES') {
+		entities['160'] = '&nbsp;';
+		entities['161'] = '&iexcl;';
+		entities['162'] = '&cent;';
+		entities['163'] = '&pound;';
+		entities['164'] = '&curren;';
+		entities['165'] = '&yen;';
+		entities['166'] = '&brvbar;';
+		entities['167'] = '&sect;';
+		entities['168'] = '&uml;';
+		entities['169'] = '&copy;';
+		entities['170'] = '&ordf;';
+		entities['171'] = '&laquo;';
+		entities['172'] = '&not;';
+		entities['173'] = '&shy;';
+		entities['174'] = '&reg;';
+		entities['175'] = '&macr;';
+		entities['176'] = '&deg;';
+		entities['177'] = '&plusmn;';
+		entities['178'] = '&sup2;';
+		entities['179'] = '&sup3;';
+		entities['180'] = '&acute;';
+		entities['181'] = '&micro;';
+		entities['182'] = '&para;';
+		entities['183'] = '&middot;';
+		entities['184'] = '&cedil;';
+		entities['185'] = '&sup1;';
+		entities['186'] = '&ordm;';
+		entities['187'] = '&raquo;';
+		entities['188'] = '&frac14;';
+		entities['189'] = '&frac12;';
+		entities['190'] = '&frac34;';
+		entities['191'] = '&iquest;';
+		entities['192'] = '&Agrave;';
+		entities['193'] = '&Aacute;';
+		entities['194'] = '&Acirc;';
+		entities['195'] = '&Atilde;';
+		entities['196'] = '&Auml;';
+		entities['197'] = '&Aring;';
+		entities['198'] = '&AElig;';
+		entities['199'] = '&Ccedil;';
+		entities['200'] = '&Egrave;';
+		entities['201'] = '&Eacute;';
+		entities['202'] = '&Ecirc;';
+		entities['203'] = '&Euml;';
+		entities['204'] = '&Igrave;';
+		entities['205'] = '&Iacute;';
+		entities['206'] = '&Icirc;';
+		entities['207'] = '&Iuml;';
+		entities['208'] = '&ETH;';
+		entities['209'] = '&Ntilde;';
+		entities['210'] = '&Ograve;';
+		entities['211'] = '&Oacute;';
+		entities['212'] = '&Ocirc;';
+		entities['213'] = '&Otilde;';
+		entities['214'] = '&Ouml;';
+		entities['215'] = '&times;';
+		entities['216'] = '&Oslash;';
+		entities['217'] = '&Ugrave;';
+		entities['218'] = '&Uacute;';
+		entities['219'] = '&Ucirc;';
+		entities['220'] = '&Uuml;';
+		entities['221'] = '&Yacute;';
+		entities['222'] = '&THORN;';
+		entities['223'] = '&szlig;';
+		entities['224'] = '&agrave;';
+		entities['225'] = '&aacute;';
+		entities['226'] = '&acirc;';
+		entities['227'] = '&atilde;';
+		entities['228'] = '&auml;';
+		entities['229'] = '&aring;';
+		entities['230'] = '&aelig;';
+		entities['231'] = '&ccedil;';
+		entities['232'] = '&egrave;';
+		entities['233'] = '&eacute;';
+		entities['234'] = '&ecirc;';
+		entities['235'] = '&euml;';
+		entities['236'] = '&igrave;';
+		entities['237'] = '&iacute;';
+		entities['238'] = '&icirc;';
+		entities['239'] = '&iuml;';
+		entities['240'] = '&eth;';
+		entities['241'] = '&ntilde;';
+		entities['242'] = '&ograve;';
+		entities['243'] = '&oacute;';
+		entities['244'] = '&ocirc;';
+		entities['245'] = '&otilde;';
+		entities['246'] = '&ouml;';
+		entities['247'] = '&divide;';
+		entities['248'] = '&oslash;';
+		entities['249'] = '&ugrave;';
+		entities['250'] = '&uacute;';
+		entities['251'] = '&ucirc;';
+		entities['252'] = '&uuml;';
+		entities['253'] = '&yacute;';
+		entities['254'] = '&thorn;';
+		entities['255'] = '&yuml;';
+	}
+
+	if (useQuoteStyle !== 'ENT_NOQUOTES') {
+		entities['34'] = '&quot;';
+	}
+	if (useQuoteStyle === 'ENT_QUOTES') {
+		entities['39'] = '&#39;';
+	}
+	entities['60'] = '&lt;';
+	entities['62'] = '&gt;';
 
 
-    // ascii decimals to real symbols
-    for (decimal in entities) {
-        symbol = String.fromCharCode(decimal);
-        hash_map[symbol] = entities[decimal];
-    }
-    
-    return hash_map;
+	// ascii decimals to real symbols
+	for (decimal in entities) {
+		symbol = String.fromCharCode(decimal);
+		hash_map[symbol] = entities[decimal];
+	}
+
+	return hash_map;
 }
 
 function htmlentities(string, quote_style) 
 {
-    var hash_map = {}, symbol = '', tmp_str = '';
-    tmp_str = string.toString();
-    if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
-    tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
-    hash_map["'"] = '&#039;';
-    for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
-    return tmp_str;
+	var hash_map = {}, symbol = '', tmp_str = '';
+	tmp_str = string.toString();
+	if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
+	tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
+	hash_map["'"] = '&#039;';
+	for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
+	return tmp_str;
 }
 
 function htmlspecialchars(string, quote_style) 
 {
-    var hash_map = {}, symbol = '', tmp_str = '';
-    tmp_str = string.toString();
-    if (false === (hash_map = this.get_html_translation_table('HTML_SPECIALCHARS', quote_style))) return false;
-    tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
-    for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
-    return tmp_str;
+	var hash_map = {}, symbol = '', tmp_str = '';
+	tmp_str = string.toString();
+	if (false === (hash_map = this.get_html_translation_table('HTML_SPECIALCHARS', quote_style))) return false;
+	tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
+	for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
+	return tmp_str;
 }
 
 function number_format (number, decimals, dec_point, thousands_sep) {
-    // http://kevin.vanzonneveld.net
-    // +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +     bugfix by: Michael White (http://getsprink.com)
-    // +     bugfix by: Benjamin Lupton
-    // +     bugfix by: Allan Jensen (http://www.winternet.no)
-    // +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    // +     bugfix by: Howard Yeend
-    // +    revised by: Luke Smith (http://lucassmith.name)
-    // +     bugfix by: Diogo Resende
-    // +     bugfix by: Rival
-    // +      input by: Kheang Hok Chin (http://www.distantia.ca/)
-    // +   improved by: davook
-    // +   improved by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: Jay Klehr
-    // +   improved by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: Amir Habibi (http://www.residence-mixte.com/)
-    // +     bugfix by: Brett Zamir (http://brett-zamir.me)
-    // +   improved by: Theriault
-    // +      input by: Amirouche
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // *     example 1: number_format(1234.56);
-    // *     returns 1: '1,235'
-    // *     example 2: number_format(1234.56, 2, ',', ' ');
-    // *     returns 2: '1 234,56'
-    // *     example 3: number_format(1234.5678, 2, '.', '');
-    // *     returns 3: '1234.57'
-    // *     example 4: number_format(67, 2, ',', '.');
-    // *     returns 4: '67,00'
-    // *     example 5: number_format(1000);
-    // *     returns 5: '1,000'
-    // *     example 6: number_format(67.311, 2);
-    // *     returns 6: '67.31'
-    // *     example 7: number_format(1000.55, 1);
-    // *     returns 7: '1,000.6'
-    // *     example 8: number_format(67000, 5, ',', '.');
-    // *     returns 8: '67.000,00000'
-    // *     example 9: number_format(0.9, 0);
-    // *     returns 9: '1'
-    // *    example 10: number_format('1.20', 2);
-    // *    returns 10: '1.20'
-    // *    example 11: number_format('1.20', 4);
-    // *    returns 11: '1.2000'
-    // *    example 12: number_format('1.2000', 3);
-    // *    returns 12: '1.200'
-    // *    example 13: number_format('1 000,50', 2, '.', ' ');
-    // *    returns 13: '100 050.00'
-    // Strip all characters but numerical ones.
-    number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
-    var n = !isFinite(+number) ? 0 : +number,
-        prec = !isFinite(+decimals) ? 0 : /*Math.abs(*/decimals/*)*/,
-        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-        s = '',
-        toFixedFix = function (n, prec) {
-            var k = Math.pow(10, prec);
-            return '' + Math.round(n * k) / k;
-        };
-    // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-    s = (prec < 0 ? ('' + n) : (prec ? toFixedFix(n, prec) : '' + Math.round(n))).split('.');
-    if (s[0].length > 3) {
-        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-    }
-    if ((s[1] || '').length < prec) {
-        s[1] = s[1] || '';
-        s[1] += new Array(prec - s[1].length + 1).join('0');
-    }
-    return s.join(dec);
+	// http://kevin.vanzonneveld.net
+	// +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+	// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	// +     bugfix by: Michael White (http://getsprink.com)
+	// +     bugfix by: Benjamin Lupton
+	// +     bugfix by: Allan Jensen (http://www.winternet.no)
+	// +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+	// +     bugfix by: Howard Yeend
+	// +    revised by: Luke Smith (http://lucassmith.name)
+	// +     bugfix by: Diogo Resende
+	// +     bugfix by: Rival
+	// +      input by: Kheang Hok Chin (http://www.distantia.ca/)
+	// +   improved by: davook
+	// +   improved by: Brett Zamir (http://brett-zamir.me)
+	// +      input by: Jay Klehr
+	// +   improved by: Brett Zamir (http://brett-zamir.me)
+	// +      input by: Amir Habibi (http://www.residence-mixte.com/)
+	// +     bugfix by: Brett Zamir (http://brett-zamir.me)
+	// +   improved by: Theriault
+	// +      input by: Amirouche
+	// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	// *     example 1: number_format(1234.56);
+	// *     returns 1: '1,235'
+	// *     example 2: number_format(1234.56, 2, ',', ' ');
+	// *     returns 2: '1 234,56'
+	// *     example 3: number_format(1234.5678, 2, '.', '');
+	// *     returns 3: '1234.57'
+	// *     example 4: number_format(67, 2, ',', '.');
+	// *     returns 4: '67,00'
+	// *     example 5: number_format(1000);
+	// *     returns 5: '1,000'
+	// *     example 6: number_format(67.311, 2);
+	// *     returns 6: '67.31'
+	// *     example 7: number_format(1000.55, 1);
+	// *     returns 7: '1,000.6'
+	// *     example 8: number_format(67000, 5, ',', '.');
+	// *     returns 8: '67.000,00000'
+	// *     example 9: number_format(0.9, 0);
+	// *     returns 9: '1'
+	// *    example 10: number_format('1.20', 2);
+	// *    returns 10: '1.20'
+	// *    example 11: number_format('1.20', 4);
+	// *    returns 11: '1.2000'
+	// *    example 12: number_format('1.2000', 3);
+	// *    returns 12: '1.200'
+	// *    example 13: number_format('1 000,50', 2, '.', ' ');
+	// *    returns 13: '100 050.00'
+	// Strip all characters but numerical ones.
+	number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+	var n = !isFinite(+number) ? 0 : +number,
+			prec = !isFinite(+decimals) ? 0 : /*Math.abs(*/decimals/*)*/,
+					sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+							dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+									s = '',
+									toFixedFix = function (n, prec) {
+								var k = Math.pow(10, prec);
+								return '' + Math.round(n * k) / k;
+							};
+							// Fix for IE parseFloat(0.55).toFixed(0) = 0;
+							s = (prec < 0 ? ('' + n) : (prec ? toFixedFix(n, prec) : '' + Math.round(n))).split('.');
+							if (s[0].length > 3) {
+								s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+							}
+							if ((s[1] || '').length < prec) {
+								s[1] = s[1] || '';
+								s[1] += new Array(prec - s[1].length + 1).join('0');
+							}
+							return s.join(dec);
 }
 

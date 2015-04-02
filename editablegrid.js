@@ -1090,7 +1090,7 @@ EditableGrid.prototype.getDisplayValueAt = function(rowIndex, columnIndex)
 {
 	var value = this.getValueAt(rowIndex, columnIndex);
 	if (value !== null) {
-		// use renderer to get the value that must be used for sorting
+		// use renderer to get the value that must be used for sorting and filtering
 		var renderer = rowIndex < 0 ? this.columns[columnIndex].headerRenderer : this.columns[columnIndex].cellRenderer;  
 		value = renderer.getDisplayValue(rowIndex, value);
 	}	
@@ -1945,13 +1945,11 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 		var row_array = [];
 		var rowCount = getRowCount();
 		for (var i = 0; i < rowCount - (ignoreLastRow ? 1 : 0); i++) row_array.push([columnIndex < 0 ? null : getDisplayValueAt(i, columnIndex), i, data[i].originalIndex]);
-		row_array.sort(columnIndex < 0 ? unsort :
-			type == "integer" || type == "double" ? sort_numeric :
-				type == "boolean" ? sort_boolean :
-					type == "date" ? sort_date :
-						sort_alpha);
 
-		if (descending) row_array = row_array.reverse();
+		var sort_function = type == "integer" || type == "double" ? sort_numeric : type == "boolean" ? sort_boolean : type == "date" ? sort_date : sort_alpha;
+		if (descending) sort_function = sort_desc(sort_function);
+		if (row_array.length > 0 && typeof row_array[0].length != 'undefined') sort_function = sort_under(sort_function);
+		row_array.sort(columnIndex < 0 ? unsort : sort_function);
 		if (ignoreLastRow) row_array.push([columnIndex < 0 ? null : getDisplayValueAt(rowCount - 1, columnIndex), rowCount - 1, data[rowCount - 1].originalIndex]);
 
 		// rebuild data using the new order
@@ -2025,7 +2023,6 @@ EditableGrid.prototype.filter = function(filterString, cols)
 				var value = getValueAt(r, typeof cols != 'undefined'  ? cols[c] : c);
 				rowContent += displayValue + " " + (displayValue == value ? "" : value + " ");
 			}
-
 
 			// add attribute values
 			for (var attributeName in row) {
