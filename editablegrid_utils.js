@@ -91,27 +91,17 @@ EditableGrid.prototype.unsort = function(a,b)
 	return aa-bb;
 };
 
-//returns a sort function handling elements which are arrays with two elements: sort value, sort index if sort value equal
-//used to sort a tree where only the first level must be actually sorted
-//TODO: generalize this and be able to sort on several columns and/or attributes (each with a specific sort function: numeric, date, boolean, alpha)
-EditableGrid.prototype.sort_under = function(sort_function) 
+/**
+ * returns a sort function which further sorts according to the original index
+ * this ensures the sort will always be stable
+ * used to sort a tree where only the first level is actually sorted
+ */
+EditableGrid.prototype.sort_stable = function(sort_function, descending) 
 {
 	return function (a, b) {
-
-		if (b[0] === null && a[0] === null) return 0;
-		if (a[0] === null && b[0] !== null) return -1;
-		if (b[0] === null && a[0] !== null) return 1;
-
-		var sort = sort_function(a[0], b[0]);
+		var sort = descending ? sort_function(b, a) : sort_function(a, b);
 		if (sort != 0) return sort;
-		return a[0][1] - b[0][1];
-	};
-};
-
-EditableGrid.prototype.sort_desc = function(sort_function) 
-{
-	return function (a, b) {
-		return sort_function(b, a);
+		return EditableGrid.prototype.unsort(a, b);
 	};
 };
 

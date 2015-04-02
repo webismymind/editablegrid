@@ -84,7 +84,7 @@ EnumCellRenderer.prototype.render = function(element, value)
 EnumCellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
 {
 	// if the column has enumerated values, sort and filter on the value label
-	return this.getLabel(rowIndex, value);
+	return value === null ? null : this.getLabel(rowIndex, value);
 };
 
 /**
