@@ -97,6 +97,11 @@ EditableGrid.prototype.unsort = function(a,b)
 EditableGrid.prototype.sort_under = function(sort_function) 
 {
 	return function (a, b) {
+
+		if (b[0] === null && a[0] === null) return 0;
+		if (a[0] === null && b[0] !== null) return -1;
+		if (b[0] === null && a[0] !== null) return 1;
+
 		var sort = sort_function(a[0], b[0]);
 		if (sort != 0) return sort;
 		return a[0][1] - b[0][1];
