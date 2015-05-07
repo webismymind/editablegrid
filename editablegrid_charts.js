@@ -248,7 +248,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
 
 					// get line style
-					var attributes = { 'stroke-width': 2, stroke: 'black', zIndex: 10000 };
+					var attributes = { 'stroke-width': 2, stroke: 'black', zIndex: 3 };
 					if (reference.style) for (var attr in reference.style) attributes[attr] = reference.style[attr];
 
 					// draw a line at Y = reference value
