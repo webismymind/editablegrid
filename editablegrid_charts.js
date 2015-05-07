@@ -189,11 +189,23 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			 */
 
 			// data: one value per row
+			var maxValue = null;
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
 				serie.data.push(value);
+				if (maxValue === null || value > maxValue) maxValue = value;
+
+				// take reference columns into account for Y axis height
+				var reference_columns = self.getRowAttribute(r, 'reference_columns');
+				if (reference_columns) $.each(reference_columns, function(i, reference) {
+					var value = self.getValueAt(r, self.getColumnIndex(reference.column));
+					if (maxValue === null || value > maxValue) maxValue = value;
+				});
 			}
+
+			// update Y max value
+			if (typeof chart.yAxis[yAxisIndex].max == 'undefined' || maxValue > chart.yAxis[yAxisIndex].max) chart.yAxis[yAxisIndex].max = maxValue;
 
 			chart.series.push(serie);
 		}
@@ -237,7 +249,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 					// get line style
 					var attributes = { 'stroke-width': 2, stroke: 'black', zIndex: 10000 };
-					for (var attr in reference.style) attributes[attr] = reference.style[attr];
+					if (reference.style) for (var attr in reference.style) attributes[attr] = reference.style[attr];
 
 					// draw a line at Y = reference value
 					var yPosition = chart.yAxis[0].toPixels(reference_value);
