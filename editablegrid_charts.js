@@ -99,8 +99,17 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 						groupPadding: 0.1,
 						pointPadding: 0.1,
 						borderWidth: 0
+					},
+					line: {
+						step: 'center',
+						lineWidth: 4,
+						zIndex: 1000,
+						marker: { enabled: false, states: { hover: { enabled: false } } }
+					},
+					scatter: {
+						zIndex: 1000,
+						marker: { symbol: 'diamond', lineColor: null, lineWidth: 4, states: { hover: { enabled: false } } }
 					}
-
 				},
 
 				legend: {
@@ -155,7 +164,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					unit: unit, 
 					title: { text: "" },
 					labels: { format: '{value} ' + (unit ? unit : '') },
-					reversedStacks: typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks'])
+					reversedStacks: (typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks']))
 				});
 			}
 
@@ -169,6 +178,15 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					// color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
 					data: []
 			};
+
+			/*
+			// test line serie combined with the bars or columns
+			if (turn_this_column_into_a_line_serie) {
+				serie.type = 'line';
+				serie.dashStyle= "ShortDot";
+				serie.color = 'gray';
+			}
+			 */
 
 			// data: one value per row
 			for (var r = 0; r < rowCount; r++) {
@@ -192,7 +210,43 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		}
 
 		// render chart
-		$('#' + divId).highcharts(chart);
+		$('#' + divId).highcharts(chart, function (chart) {
+
+			var widthColumn = null;
+			$.each(chart.series[0].points, function(rowIndex, p) {
+
+				// check if reference_columns attribute is set on rows, otherwise break loop here
+				var reference_columns = self.getRowAttribute(rowIndex, 'reference_columns');
+				if (!reference_columns) return false;
+
+				// determine width of columns (only once)
+				if (widthColumn === null) {
+					var lastX = null;
+					widthColumn = 0;
+					$.each(chart.series[0].points, function(i, p) {
+						if (lastX) widthColumn = p.plotX - lastX;
+						lastX = p.plotX;
+					});
+				}
+
+				// for each reference column
+				$.each(reference_columns, function(i, reference) {
+
+					// get reference value
+					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
+
+					// get line style
+					var attributes = { 'stroke-width': 2, stroke: 'black', zIndex: 10000 };
+					for (var attr in reference.style) attributes[attr] = reference.style[attr];
+
+					// draw a line at Y = reference value
+					var yPosition = chart.yAxis[0].toPixels(reference_value);
+					var xPosition = chart.plotLeft + p.plotX - widthColumn / 2;
+					chart.renderer.path(['M', xPosition, yPosition, 'L', xPosition + widthColumn, yPosition]).attr(attributes).add();
+
+				});
+			});
+		});
 	}
 };
 
