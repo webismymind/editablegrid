@@ -58,6 +58,9 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 	this.bar3d = false;
 	this.rotateXLabels = 0;
 
+	// used to find the rowindex from the pointIndex for drawing horizontal reference lines
+	var rowIndexByPoint = {};
+
 	with (this) {
 
 		if (EditableGrid_check_lib === null) EditableGrid_check_lib = checkChartLib();
@@ -193,6 +196,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			for (var r = 0; r < rowCount; r++) {
 				if (getRowAttribute(r, "skip") == "1") continue;
 				var value = getValueAt(r,c);
+				rowIndexByPoint[serie.data.length] = r;
 				serie.data.push(value);
 				if (maxValue === null || value > maxValue) maxValue = value;
 
@@ -225,9 +229,10 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		$('#' + divId).highcharts(chart, function (chart) {
 
 			var widthColumn = null;
-			$.each(chart.series[0].points, function(rowIndex, p) {
+			$.each(chart.series[0].points, function(pointIndex, p) {
 
 				// check if reference_columns attribute is set on rows, otherwise break loop here
+				var rowIndex = rowIndexByPoint[pointIndex];
 				var reference_columns = self.getRowAttribute(rowIndex, 'reference_columns');
 				if (!reference_columns) return false;
 
