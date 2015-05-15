@@ -229,7 +229,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		$('#' + divId).highcharts(chart, function (chart) {
 
 			var widthColumn = null;
-			$.each(chart.series[0].points, function(pointIndex, p) {
+			if (chart.series[0]) $.each(chart.series[0].points, function(pointIndex, p) {
 
 				// check if reference_columns attribute is set on rows, otherwise break loop here
 				var rowIndex = rowIndexByPoint[pointIndex];
