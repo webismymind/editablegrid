@@ -152,6 +152,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// one serie for each bar column
 		chart.series = [];
 		chart.yAxis = [];
+
 		for (var c = 0; c < columnCount; c++) {
 			if (!isColumnBar(c)) continue;
 
@@ -209,7 +210,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			}
 
 			// update Y max value
-			if (typeof chart.yAxis[yAxisIndex].max == 'undefined' || maxValue > chart.yAxis[yAxisIndex].max) chart.yAxis[yAxisIndex].max = maxValue;
+			// if (typeof chart.yAxis[yAxisIndex].max == 'undefined' || maxValue > chart.yAxis[yAxisIndex].max) chart.yAxis[yAxisIndex].max = maxValue;
 
 			chart.series.push(serie);
 		}
