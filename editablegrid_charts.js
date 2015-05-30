@@ -268,6 +268,11 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				});
 			});
 		});
+
+		if (options.noDataMessage) {
+			var container = $('#' + divId).highcharts();
+			if (chart.series.length == 0) container.showLoading(options.noDataMessage);
+		}
 	}
 };
 
