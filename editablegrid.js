@@ -911,7 +911,7 @@ EditableGrid.prototype._createCellEditor = function(column)
 									column.cellEditor.column = column;
 								}
 
-								
+
 };
 
 /**
@@ -1839,9 +1839,11 @@ EditableGrid.prototype.mouseClicked = function(e)
  * @param columnIndex
  * @private
  */
-EditableGrid.prototype.editCell = function(rowIndex, columnIndex) {
-var target = this.getCell(rowIndex, columnIndex);
+EditableGrid.prototype.editCell = function(rowIndex, columnIndex)
+{
+	var target = this.getCell(rowIndex, columnIndex);
 	with (this) {
+
 		var column = columns[columnIndex];
 		if (column) {
 
@@ -1855,7 +1857,7 @@ var target = this.getCell(rowIndex, columnIndex);
 			if (!column.editable) { readonlyWarning(column); }
 			else {
 				if (rowIndex < 0) { 
-					if (column.headerEditor && isHeaderEditable(rowIndex, columnIndex)) 
+					if (column.headerEditor && isHeaderEditable(rowIndex, columnIndex))
 						column.headerEditor.edit(rowIndex, columnIndex, target, column.label);
 				}
 				else if (column.cellEditor && isEditable(rowIndex, columnIndex))
@@ -1863,42 +1865,42 @@ var target = this.getCell(rowIndex, columnIndex);
 			}
 		}
 	}
-}
+};
 
 /**
  * Moves columns around (added by JRE)
  * @param {array[strings]} an array of class names of the headers
  * returns boolean based on success
  */
-EditableGrid.prototype.sortColumns = function(headerArray){
-	with (this){
+EditableGrid.prototype.sortColumns = function(headerArray)
+{
+	with (this) {
 		newColumns = [];
-		newColumnIndeces = [];
+		newColumnIndices = [];
 
 		for (var i = 0; i < headerArray.length; i++) {
 
 			columnIndex = this.getColumnIndex(headerArray[i]);
-
-			if(columnIndex == -1){//a column could not be found. can't reorder anything or data may be lost
+			if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
 				console.error("[sortColumns] Invalid column: " + columnIndex);
 				return false;
 			}
 
 			newColumns[i] = this.columns[columnIndex];
-			newColumnIndeces[i] = columnIndex;
+			newColumnIndices[i] = columnIndex;
 		}
 
-		//rearrance headers
+		// rearrange headers
 		this.columns = newColumns;
 
-		//need to rearrange all of the data elements as well
+		// need to rearrange all of the data elements as well
 		for (var i = 0; i < this.data.length; i++) {
 			var myData = this.data[i];
 			var myDataColumns = myData.columns;
 			var newDataColumns = [];
 
 			for (var j = 0; j < myDataColumns.length; j++) {
-				newIndex = newColumnIndeces[j];
+				newIndex = newColumnIndices[j];
 				newDataColumns[j] = myDataColumns[newIndex];
 			}
 
@@ -1907,7 +1909,7 @@ EditableGrid.prototype.sortColumns = function(headerArray){
 
 		return true;
 	}
-}
+};
 
 /**
  * Sort on a column

@@ -41,13 +41,34 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 			// backup onblur then remove it: it will be restored if editing could not be applied
 			this.onblur_backup = this.onblur; 
 			this.onblur = null;
-			
-			// move to next cell on tab key
-			if (event.keyCode == 9){
-				this.celleditor.editablegrid.editCell(this.element.rowIndex, this.element.columnIndex + 1);
+			if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup;
+
+			// TAB: move to next cell
+			if (event.keyCode == 9) {
+				if (this.element.rowIndex >= 0 && this.celleditor.editablegrid.getColumnCount() > 0 && this.celleditor.editablegrid.getRowCount() > 0) {
+
+					var candidateRowIndex = this.element.rowIndex;
+					var candidateColumnIndex = this.element.columnIndex;
+					while (true) {
+
+						// find next cell in grid
+						if (candidateColumnIndex < this.celleditor.editablegrid.getColumnCount() - 1) candidateColumnIndex++;
+						else { candidateRowIndex++; candidateColumnIndex = 0; }
+						if (!this.celleditor.editablegrid.getRow(candidateRowIndex)) candidateRowIndex = 0;
+
+						// candidate cell is editable: edit it and break
+						var column = this.celleditor.editablegrid.getColumn(candidateColumnIndex);
+						if (column.editable && column.datatype != 'boolean' && this.celleditor.editablegrid.isEditable(candidateRowIndex, candidateColumnIndex)) {
+							this.celleditor.editablegrid.editCell(candidateRowIndex, candidateColumnIndex);
+							break;
+						}
+
+						// if we ever come back to the original cell, break
+						if (candidateRowIndex == this.element.rowIndex && candidateColumnIndex == this.element.columnIndex) break;
+					}
+				}
 			}
 
-			if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup; 
 			return false;
 		}
 
@@ -70,6 +91,7 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	}
 	:
 		function(event) { 
+
 		this.onblur = null; 
 		this.celleditor.cancelEditing(this.element); 
 	};
@@ -79,7 +101,6 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 
 	// give focus to the created editor
 	editorInput.focus();
-	console.log(this);
 };
 
 CellEditor.prototype.getEditor = function(element, value) {
