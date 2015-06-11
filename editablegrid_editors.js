@@ -41,6 +41,12 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 			// backup onblur then remove it: it will be restored if editing could not be applied
 			this.onblur_backup = this.onblur; 
 			this.onblur = null;
+			
+			// move to next cell on tab key
+			if (event.keyCode == 9){
+				this.celleditor.editablegrid.editCell(this.element.rowIndex, this.element.columnIndex + 1);
+			}
+
 			if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup; 
 			return false;
 		}
@@ -73,6 +79,7 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 
 	// give focus to the created editor
 	editorInput.focus();
+	console.log(this);
 };
 
 CellEditor.prototype.getEditor = function(element, value) {

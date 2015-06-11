@@ -910,6 +910,8 @@ EditableGrid.prototype._createCellEditor = function(column)
 									column.cellEditor.editablegrid = this;
 									column.cellEditor.column = column;
 								}
+
+								
 };
 
 /**
@@ -1827,6 +1829,19 @@ EditableGrid.prototype.mouseClicked = function(e)
 		var rowIndex = getRowIndex(target.parentNode);
 		var columnIndex = target.cellIndex;
 
+		editCell(rowIndex, columnIndex);		
+	}
+};
+
+/**
+ * Edit Cell
+ * @param rowIndex
+ * @param columnIndex
+ * @private
+ */
+EditableGrid.prototype.editCell = function(rowIndex, columnIndex) {
+var target = this.getCell(rowIndex, columnIndex);
+	with (this) {
 		var column = columns[columnIndex];
 		if (column) {
 
@@ -1848,8 +1863,7 @@ EditableGrid.prototype.mouseClicked = function(e)
 			}
 		}
 	}
-};
-
+}
 
 /**
  * Moves columns around (added by JRE)
