@@ -331,7 +331,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 
 	// auto adapt dimensions to cell, with a min width
 	if (this.adaptWidth) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
-	if (this.adaptHeight) htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
+	if (this.adaptHeight && typeof jQuery.fn.select2 == 'undefined') htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
 
 	// get column option values for this row 
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
@@ -384,6 +384,37 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	htmlInput.onchange = function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, this.value); };
 
 	return htmlInput; 
+};
+
+//redefine displayEditor to setup select2
+SelectCellEditor.prototype.displayEditor = function(element, htmlInput) 
+{
+	// call base method
+	CellEditor.prototype.displayEditor.call(this, element, htmlInput);
+
+	// use select2 if loaded
+	if (typeof jQuery.fn.select2 != 'undefined') {
+
+		// setup and open
+		jQuery(htmlInput).select2({
+			dropdownAutoWidth: true,
+			minimumResultsForSearch: 10
+		}).select2('open');
+
+		// catches select2-blur
+		jQuery(htmlInput).on('select2-blur', function() { 
+			if (this.onblur) this.onblur();
+		});
+	}
+};
+
+SelectCellEditor.prototype.cancelEditing = function(element) 
+{
+	// destroy select2 if loaded
+	if (typeof jQuery.fn.select2 != 'undefined') jQuery(element).find('select').select2('destroy');
+
+	// call base method
+	CellEditor.prototype.cancelEditing.call(this, element);
 };
 
 /**
