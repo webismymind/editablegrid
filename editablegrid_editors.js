@@ -401,10 +401,10 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 			minimumResultsForSearch: 10
 		}).select2('open');
 
-		// catches select2-blur
-		jQuery(htmlInput).on('select2-blur', function() { 
-			if (this.onblur) this.onblur();
-		});
+		// catches select2-blur and select2-close to apply (or cancel) editing
+		jQuery(htmlInput)
+		.on('select2-blur', function() { if (this.onblur) this.onblur(); })
+		.on('select2-close', function() { if (this.onblur) this.onblur(); });
 	}
 };
 
