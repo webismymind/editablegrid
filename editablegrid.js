@@ -1284,6 +1284,10 @@ EditableGrid.prototype.getRowValues = function(rowIndex)
  */
 EditableGrid.prototype.append = function(rowId, cellValues, rowAttributes, dontSort)
 {
+	// This needs to be put here cause it gives Stackoverflow if the table is empty
+	if(this.data.length === 0) {
+		return this._insert(this.data.length, 0, rowId, cellValues, rowAttributes, dontSort);
+	}
 	return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
 };
 
