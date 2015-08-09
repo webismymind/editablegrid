@@ -301,7 +301,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 	this.bgColor = null; // transparent
 	this.alpha = 0.9;
 	this.limit = 0;
-	this.pie3d = false,
+	this.pie3d = false;
 	this.gradientFill = true;
 
 	// override default options with the ones given
