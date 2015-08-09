@@ -320,7 +320,6 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	strDatestyle = strDatestyle || this.dateFormat;
 	strDatestyle = strDatestyle || "EU";
 
-	var strDate;
 	var strDateArray;
 	var strDay;
 	var strMonth;
