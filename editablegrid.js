@@ -775,7 +775,7 @@ EditableGrid.prototype.getTypedValue = function(columnIndex, cellValue)
 	if (cellValue === null) return cellValue;
 
 	var colType = this.getColumnType(columnIndex);
-	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false") ? true : false;
+	if (colType == 'boolean') cellValue = (cellValue && cellValue != 0 && cellValue != "false" && cellValue != "f") ? true : false;
 	if (colType == 'integer') { cellValue = parseInt(cellValue, 10); } 
 	if (colType == 'double') { cellValue = parseFloat(cellValue); }
 	if (colType == 'string') { cellValue = "" + cellValue; }
@@ -1284,6 +1284,10 @@ EditableGrid.prototype.getRowValues = function(rowIndex)
  */
 EditableGrid.prototype.append = function(rowId, cellValues, rowAttributes, dontSort)
 {
+	// This needs to be put here cause it gives Stackoverflow if the table is empty
+	if(this.data.length === 0) {
+		return this._insert(this.data.length, 0, rowId, cellValues, rowAttributes, dontSort);
+	}
 	return this.insertAfter(this.data.length - 1, rowId, cellValues, rowAttributes, dontSort);
 };
 
