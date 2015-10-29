@@ -35,6 +35,18 @@ EditableGrid.prototype.getFormattedValue = function(columnIndex, value)
 	}
 };
 
+EditableGrid.prototype.skipRow = function(rowIndex)
+{
+	// skip if set as an attribute
+	if (this.getRowAttribute(rowIndex, "skip") == "1") return true;
+
+	// skip if hidden or expanded
+	var row = this.getRow(rowIndex);
+	if (row && row.style && row.style.display == 'none') return true;
+	if (typeof row.expanded != 'undefined' && row.expanded !== null) return row.expanded;
+
+	return false;
+};
 
 /**
  * renderBarChart
@@ -144,7 +156,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// on category for each row
 		chart.xAxis.categories = []; 
 		for (var r = 0; r < rowCount; r++) {
-			if (getRowAttribute(r, "skip") == "1") continue;
+			if (skipRow(r)) continue;
 			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
 			chart.xAxis.categories.push(label ? label : getValueAt(r, cLabel));
 		}
@@ -195,7 +207,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			// data: one value per row
 			var maxValue = null;
 			for (var r = 0; r < rowCount; r++) {
-				if (getRowAttribute(r, "skip") == "1") continue;
+				if (skipRow(r)) continue;
 				var value = getValueAt(r,c);
 				rowIndexByPoint[serie.data.length] = r;
 				serie.data.push(value);
@@ -371,7 +383,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 			// frequency pie chart
 			var distinctValues = {}; 
 			for (var r = 0; r < rowCount; r++) {
-				if (getRowAttribute(r, "skip") == "1") continue;
+				if (skipRow(r)) continue;
 				var rowValue = getValueAt(r,cValue);
 				if (rowValue in distinctValues) distinctValues[rowValue]++;
 				else distinctValues[rowValue] = 1;
@@ -392,7 +404,7 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		else {
 
 			for (var r = 0; r < rowCount; r++) {
-				if (getRowAttribute(r, "skip") == "1") continue;
+				if (skipRow(r)) continue;
 				var value = getValueAt(r,cValue);
 				var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
 				if (value !== null && !isNaN(value)) serie.data.push({ 
