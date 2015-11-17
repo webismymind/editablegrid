@@ -43,7 +43,7 @@ EditableGrid.prototype.skipRow = function(rowIndex)
 	// skip if hidden or expanded
 	var row = this.getRow(rowIndex);
 	if (row && row.style && row.style.display == 'none') return true;
-	if (typeof row.expanded != 'undefined' && row.expanded !== null) return row.expanded;
+	if (row && typeof row.expanded != 'undefined' && row.expanded !== null) return row.expanded;
 
 	return false;
 };
