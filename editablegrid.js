@@ -1848,7 +1848,7 @@ EditableGrid.prototype.editCell = function(rowIndex, columnIndex)
 		if (column) {
 
 			// if another row has been selected: callback
-			if (rowIndex > -1 && rowIndex != lastSelectedRowIndex) {
+			if (rowIndex > -1) {
 				rowSelected(lastSelectedRowIndex, rowIndex);				
 				lastSelectedRowIndex = rowIndex;
 			}
