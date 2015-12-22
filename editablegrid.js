@@ -2130,7 +2130,7 @@ EditableGrid.prototype.getPageCount = function()
 {
 	if (this.getRowCount() == 0) return 0;
 	if (this.pageCount > 0) return this.pageCount; // server side pagination
-	else if (this.pageSize <= 0) { console.error("getPageCount: no or invalid page size defined (" + this.pageSize + ")"); return -1; }
+	if (this.pageSize <= 0) return 1; // no client side pagination: one page
 	return Math.ceil(this.getRowCount() / this.pageSize);
 };
 
