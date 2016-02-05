@@ -121,6 +121,9 @@ EditableGrid.prototype.sort_boolean = function(a,b)
 
 EditableGrid.prototype.sort_alpha = function(a,b) 
 {
+	if (!a[0] && !b[0]) return 0;
+	if (a[0] && !b[0]) return 1;
+	if (!a[0] && b[0]) return -1;
 	if (a[0].toLowerCase()==b[0].toLowerCase()) return 0;
 	return a[0].toLowerCase().localeCompare(b[0].toLowerCase());
 };
