@@ -238,6 +238,21 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				var reference_columns = self.getRowAttribute(rowIndex, 'reference_columns');
 				if (!reference_columns) return false;
 
+				// update y axis max in case some reference value exceeds it
+				$.each(reference_columns, function(i, reference) {
+					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
+					if (chart.yAxis[0].max < reference_value) chart.yAxis[0].setExtremes(null,reference_value);
+				});
+
+			});
+
+			if (chart.series[0]) $.each(chart.series[0].points, function(pointIndex, p) {
+
+				// check if reference_columns attribute is set on rows, otherwise break loop here
+				var rowIndex = rowIndexByPoint[pointIndex];
+				var reference_columns = self.getRowAttribute(rowIndex, 'reference_columns');
+				if (!reference_columns) return false;
+
 				// determine width of columns (only once)
 				if (widthColumn === null) {
 					var lastX = null;
@@ -248,12 +263,6 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 					});
 					if (widthColumn == 0) widthColumn = chart.plotWidth;
 				}
-
-				// update y axis max in cas some reference value exceeds it
-				$.each(reference_columns, function(i, reference) {
-					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
-					if (chart.yAxis[0].max < reference_value) chart.yAxis[0].setExtremes(null,reference_value);
-				});
 
 				// for each reference column
 				$.each(reference_columns, function(i, reference) {
