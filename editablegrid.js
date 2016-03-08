@@ -409,7 +409,7 @@ EditableGrid.prototype.processXML = function()
 			}
 
 			// for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
-			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") ? rows[i].getAttribute("id") : defaultRowId++ };  
+			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") !== null ? rows[i].getAttribute("id") : defaultRowId++ };  
 			for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
 				var node = rows[i].attributes.item(attrIndex);
 				if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
@@ -633,7 +633,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		}
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
-		var rowData = { visible: true, originalIndex: i, id: row.id ? row.id : defaultRowId++ };  
+		var rowData = { visible: true, originalIndex: i, id: row.id !== undefined ? row.id : defaultRowId++ };  
 		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
 
 		// get column values for this rows
