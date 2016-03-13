@@ -633,7 +633,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		}
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
-		var rowData = { visible: true, originalIndex: i, id: row.id !== undefined ? row.id : defaultRowId++ };  
+		var rowData = { visible: true, originalIndex: i, id: row.id !== undefined && row.id !== null ? row.id : defaultRowId++ };  
 		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
 
 		// get column values for this rows
