@@ -62,17 +62,17 @@ function EnumCellRenderer(config) { this.init(config); }
 EnumCellRenderer.prototype = new CellRenderer();
 EnumCellRenderer.prototype.getLabel = function(rowIndex, value)
 {
-	var label = "";
+	var label = null;
 	if (typeof value != 'undefined') {
 		value = value ? value : '';
 		var optionValues = this.column.getOptionValuesForRender(rowIndex);
 		if (optionValues && value in optionValues) label = optionValues[value];
-		if (label == "") {
+		if (label === null) {
 			var isNAN = typeof value == 'number' && isNaN(value);
 			label = isNAN ? "" : value;
 		}
 	}
-	return label;
+	return label ? label : '';
 };
 
 EnumCellRenderer.prototype.render = function(element, value)
