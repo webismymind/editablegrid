@@ -405,7 +405,7 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 		// setup and open
 		jQuery(htmlInput).select2({
 			dropdownAutoWidth: true,
-			minimumResultsForSearch: 0 // should be 10 but cf. TODO in autoFocus below
+			minimumResultsForSearch: 10 // since Select2 v4, escape and arrow keys will not work correctly if no search box present... cf. TODO in autoFocus below
 		});
 
 		// select2 v4 does not position right in X: do it then open so that drodown is also positioned correctly
