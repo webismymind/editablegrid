@@ -114,6 +114,7 @@ function MultiselectCellRenderer(config)
 { 
 	// default options
 	this.noneText = "(none)";
+	this.noneColor = "ddd";
 	this.minWidth = 100;
 	this.maxWidth = 150;
 
@@ -127,7 +128,8 @@ MultiselectCellRenderer.prototype = new EnumCellRenderer();
 MultiselectCellRenderer.prototype.render = function(element, value)
 {
 	EnumCellRenderer.prototype.render.call(this, element, value);
-	if ($(element).html() == '') $(element).html("<i>" + this.noneText + "</i>"); 
+	if ($(element).html() == '') $(element).html(this.noneText.replace(' ', '&nbsp;')).css('color', '#' + this.noneColor);
+	else $(element).css('color', '');
 	$(element).css('min-width', this.minWidth + 'px').css('max-width', this.maxWidth + 'px');
 };
 
