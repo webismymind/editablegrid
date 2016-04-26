@@ -59,7 +59,7 @@ Column.prototype.getOptionValuesForEdit = function(rowIndex) {
 };
 
 Column.prototype.isValid = function(value) {
-	for (var i = 0, lgth = this.cellValidators.length; i < lgth; i++) if (!this.cellValidators[i].isValid(value)) return false;
+	for (var i = 0; i < this.cellValidators.length; i++) if (!this.cellValidators[i].isValid(value)) return false;
 	return true;
 };
 
@@ -327,7 +327,7 @@ EditableGrid.prototype.processXML = function()
 
 			this.columns = [];
 			var columnDeclarations = metadata[0].getElementsByTagName("column");
-			for (var i = 0, lgth = columnDeclarations.length; i < lgth; i++) {
+			for (var i = 0; i < columnDeclarations.length; i++) {
 
 				// get column type
 				var col = columnDeclarations[i];
@@ -343,10 +343,10 @@ EditableGrid.prototype.processXML = function()
 
 					var enumGroups = enumValues[0].getElementsByTagName("group");
 					if (enumGroups.length > 0) {
-						for (var g = 0, lgth2 = enumGroups.length; g < lgth2; g++) {
+						for (var g = 0; g < enumGroups.length; g++) {
 							var groupOptionValues = [];
 							enumValues = enumGroups[g].getElementsByTagName("value");
-							for (var v = 0, lgth3 = enumValues.length; v < lgth3; v++) {
+							for (var v = 0; v < enumValues.length; v++) {
 								var _value = enumValues[v].getAttribute("value");
 								var _label = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
 								optionValuesForRender[_value] = _label; 
@@ -357,7 +357,7 @@ EditableGrid.prototype.processXML = function()
 					}
 					else {
 						enumValues = enumValues[0].getElementsByTagName("value");
-						for (var v = 0, lgth4 = enumValues.length; v < lgth4; v++) {
+						for (var v = 0; v < enumValues.length; v++) {
 							var _value = enumValues[v].getAttribute("value");
 							var _label = enumValues[v].firstChild ? enumValues[v].firstChild.nodeValue : "";
 							optionValuesForRender[_value] = _label; 
@@ -397,12 +397,12 @@ EditableGrid.prototype.processXML = function()
 
 		// load content
 		var rows = xmlDoc.getElementsByTagName("row");
-		for (var i = 0, lgth = rows.length; i < lgth; i++)
+		for (var i = 0; i < rows.length; i++) 
 		{
 			// get all defined cell values
 			var cellValues = {};
 			var cols = rows[i].getElementsByTagName("column");
-			for (var j = 0, lgth2 = cols.length; j < lgth2; j++) {
+			for (var j = 0; j < cols.length; j++) {
 				var colname = cols[j].getAttribute("name");
 				if (!colname) {
 					if (j >= columns.length) console.error("You defined too many columns for row " + (i+1));
@@ -413,14 +413,14 @@ EditableGrid.prototype.processXML = function()
 
 			// for each row we keep the orginal index, the id and all other attributes that may have been set in the XML
 			var rowData = { visible: true, originalIndex: i, id: rows[i].getAttribute("id") !== null ? rows[i].getAttribute("id") : defaultRowId++ };  
-			for (var attrIndex = 0, lgth2 = rows[i].attributes.length; attrIndex < lgth2; attrIndex++) {
+			for (var attrIndex = 0; attrIndex < rows[i].attributes.length; attrIndex++) {
 				var node = rows[i].attributes.item(attrIndex);
 				if (node.nodeName != "id") rowData[node.nodeName] = node.nodeValue; 
 			}
 
 			// get column values for this rows
 			rowData.columns = [];
-			for (var c = 0, lgth2 = columns.length; c < lgth2; c++) {
+			for (var c = 0; c < columns.length; c++) {
 				var cellValue = columns[c].name in cellValues ? cellValues[columns[c].name] : "";
 				rowData.columns.push(getTypedValue(c, cellValue));
 			}
@@ -522,7 +522,7 @@ EditableGrid.prototype.load = function(object)
  */
 EditableGrid.prototype.update = function(object)
 {
-	if (object.data) for (var i = 0, lgth = object.data.length; i < lgth; i++)
+	if (object.data) for (var i = 0; i < object.data.length; i++) 
 	{
 		var row = object.data[i];
 		if (!row.id || !row.values) continue;
@@ -535,7 +535,7 @@ EditableGrid.prototype.update = function(object)
 		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
 		else {
 			cellValues = {};
-			for (var j = 0, lgthValues = row.values.length, lgthCol = this.columns.length ; j < lgthValues && j < lgthCol; j++) cellValues[this.columns[j].name] = row.values[j];
+			for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
 		}
 
 		// set all attributes that may have been set in the JSON
@@ -543,14 +543,14 @@ EditableGrid.prototype.update = function(object)
 
 		// get column values for this rows
 		rowData.columns = [];
-		for (var c = 0, lgthCol = this.columns.length; c < lgthCol; c++) {
+		for (var c = 0; c < this.columns.length; c++) {
 			var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
 			rowData.columns.push(this.getTypedValue(c, cellValue));
 		}
 
 		// render row
 		var tr = this.getRow(rowIndex);
-		for (var j = 0, lgthCells = tr.cells.length, lgthCol = this.columns.length; j < lgthCells && j < lgthCol; j++)  if (this.columns[j].renderable) this.columns[j].cellRenderer._render(rowIndex, j, tr.cells[j], this.getValueAt(rowIndex,j));
+		for (var j = 0; j < tr.cells.length && j < this.columns.length; j++)  if (this.columns[j].renderable) this.columns[j].cellRenderer._render(rowIndex, j, tr.cells[j], this.getValueAt(rowIndex,j));
 		this.tableRendered(this.currentContainerid, this.currentClassName, this.currentTableid);
 	}
 };
@@ -574,7 +574,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 		// create columns 
 		this.columns = [];
-		for (var c = 0, metadataLgth = jsonData.metadata.length; c < metadataLgth; c++) {
+		for (var c = 0; c < jsonData.metadata.length; c++) {
 			var columndata = jsonData.metadata[c];
 
 			var optionValues = columndata.values ? this._convertOptions(columndata.values) : null;
@@ -583,10 +583,10 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 				// build a fast lookup structure for rendering
 				var optionValuesForRender = {};
-				for (var optionIndex = 0, optValLgth = optionValues.length; optionIndex < optValLgth; optionIndex++) {
+				for (var optionIndex = 0; optionIndex < optionValues.length; optionIndex++) {
 					var optionValue = optionValues[optionIndex];
 					if (typeof optionValue.values == 'object') {
-						for (var groupOptionIndex = 0, optValLgth2 = optionValue.values.length; groupOptionIndex < optValLgth2; groupOptionIndex++) {
+						for (var groupOptionIndex = 0; groupOptionIndex < optionValue.values.length; groupOptionIndex++) {
 							var groupOptionValue = optionValue.values[groupOptionIndex];
 							optionValuesForRender[groupOptionValue.value] = groupOptionValue.label;
 						}
@@ -623,7 +623,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 	var defaultRowId = 1;
 
 	// load content
-	if (jsonData.data) for (var i = 0, dataLgth = jsonData.data.length; i < dataLgth; i++)
+	if (jsonData.data) for (var i = 0; i < jsonData.data.length; i++) 
 	{
 		var row = jsonData.data[i];
 		if (!row.values) continue;
@@ -632,7 +632,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
 		else {
 			cellValues = {};
-			for (var j = 0, valLgth = row.values.length, colLgth = this.columns.length; j < valLgth && j < colLgth; j++) cellValues[this.columns[j].name] = row.values[j];
+			for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
 		}
 
 		// for each row we keep the orginal index, the id and all other attributes that may have been set in the JSON
@@ -641,7 +641,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 
 		// get column values for this rows
 		rowData.columns = [];
-		for (var c = 0, colLgth = this.columns.length; c < colLgth; c++) {
+		for (var c = 0; c < this.columns.length; c++) {
 			var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
 			rowData.columns.push(this.getTypedValue(c, cellValue));
 		}
@@ -659,7 +659,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
  */
 EditableGrid.prototype.processColumns = function()
 {
-	for (var columnIndex = 0, colLgth = this.columns.length ; columnIndex < colLgth; columnIndex++) {
+	for (var columnIndex = 0; columnIndex < this.columns.length; columnIndex++) {
 
 		var column = this.columns[columnIndex];
 
@@ -801,7 +801,7 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 	// process columns if given
 	if (_columns) {
 		this.columns = _columns;
-		for (var columnIndex = 0, colLgth = this.columns.length; columnIndex < colLgth; columnIndex++) this.columns[columnIndex].optionValues = this._convertOptions(this.columns[columnIndex].optionValues); // convert options from old format if needed
+		for (var columnIndex = 0; columnIndex < this.columns.length; columnIndex++) this.columns[columnIndex].optionValues = this._convertOptions(this.columns[columnIndex].optionValues); // convert options from old format if needed
 		this.processColumns();
 	}
 
@@ -832,10 +832,10 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 
 	// load header labels
 	var rows = this.tHead.rows;
-	for (var i = 0, rLgth = rows.length; i < rLgth; i++) {
+	for (var i = 0; i < rows.length; i++) {
 		var cols = rows[i].cells;
 		var columnIndexInModel = 0;
-		for (var j = 0, colsLgth = cols.length, col2Lgth =this.columns.length; j < colsLgth && columnIndexInModel < col2Lgth; j++) {
+		for (var j = 0; j < cols.length && columnIndexInModel < this.columns.length; j++) {
 			if (!this.columns[columnIndexInModel].label || this.columns[columnIndexInModel].label == this.columns[columnIndexInModel].name) this.columns[columnIndexInModel].label = cols[j].innerHTML;
 			var colspan = parseInt(cols[j].getAttribute("colspan"));
 			columnIndexInModel += colspan > 1 ? colspan : 1;
@@ -844,10 +844,10 @@ EditableGrid.prototype.attachToHTMLTable = function(_table, _columns)
 
 	// load content
 	var rows = this.tBody.rows;
-	for (var i = 0, rLgth = rows.length; i < rLgth; i++) {
+	for (var i = 0; i < rows.length; i++) {
 		var rowData = [];
 		var cols = rows[i].cells;
-		for (var j = 0, colsLgth = cols.length, col2Lgth =this.columns.length; j < colLgth && j < col2Lgth; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
+		for (var j = 0; j < cols.length && j < this.columns.length; j++) rowData.push(this.getTypedValue(j, cols[j].innerHTML));
 		this.data.push({ visible: true, originalIndex: i, id: rows[i].id, columns: rowData });
 		rows[i].rowId = rows[i].id;
 		rows[i].id = this._getRowDOMId(rows[i].id);
@@ -1189,7 +1189,7 @@ EditableGrid.prototype.getRowId = function(rowIndex)
 EditableGrid.prototype.getRowIndex = function(rowId) 
 {
 	rowId = typeof rowId == 'object' ? rowId.rowId : rowId;
-	for (var rowIndex = 0, dataLgth = this.data.length; rowIndex < dataLgth; rowIndex++) if (this.data[rowIndex].id == rowId) return rowIndex;
+	for (var rowIndex = 0; rowIndex < this.data.length; rowIndex++) if (this.data[rowIndex].id == rowId) return rowIndex;
 	return -1; 
 };
 
@@ -1253,7 +1253,7 @@ EditableGrid.prototype.remove = function(rowIndex)
 	if (tr != null) this.tBody.removeChild(tr);
 
 	// update originalRowIndex
-	for (var r = 0, dataLgth = _data.length; r < dataLgth; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex--;
+	for (var r = 0; r < _data.length; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex--;
 
 	// delete row from data
 	this.data.splice(rowIndex, 1);
@@ -1273,7 +1273,7 @@ EditableGrid.prototype.remove = function(rowIndex)
 EditableGrid.prototype.getRowValues = function(rowIndex) 
 {
 	var rowValues = {};
-	for (var columnIndex = 0, colCount = this.getColumnCount(); columnIndex < colCount; columnIndex++) {
+	for (var columnIndex = 0; columnIndex < this.getColumnCount(); columnIndex++) { 
 		rowValues[this.getColumnName(columnIndex)] = this.getValueAt(rowIndex, columnIndex);
 	}
 	return rowValues;
@@ -1330,13 +1330,13 @@ EditableGrid.prototype._insert = function(rowIndex, offset, rowId, cellValues, r
 	var rowData = { visible: true, originalIndex: originalIndex, id: rowId };
 	if (rowAttributes) for (var attributeName in rowAttributes) rowData[attributeName] = rowAttributes[attributeName]; 
 	rowData.columns = [];
-	for (var c = 0, colLgth = this.columns.length; c < colLgth; c++) {
+	for (var c = 0; c < this.columns.length; c++) {
 		var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
 		rowData.columns.push(this.getTypedValue(c, cellValue));
 	}
 
 	// update originalRowIndex
-	for (var r = 0, dataLgth = _data.length; r < dataLgth; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex++;
+	for (var r = 0; r < _data.length; r++) if (_data[r].originalIndex >= originalIndex) _data[r].originalIndex++;
 
 	// append row in data
 	this.data.splice(rowIndex + offset, 0, rowData);
@@ -1643,7 +1643,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 			var displayed = 0;
 			var rowIndex = 0;
 
-			for (var i = 0, rowsLgth = rows.length; i < rowsLgth; i++) {
+			for (var i = 0; i < rows.length; i++) {
 
 				// filtering and pagination in attach mode means hiding rows
 				if (!_data[i].visible || (pageSize > 0 && displayed >= pageSize)) {
@@ -1669,7 +1669,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 						}
 						rows[i].rowId = getRowId(rowIndex);
 						rows[i].id = _getRowDOMId(rows[i].rowId);
-						for (var j = 0, colLgth =cols.length, columnsLgth = columns.length; j < colLgth && j < columnsLgth; j++)
+						for (var j = 0; j < cols.length && j < columns.length; j++) 
 							if (columns[j].renderable) columns[j].cellRenderer._render(rowIndex, j, cols[j], getValueAt(rowIndex,j));
 					}
 					rowIndex++;
@@ -1799,7 +1799,7 @@ EditableGrid.prototype._renderHeaders = function()
 			var rowData = [];
 			var cols = rows[i].cells;
 			var columnIndexInModel = 0;
-			for (var j = 0, colsLgth = cols.length, columnsLgth = columns.length; j < colsLgth && columnIndexInModel < columnsLgth; j++) {
+			for (var j = 0; j < cols.length && columnIndexInModel < columns.length; j++) {
 				columns[columnIndexInModel].headerRenderer._render(-1, columnIndexInModel, cols[j], columns[columnIndexInModel].label);
 				var colspan = parseInt(cols[j].getAttribute("colspan"));
 				columnIndexInModel += colspan > 1 ? colspan : 1;
@@ -1881,7 +1881,7 @@ EditableGrid.prototype.sortColumns = function(headerArray)
 		newColumns = [];
 		newColumnIndices = [];
 
-		for (var i = 0, lgth = headerArray.length; i < lgth; i++) {
+		for (var i = 0; i < headerArray.length; i++) {
 
 			columnIndex = this.getColumnIndex(headerArray[i]);
 			if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
@@ -1897,12 +1897,12 @@ EditableGrid.prototype.sortColumns = function(headerArray)
 		this.columns = newColumns;
 
 		// need to rearrange all of the data elements as well
-		for (var i = 0, dataLgth = this.data.length; i < dataLgth; i++) {
+		for (var i = 0; i < this.data.length; i++) {
 			var myData = this.data[i];
 			var myDataColumns = myData.columns;
 			var newDataColumns = [];
 
-			for (var j = 0, mydataLgth = myDataColumns.length; j < mydataLgth; j++) {
+			for (var j = 0; j < myDataColumns.length; j++) {
 				newIndex = newColumnIndices[j];
 				newDataColumns[j] = myDataColumns[newIndex];
 			}
@@ -1969,7 +1969,7 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
 		// rebuild data using the new order
 		var _data = data;
 		data = [];
-		for (var i = 0, lgth = row_array.length; i <lgth; i++) data.push(_data[row_array[i][1]]);
+		for (var i = 0; i < row_array.length; i++) data.push(_data[row_array[i][1]]);
 		delete row_array;
 
 		if (filterActive) {
@@ -2010,7 +2010,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 			if (dataUnfiltered != null) {
 				data = dataUnfiltered;
 				dataUnfiltered = null;
-				for (var r = 0, count = getRowCount(); r < count; r++) data[r].visible = true;
+				for (var r = 0; r < getRowCount(); r++) data[r].visible = true;
 				setPageIndex(0);
 				tableFiltered();
 			}
@@ -2044,7 +2044,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 			}
 
 			// if row contents do not match one word in the filter, hide the row
-			for (var i = 0, lgth = words.length; i < lgth; i++) {
+			for (var i = 0; i < words.length; i++) {
 				var word = words[i];
 				var match = false;
 
