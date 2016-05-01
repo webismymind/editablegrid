@@ -220,7 +220,7 @@ DateCellRenderer.prototype.render = function(cell, value)
 {
 	var date = this.editablegrid.checkDate(value);
 	if (typeof date == "object") cell.innerHTML = date.formattedDate;
-	else cell.innerHTML = value;
+	else cell.innerHTML = value ? value : "";
 	cell.style.whiteSpace = 'nowrap';
 };
 
