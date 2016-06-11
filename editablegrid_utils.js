@@ -244,7 +244,7 @@ EditableGrid.prototype.detectDir = function()
 	var e = document.getElementsByTagName('base');
 	for (var i=0; i<e.length; i++) if(e[i].href) base = e[i].href;
 
-	var e = document.getElementsByTagName('script');
+	e = document.getElementsByTagName('script');
 	for (var i=0; i<e.length; i++) {
 		if (e[i].src && /(^|\/)editablegrid[^\/]*\.js([?#].*)?$/i.test(e[i].src)) {
 			var src = new URI(e[i].src);
@@ -323,7 +323,6 @@ EditableGrid.prototype.checkDate = function(strDate, strDatestyle)
 	strDatestyle = strDatestyle || this.dateFormat;
 	strDatestyle = strDatestyle || "EU";
 
-	var strDate;
 	var strDateArray;
 	var strDay;
 	var strMonth;
