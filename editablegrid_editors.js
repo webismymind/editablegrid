@@ -333,7 +333,7 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("select");
 
 	// auto adapt dimensions to cell, with a min width
-	if (this.adaptWidth) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
+	if (this.adaptWidth && typeof jQuery.fn.select2 == 'undefined') htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
 	if (this.adaptHeight && typeof jQuery.fn.select2 == 'undefined') htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
 
 	// get column option values for this row 
