@@ -118,7 +118,11 @@ function EnumProvider(config)
  * @constructor
  * @class EditableGrid
  */
-function EditableGrid(name, config) { if (name) this.init(name, config); }
+function EditableGrid(name, config) { 
+  if ( name && name.trim() == "" ) console.error("EditableGrid() : parameter [name] cannot be empty."); 
+  if (name) this.init(name, config);
+
+}
 
 /**
  * Default properties
@@ -148,7 +152,7 @@ EditableGrid.prototype.paginatorAttributes = null;
 EditableGrid.prototype.lastURL = null;
 
 EditableGrid.prototype.init = function (name, config)
-{
+{   
 	if (typeof name != "string" || (typeof config != "object" && typeof config != "undefined")) {
 		alert("The EditableGrid constructor takes two arguments:\n- name (string)\n- config (object)\n\nGot instead " + (typeof name) + " and " + (typeof config) + ".");
 	};
