@@ -119,9 +119,8 @@ function EnumProvider(config)
  * @class EditableGrid
  */
 function EditableGrid(name, config) { 
-  if ( name && name.trim() == "" ) console.error("EditableGrid() : parameter [name] cannot be empty."); 
-  if (name) this.init(name, config);
-
+	if (typeof name != 'undefined' && name.replace(/\s+/g,'') == "") console.error("EditableGrid() : parameter [name] cannot be empty."); 
+	if (name) this.init(name, config);
 }
 
 /**
@@ -192,20 +191,20 @@ EditableGrid.prototype.init = function (name, config)
 
 	if (this.enableSort) {
 		if ( typeof config != "undefined" && typeof config['sortIconUp'] != "undefined" ) {
-            this.sortUpElement = new Image();
+			this.sortUpElement = new Image();
 			this.sortUpElement.src = config['sortIconUp'];
-        } else {
-            this.sortUpElement = document.createElement('span');
+		} else {
+			this.sortUpElement = document.createElement('span');
 			this.sortUpElement.innerHTML = '&#8593;' // Unicode 'up' arrow
-        }
+		}
 
 		if ( typeof config != "undefined" && typeof config['sortIconDown'] != "undefined" ) {
-            this.sortDownElement = new Image();
+			this.sortDownElement = new Image();
 			this.sortDownElement.src = config['sortIconDown'];
-        } else {
-            this.sortDownElement = document.createElement('span');
+		} else {
+			this.sortDownElement = document.createElement('span');
 			this.sortDownElement.innerHTML = '&#8595;' // Unicode 'down' arrow
-        }
+		}
 	}
 
 	// restore stored parameters, or use default values if nothing stored
