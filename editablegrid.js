@@ -605,13 +605,13 @@ EditableGrid.prototype.processJSON = function(jsonData)
 				editable: (columndata.editable ? true : false),
 				renderable: columndata.renderable,
 				datatype: (columndata.datatype ? columndata.datatype : "string"),
-                decimal_point: columndata.decimal_point,
+				decimal_point: columndata.decimal_point,
                 unit: columndata.unit,
                 unit_before_number: columndata.unit_before_number,
                 thousands_separator: columndata.thousands_separator,
                 bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar || false)),
 				hidden: (typeof columndata.hidden == 'undefined' ? false : (columndata.hidden ? true : false)),
-                nansymbol: columndata.nansymbol,
+				nansymbol: columndata.nansymbol,
 				optionValuesForRender: optionValuesForRender,
 				optionValues: optionValues
 			}));
@@ -703,14 +703,6 @@ EditableGrid.prototype.processColumns = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-	//// reset
-	//column.unit = null;
-	//column.precision = -1;
-	//column.decimal_point = ',';
-	//column.thousands_separator = '.';
-	//column.unit_before_number = false;
-	//column.nansymbol = '';
-
 	// extract precision, unit and number format from type if 6 given
 	if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
 		column.datatype = RegExp.$1;
