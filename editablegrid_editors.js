@@ -377,10 +377,11 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 		}
 	}
 
-	// if the current value is not in the list add it to the front
+	// if the current value is not in the list add it to the front, using display value as label
 	if (!valueFound) {
 		var option = document.createElement('option');
-		option.text = value ? value : "";
+		var value_label = this.editablegrid.getDisplayValueAt(element.rowIndex, element.columnIndex);
+		option.text = value_label ? value_label : "";
 		option.value = value ? value : "";
 		// add does not work as expected in IE7 (cf. second arg)
 		try { htmlInput.add(option, htmlInput.options[0]); } catch (e) { htmlInput.add(option); } 
