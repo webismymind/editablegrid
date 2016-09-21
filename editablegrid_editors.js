@@ -408,10 +408,7 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 		htmlInput.onchange = null;
 
 		// setup and open
-		jQuery(htmlInput).select2({
-			dropdownAutoWidth: true,
-			minimumResultsForSearch: 10 // since Select2 v4, escape and arrow keys will not work correctly if no search box present... cf. TODO in autoFocus below
-		});
+		this.select2(element, htmlInput);
 
 		// select2 v4 does not position right in X: do it then open so that drodown is also positioned correctly
 		jQuery(htmlInput).siblings('span.select2-container').css('position', 'absolute').css('left', htmlInput.style.left);
@@ -423,6 +420,14 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 		.on('select2-blur', function() { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }) // v3
 		.on('select2-close', function() { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }); // v3
 	}
+};
+
+SelectCellEditor.prototype.select2 = function(element, htmlInput) 
+{
+	jQuery(htmlInput).select2({
+		dropdownAutoWidth: true,
+		minimumResultsForSearch: 10 // since Select2 v4, escape and arrow keys will not work correctly if no search box present... cf. TODO in autoFocus below
+	});
 };
 
 SelectCellEditor.prototype.autoFocus = function(editorInput)
