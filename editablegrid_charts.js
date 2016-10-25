@@ -217,15 +217,17 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		}
 
 		// auto height based on number of bars
+		/*
 		if (type == 'bar') {
 			var stacks = {};
-			chart.chart.height = 100; // margin
+			chart.chart.height = 200; // margin
 			for (var s = 0; s < chart.series.length; s++) {
 				if (chart.series[s].stack in stacks) continue; // count height only once per stack
 				stacks[chart.series[s].stack] = true;
 				chart.chart.height += serie.data.length * 40;
 			}
 		}
+		*/
 
 		// render chart
 		$('#' + divId).highcharts(chart, function (chart) {
