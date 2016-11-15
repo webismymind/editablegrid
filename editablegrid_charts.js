@@ -69,6 +69,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 	this.limit = 0;
 	this.bar3d = false;
 	this.rotateXLabels = 0;
+	this.autoHeight = 0; // use for (horizontal) bar charts if you want height to be computed dyn. based on the number of bars: autoHeight = number of px for one bar
 
 	// used to find the rowindex from the pointIndex for drawing horizontal reference lines
 	var rowIndexByPoint = {};
@@ -217,17 +218,15 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		}
 
 		// auto height based on number of bars
-		/*
-		if (type == 'bar') {
+		if (this.autoHeight > 0 && type == 'bar') {
 			var stacks = {};
-			chart.chart.height = 200; // margin
+			chart.chart.height = 100; // margin
 			for (var s = 0; s < chart.series.length; s++) {
 				if (chart.series[s].stack in stacks) continue; // count height only once per stack
 				stacks[chart.series[s].stack] = true;
-				chart.chart.height += serie.data.length * 40;
+				chart.chart.height += chart.series[s].data.length * this.autoHeight;
 			}
 		}
-		*/
 
 		// render chart
 		$('#' + divId).highcharts(chart, function (chart) {

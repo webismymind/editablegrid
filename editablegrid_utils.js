@@ -686,7 +686,7 @@ function htmlentities(string, quote_style)
 {
 	var hash_map = {}, symbol = '', tmp_str = '';
 	tmp_str = string.toString();
-	if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
+	if (false === (hash_map = get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
 	tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
 	hash_map["'"] = '&#039;';
 	for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
@@ -697,7 +697,7 @@ function htmlspecialchars(string, quote_style)
 {
 	var hash_map = {}, symbol = '', tmp_str = '';
 	tmp_str = string.toString();
-	if (false === (hash_map = this.get_html_translation_table('HTML_SPECIALCHARS', quote_style))) return false;
+	if (false === (hash_map = get_html_translation_table('HTML_SPECIALCHARS', quote_style))) return false;
 	tmp_str = tmp_str.split('&').join('&amp;'); // replace & first, otherwise & in htlm codes will be replaced too!
 	for (symbol in hash_map) tmp_str = tmp_str.split(symbol).join(hash_map[symbol]);
 	return tmp_str;
