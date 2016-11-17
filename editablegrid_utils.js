@@ -682,6 +682,16 @@ function get_html_translation_table (table, quote_style) {
 	return hash_map;
 }
 
+function html_entity_decode(string, quote_style)
+{
+	var hash_map = {}, symbol = '', tmp_str = '';
+	tmp_str = string.toString();
+	if (false === (hash_map = get_html_translation_table('HTML_ENTITIES', quote_style))) return false;
+	hash_map["'"] = '&#039;';
+	for (symbol in hash_map) tmp_str = tmp_str.split(hash_map[symbol]).join(symbol);
+	return tmp_str;
+}
+
 function htmlentities(string, quote_style) 
 {
 	var hash_map = {}, symbol = '', tmp_str = '';

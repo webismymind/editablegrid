@@ -49,6 +49,9 @@ CellRenderer.prototype.render = function(element, value, escapehtml)
 
 CellRenderer.prototype.getDisplayValue = function(rowIndex, value) 
 {
+	// for html data type, sort and filter after replacing html entities
+	if (this.column.datatype == 'html') return html_entity_decode(value);
+			
 	return value;
 };
 
