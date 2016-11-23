@@ -62,6 +62,9 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 {
 	var self = this;
 
+	// TODO: do not assign options local to this function on "this"... name conflicts
+	this.autoHeight_fun = this.autoHeight;
+
 	// default options
 	this.legend = null;
 	this.bgColor = null; // transparent
@@ -289,6 +292,9 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			if (chart.series.length == 0) container.showLoading(options.noDataMessage);
 		}
 	}
+
+	// TODO: do not assign options local to this function on "this"... name conflicts
+	this.autoHeight = this.autoHeight_fun;
 };
 
 /**
