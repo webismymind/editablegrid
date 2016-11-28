@@ -54,7 +54,15 @@ EditableGrid.prototype.skipRow = function(rowIndex)
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param options: legend (label of labelColumnIndexOrName), bgColor (transparent), alpha (0.9), limit (0), bar3d (true), rotateXLabels (0) 
+ * @param options:
+ * - type: bar, column, spline, scatter [default = column]
+ * - zoomType: x, y, xy [default = none]
+ * - legend: text [default = label of column given by labelColumnIndexOrName]
+ * - bgColor: css format #xxxxxx [default = null, meaning transparent]
+ * - alpha: between 0 and 1 [default = 0.9]
+ * - limit: max number of rows considered [default = 0, meaning all rows]
+ * - bar3d: boolean [defaut = true]
+ * - rotateXLabels: angle in degrees [default = 0]
  * @return
  */
 
@@ -98,6 +106,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 				chart: {
 					type: type,
+					zoomType: options['zoomType'] || null,
 					backgroundColor: bgColor,
 					plotBackgroundColor: bgColor,
 					height: null, // auto
@@ -303,7 +312,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param divId
  * @param title
  * @param labelColumnIndexOrName
- * @param options: legend (label of labelColumnIndexOrName), bgColor (#ffffff), alpha (0.9), limit (0), rotateXLabels (0) 
+ * @param options: same as renderBarChart
  * @return
  */
 EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
