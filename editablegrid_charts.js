@@ -168,10 +168,12 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 		// on category for each row
 		chart.xAxis.categories = []; 
+		var nb_categories = 0; for (var r = 0; r < rowCount; r++) if (!skipRow(r)) nb_categories++;
+		var mod = Math.floor(nb_categories / 100);
 		for (var r = 0; r < rowCount; r++) {
 			if (skipRow(r)) continue;
 			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
-			chart.xAxis.categories.push(label ? label : getValueAt(r, cLabel));
+			chart.xAxis.categories.push(rowCount > 100 && r % mod != 0 ? "" : (label ? label : getValueAt(r, cLabel)));
 		}
 
 		// one serie for each bar column
