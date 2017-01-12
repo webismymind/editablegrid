@@ -146,11 +146,11 @@ CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adj
 		editorInput.style.left = (this.editablegrid.getCellX(element) - offsetScrollX + paddingLeft + (adjustX ? adjustX : 0)) + "px";
 		editorInput.style.top = (this.editablegrid.getCellY(element) - offsetScrollY + paddingTop + vCenter + (adjustY ? adjustY : 0)) + "px";
 
-		// if number type: align field and its content to the right
+		// if number type: align field and its content as the containing cell
 		if (this.column.datatype == 'integer' || this.column.datatype == 'double') {
 			var rightPadding = this.editablegrid.getCellX(element) - offsetScrollX + element.offsetWidth - (parseInt(editorInput.style.left) + editorInput.offsetWidth);
 			editorInput.style.left = (parseInt(editorInput.style.left) + rightPadding) + "px";
-			editorInput.style.textAlign = "right";
+			editorInput.style.textAlign = EditableGrid.prototype.getStyle(element, 'textAlign', 'text-align');
 		}
 	}
 
