@@ -275,6 +275,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 						lastX = p.plotX;
 					});
 					if (widthColumn == 0) widthColumn = chart.plotWidth;
+					widthColumn *= 0.9;
 				}
 
 				// for each reference column
