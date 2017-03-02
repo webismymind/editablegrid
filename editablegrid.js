@@ -1726,6 +1726,8 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 			for (var c = 0; c < columnCount; c++) {
 				var headerCell = document.createElement("TH");
 				var td = trHeader.appendChild(headerCell);
+				// hide column if column property hidden:true
+				if (columns[c].hidden) {td.style.display = 'none';}
 				columns[c].headerRenderer._render(-1, c, td, columns[c].label);
 			}
 
@@ -1741,6 +1743,9 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 
 					// create cell and render its content
 					var td = tr.insertCell(j);
+					
+					// hide column if column property hidden:true
+					if (columns[j].hidden) {td.style.display = 'none';}
 					columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
 				}
 			}
