@@ -379,7 +379,13 @@ EditableGrid.prototype.processXML = function()
 					bar: (col.getAttribute("bar") ? col.getAttribute("bar") == "true" : true),
 					hidden: (col.getAttribute("hidden") ? col.getAttribute("hidden") == "true" : false),
 					optionValuesForRender: optionValuesForRender,
-					optionValues: optionValues
+					optionValues: optionValues,
+
+				precision: col.getAttribute("precision"),
+				decimal_point: col.getAttribute("decimal_point"),
+				thousands_separator: col.getAttribute("thousands_separator"),
+				unit_before_number: col.getAttribute("unit_before_number"),
+				nansymbol: col.getAttribute("nansymbol")
 				}));
 			}
 
@@ -607,7 +613,12 @@ EditableGrid.prototype.processJSON = function(jsonData)
 				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar || false)),
 				hidden: (typeof columndata.hidden == 'undefined' ? false : (columndata.hidden ? true : false)),
 				optionValuesForRender: optionValuesForRender,
-				optionValues: optionValues
+				optionValues: optionValues,
+				precision: columndata.precision,
+				decimal_point: columndata.decimal_point,
+				thousands_separator: columndata.thousands_separator,
+				unit_before_number: columndata.unit_before_number,
+				nansymbol: columndata.nansymbol
 			}));
 		}
 
@@ -697,14 +708,6 @@ EditableGrid.prototype.processColumns = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-	// reset
-	column.unit = null;
-	column.precision = -1;
-	column.decimal_point = ',';
-	column.thousands_separator = '.';
-	column.unit_before_number = false;
-	column.nansymbol = '';
-
 	// extract precision, unit and number format from type if 6 given
 	if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
 		column.datatype = RegExp.$1;
