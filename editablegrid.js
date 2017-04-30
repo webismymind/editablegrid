@@ -1676,8 +1676,8 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 						for (var j = 0; j < cols.length && j < columns.length; j++) 
 							if (columns[j].renderable) columns[j].cellRenderer._render(rowIndex, j, cols[j], getValueAt(rowIndex,j));
 					}
-					rowIndex++;
 				}
+				rowIndex++;
 			}
 
 			// attach handler on click or double click 
