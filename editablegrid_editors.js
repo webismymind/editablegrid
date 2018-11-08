@@ -328,6 +328,8 @@ function SelectCellEditor(config) {
 }
 
 SelectCellEditor.prototype = new CellEditor();
+// use select2 if defined and not on iPad
+SelectCellEditor.prototype.useSelect2 = function() { return typeof jQuery.fn.select2 != 'undefined' && navigator.userAgent.match(/iPad/i) === null; };
 SelectCellEditor.prototype.isValueSelected = function(htmlInput, optionValue, value) { return (!optionValue && !value) || (optionValue == value); };
 SelectCellEditor.prototype.getEditor = function(element, value)
 {
@@ -337,8 +339,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 	var htmlInput = document.createElement("select");
 
 	// auto adapt dimensions to cell, with a min width
-	if (this.adaptWidth && typeof jQuery.fn.select2 == 'undefined') htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
-	if (this.adaptHeight && typeof jQuery.fn.select2 == 'undefined') htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
+	if (this.adaptWidth && !this.useSelect2()) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
+	if (this.adaptHeight && !this.useSelect2()) htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
 
 	// get column option values for this row 
 	var optionValues = this.column.getOptionValuesForEdit(element.rowIndex);
@@ -401,7 +403,7 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 	CellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
 	// use select2 if loaded
-	if (typeof jQuery.fn.select2 != 'undefined') {
+	if (this.useSelect2()) {
 
 		// select2 v4 calls onblur before onchange, when the value is not changed yet
 		htmlInput.onblur = null;
@@ -433,7 +435,7 @@ SelectCellEditor.prototype.select2 = function(element, htmlInput)
 SelectCellEditor.prototype.autoFocus = function(editorInput)
 {
 	// no autofocus on original select otherwise this select appears when hitting arrow
-	if (typeof jQuery.fn.select2 != 'undefined') {
+	if (this.useSelect2()) {
 
 		// TODO: select2('open') does not give focus as when the user clicks... side effects = escape does not work and arrows scroll the whole body... unless a search box is present!
 		return true;
@@ -445,7 +447,7 @@ SelectCellEditor.prototype.autoFocus = function(editorInput)
 SelectCellEditor.prototype.getEditorValue = function(editorInput)
 {
 	// use select2 if loaded
-	if (typeof jQuery.fn.select2 != 'undefined') return jQuery(editorInput).val();
+	if (this.useSelect2()) return jQuery(editorInput).val();
 
 	return CellEditor.prototype.getEditorValue.call(this, editorInput);
 };
@@ -453,7 +455,7 @@ SelectCellEditor.prototype.getEditorValue = function(editorInput)
 SelectCellEditor.prototype.cancelEditing = function(element) 
 {
 	// destroy select2 if loaded
-	if (typeof jQuery.fn.select2 != 'undefined') jQuery(element).find('select').select2('destroy');
+	if (this.useSelect2()) jQuery(element).find('select').select2('destroy');
 
 	// call base method
 	CellEditor.prototype.cancelEditing.call(this, element);
