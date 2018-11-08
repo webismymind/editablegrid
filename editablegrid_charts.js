@@ -232,12 +232,13 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		// auto height based on number of bars
 		if (this.autoHeight > 0 && type == 'bar') {
 			var stacks = {};
-			chart.chart.height = 100; // margin
+			chart.chart.height = 120; // margin
 			for (var s = 0; s < chart.series.length; s++) {
 				if (chart.series[s].stack in stacks) continue; // count height only once per stack
 				stacks[chart.series[s].stack] = true;
 				chart.chart.height += chart.series[s].data.length * this.autoHeight;
 			}
+			chart.chart.height = Math.max(chart.chart.height, 200);
 		}
 
 		// render chart
