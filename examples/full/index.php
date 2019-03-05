@@ -42,7 +42,7 @@
 
 		<!-- include javascript and css files for this demo -->
 		<script src="javascript/demo.js" ></script>
-		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="css/demo.css" media="screen">
 		<script type="text/javascript">
 			window.onload = function() { 
 				// you can use "datasource/demo.php" if you have PHP installed, to get live data from the demo.csv file
@@ -91,7 +91,7 @@
 		
 			<!-- Grid filter -->
 			<label for="filter">Filter :</label>
-			<input type="text" id="filter"/>
+			<input type="text" id="filter">
 		
 			<!-- Grid contents -->
 			<div id="tablecontent"></div>
