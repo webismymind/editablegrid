@@ -4,7 +4,7 @@
  * @class Base class for all cell validators
  */
 
-function CellValidator(config) 
+function CellValidator(config)
 {
 	// default properties
     var props = { isValid: null };
@@ -13,7 +13,7 @@ function CellValidator(config)
     for (var p in props) if (typeof config != 'undefined' && typeof config[p] != 'undefined') this[p] = config[p];
 }
 
-CellValidator.prototype.isValid = function(value) 
+CellValidator.prototype.isValid = function(value)
 {
 	return true;
 };
@@ -26,14 +26,14 @@ CellValidator.prototype.isValid = function(value)
 
 function NumberCellValidator(type) { this.type = type; }
 NumberCellValidator.prototype = new CellValidator;
-NumberCellValidator.prototype.isValid = function(value) 
+NumberCellValidator.prototype.isValid = function(value)
 {
 	// check that it is a valid number
 	if (isNaN(value)) return false;
-	
+
 	// for integers check that it's not a float
 	if (this.type == "integer" && value != "" && parseInt(value) != parseFloat(value)) return false;
-	
+
 	// the integer or double is valid
 	return true;
 };
@@ -46,7 +46,7 @@ NumberCellValidator.prototype.isValid = function(value)
 
 function EmailCellValidator() {}
 EmailCellValidator.prototype = new CellValidator;
-EmailCellValidator.prototype.isValid = function(value) { return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(value); };
+EmailCellValidator.prototype.isValid = function(value) { return value == "" || /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,})$/.test(value); };
 
 /**
  * Website cell validator
@@ -68,7 +68,7 @@ WebsiteCellValidator.prototype.isValid = function(value) { return value == "" ||
 function DateCellValidator(grid) { this.grid = grid; }
 DateCellValidator.prototype = new CellValidator;
 
-DateCellValidator.prototype.isValid = function(value) 
+DateCellValidator.prototype.isValid = function(value)
 {
 	return value == "" || typeof this.grid.checkDate(value) == "object";
 };
