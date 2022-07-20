@@ -144,7 +144,7 @@ Let's see how each feature has been implemented in our example:
 4. Here again, to display a flag for the country we associate a custom CellRenderer with the column 'country':
 
        setCellRenderer("country", new CellRenderer({
-      render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
+       render: function(cell, value) { cell.innerHTML = value ? "<img src='images/flags/" + value.toLowerCase() + ".png' alt='" + value + "'/>" : ""; }
        })); 
 
 5. To achieve this, we must associate a custom EnumProvider with our column, using the function setEnumProvider:
