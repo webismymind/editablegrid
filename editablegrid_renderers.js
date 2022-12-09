@@ -33,9 +33,14 @@ CellRenderer.prototype._render = function(rowIndex, columnIndex, element, value)
 
 	// apply a css class corresponding to the column name
 	EditableGrid.prototype.addClassName(element, "editablegrid-" + this.column.name);
+	
+	// apply a css class corresponding to the cell alignment
+	if( this.column.vertical_alignment == 'top') EditableGrid.prototype.addClassName(element, "vertical-align-top");
+	if( this.column.vertical_alignment == 'center') EditableGrid.prototype.addClassName(element, "vertical-align-center");
+	if( this.column.vertical_alignment == 'bottom') EditableGrid.prototype.addClassName(element, "vertical-align-bottom");
 
 	// add a data-title attribute used for responsiveness
-	element.setAttribute('data-title', this.column.label);
+	element.setAttribute('data-title', this.column.label);	
 
 	// call the specialized render method
 	return this.render(element, typeof value == 'string' && this.column.datatype != "html" ? (value === null ? null : htmlspecialchars(value, 'ENT_NOQUOTES').replace(/  /g, ' &nbsp;')) : value);
