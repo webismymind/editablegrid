@@ -1,7 +1,6 @@
 var EditableGrid_check_lib = null;
 
-EditableGrid.prototype.checkChartLib = function()
-{
+EditableGrid.prototype.checkChartLib = function () {
 	try {
 		$('dummy').highcharts();
 	}
@@ -13,15 +12,13 @@ EditableGrid.prototype.checkChartLib = function()
 	return true;
 };
 
-EditableGrid.prototype.hex2rgba = function(hexColor, alpha)
-{
+EditableGrid.prototype.hex2rgba = function (hexColor, alpha) {
 	if (typeof alpha == 'undefined') alpha = 1.0;
-	var color = {red: parseInt(hexColor.substr(1,2),16), green: parseInt(hexColor.substr(3,2),16), blue:  parseInt(hexColor.substr(5,2),16)};
+	var color = { red: parseInt(hexColor.substr(1, 2), 16), green: parseInt(hexColor.substr(3, 2), 16), blue: parseInt(hexColor.substr(5, 2), 16) };
 	return 'rgba(' + color.red + ',' + color.green + ',' + color.blue + ',' + alpha + ')';
 };
 
-EditableGrid.prototype.getFormattedValue = function(columnIndex, value)
-{
+EditableGrid.prototype.getFormattedValue = function (columnIndex, value) {
 	try {
 
 		// let the renderer work on a dummy element
@@ -35,8 +32,7 @@ EditableGrid.prototype.getFormattedValue = function(columnIndex, value)
 	}
 };
 
-EditableGrid.prototype.skipRow = function(rowIndex)
-{
+EditableGrid.prototype.skipRow = function (rowIndex) {
 	// skip if set as an attribute
 	if (this.getRowAttribute(rowIndex, "skip") == "1") return true;
 
@@ -47,6 +43,10 @@ EditableGrid.prototype.skipRow = function(rowIndex)
 
 	return false;
 };
+
+EditableGrid.prototype.chartHook = function (chart) {
+	return chart;
+}
 
 /**
  * renderBarChart
@@ -66,8 +66,7 @@ EditableGrid.prototype.skipRow = function(rowIndex)
  * @return
  */
 
-EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexOrName, options)
-{
+EditableGrid.prototype.renderBarChart = function (divId, title, labelColumnIndexOrName, options) {
 	var self = this;
 
 	// TODO: do not assign options local to this function on "this"... name conflicts
@@ -104,70 +103,70 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 		var type = options['type'] || 'column';
 		var chart = {
 
-				chart: {
-					type: type,
-					zoomType: options['zoomType'] || null,
-					backgroundColor: bgColor,
-					plotBackgroundColor: bgColor,
-					height: null, // auto
-					options3d: { 
-						enabled: bar3d
-					}
-				},
-
-				plotOptions: {
-					column: {
-						stacking: options['stacking'] || '',
-						groupPadding: 0.1,
-						pointPadding: 0.1,
-						borderWidth: 0
-					},
-					bar: {
-						stacking: options['stacking'] || '',
-						groupPadding: 0.1,
-						pointPadding: 0.1,
-						borderWidth: 0
-					},
-					line: {
-						step: 'center',
-						lineWidth: 4,
-						zIndex: 1000,
-						marker: { enabled: false, states: { hover: { enabled: false } } }
-					},
-					scatter: {
-						zIndex: 1000,
-						marker: { symbol: 'diamond', lineColor: null, lineWidth: 4, states: { hover: { enabled: false } } }
-					}
-				},
-
-				legend: {
-					align: 'center',
-					verticalAlign: (type == 'bar' ? 'top' : 'bottom'),
-					margin: (type == 'bar' ? 40 : 12),
-					floating: false
-				},
-
-				credits: {
-					enabled: false
-				},
-
-				title: {
-					text: title
-				},
-
-				tooltip: {
-					pointFormatter: function() { return this.series.name + '<b>: ' + self.getFormattedValue(this.series.options.colIndex, this.y) + '</b>'; }
+			chart: {
+				type: type,
+				zoomType: options['zoomType'] || null,
+				backgroundColor: bgColor,
+				plotBackgroundColor: bgColor,
+				height: null, // auto
+				options3d: {
+					enabled: bar3d
 				}
+			},
+
+			plotOptions: {
+				column: {
+					stacking: options['stacking'] || '',
+					groupPadding: 0.1,
+					pointPadding: 0.1,
+					borderWidth: 0
+				},
+				bar: {
+					stacking: options['stacking'] || '',
+					groupPadding: 0.1,
+					pointPadding: 0.1,
+					borderWidth: 0
+				},
+				line: {
+					step: 'center',
+					lineWidth: 4,
+					zIndex: 1000,
+					marker: { enabled: false, states: { hover: { enabled: false } } }
+				},
+				scatter: {
+					zIndex: 1000,
+					marker: { symbol: 'diamond', lineColor: null, lineWidth: 4, states: { hover: { enabled: false } } }
+				}
+			},
+
+			legend: {
+				align: 'center',
+				verticalAlign: (type == 'bar' ? 'top' : 'bottom'),
+				margin: (type == 'bar' ? 40 : 12),
+				floating: false
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			title: {
+				text: title
+			},
+
+			tooltip: {
+				pointFormatter: function () { return this.series.name + '<b>: ' + self.getFormattedValue(this.series.options.colIndex, this.y) + '</b>'; }
+			}
 		};
 
 		// xaxis with legend and rotation
 		chart.xAxis = {
-				title: { text:  legend || getColumnLabel(labelColumnIndexOrName) }, 
-				labels: { rotation: rotateXLabels } 
+			title: { text: legend || getColumnLabel(labelColumnIndexOrName) },
+			labels: { rotation: rotateXLabels }
 		};
 
 		// one category for each row
-		chart.xAxis.categories = []; 
+		chart.xAxis.categories = [];
 		for (var r = 0; r < rowCount; r++) {
 			if (skipRow(r)) continue;
 			var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
@@ -189,8 +188,8 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 
 				// not found: create new axis with no title and unit
 				yAxisIndex = chart.yAxis.length;
-				chart.yAxis.push({ 
-					unit: unit, 
+				chart.yAxis.push({
+					unit: unit,
 					title: { text: "" },
 					labels: { format: '{value} ' + (unit ? unit : '') },
 					reversedStacks: (typeof options['reversedStacks'] == 'undefined' ? false : (!!options['reversedStacks']))
@@ -198,14 +197,14 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			}
 
 			// serie's name, stack and color
-			var serie = { 
-					name: getColumnLabel(c), 
-					stack: getColumnStack(c),
-					yAxis: yAxisIndex, 
-					colIndex: c, // for pointFormatter
-					// let Highcharts handle smart colors
-					// color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
-					data: []
+			var serie = {
+				name: getColumnLabel(c),
+				stack: getColumnStack(c),
+				yAxis: yAxisIndex,
+				colIndex: c, // for pointFormatter
+				// let Highcharts handle smart colors
+				// color: hex2rgba(smartColorsBar[chart.series.length % smartColorsBar.length], alpha), 
+				data: []
 			};
 
 			/*
@@ -221,7 +220,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			var maxValue = null;
 			for (var r = 0; r < rowCount; r++) {
 				if (skipRow(r)) continue;
-				var value = getValueAt(r,c);
+				var value = getValueAt(r, c);
 				rowIndexByPoint[serie.data.length] = r;
 				serie.data.push(value);
 			}
@@ -241,11 +240,14 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 			chart.chart.height = Math.max(chart.chart.height, 200);
 		}
 
+		// custom hook to act on chart object
+		chart = self.chartHook(chart);
+
 		// render chart
 		$('#' + divId).highcharts(chart, function (chart) {
 
 			var widthColumn = null;
-			if (chart.series[0]) $.each(chart.series[0].points, function(pointIndex, p) {
+			if (chart.series[0]) $.each(chart.series[0].points, function (pointIndex, p) {
 
 				// check if reference_columns attribute is set on rows, otherwise break loop here
 				var rowIndex = rowIndexByPoint[pointIndex];
@@ -253,14 +255,14 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				if (!reference_columns) return false;
 
 				// update y axis max in case some reference value exceeds it
-				$.each(reference_columns, function(i, reference) {
+				$.each(reference_columns, function (i, reference) {
 					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
-					if (chart.yAxis[0].max < reference_value) chart.yAxis[0].setExtremes(null,reference_value);
+					if (chart.yAxis[0].max < reference_value) chart.yAxis[0].setExtremes(null, reference_value);
 				});
 
 			});
 
-			if (chart.series[0]) $.each(chart.series[0].points, function(pointIndex, p) {
+			if (chart.series[0]) $.each(chart.series[0].points, function (pointIndex, p) {
 
 				// check if reference_columns attribute is set on rows, otherwise break loop here
 				var rowIndex = rowIndexByPoint[pointIndex];
@@ -271,7 +273,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				if (widthColumn === null) {
 					var lastX = null;
 					widthColumn = 0;
-					$.each(chart.series[0].points, function(i, p) {
+					$.each(chart.series[0].points, function (i, p) {
 						if (lastX) widthColumn = p.plotX - lastX;
 						lastX = p.plotX;
 					});
@@ -280,7 +282,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
 				}
 
 				// for each reference column
-				$.each(reference_columns, function(i, reference) {
+				$.each(reference_columns, function (i, reference) {
 
 					// get reference value
 					var reference_value = self.getValueAt(rowIndex, self.getColumnIndex(reference.column));
@@ -317,8 +319,7 @@ EditableGrid.prototype.renderBarChart = function(divId, title, labelColumnIndexO
  * @param options: same as renderBarChart
  * @return
  */
-EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColumnIndexOrName, options)
-{
+EditableGrid.prototype.renderStackedBarChart = function (divId, title, labelColumnIndexOrName, options) {
 	options = options || {};
 	options.stacking = 'normal';
 	return this.renderBarChart(divId, title, labelColumnIndexOrName, options);
@@ -333,8 +334,7 @@ EditableGrid.prototype.renderStackedBarChart = function(divId, title, labelColum
  * @param options: startAngle (0), bgColor (transparent), alpha (0.9), limit (0), gradientFill (true) 
  * @return
  */
-EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) 
-{
+EditableGrid.prototype.renderPieChart = function (divId, title, valueColumnIndexOrName, labelColumnIndexOrName, options) {
 	// default options
 	this.startAngle = 0;
 	this.bgColor = null; // transparent
@@ -366,39 +366,39 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		// base chart
 		var chart = {
 
-				chart: {
-					type: 'pie',
-					backgroundColor: bgColor,
-					plotBackgroundColor: bgColor,
-					plotBorderWidth: 0,
-					options3d: { 
-						enabled: pie3d,
-						alpha: 45
-					}
-
-				},
-
-				credits: {
-					enabled: false
-				},
-
-				title: {
-					text: title
-				},
-
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-
-				plotOptions: {
-					pie: {
-						dataLabels: {
-							enabled: true,
-							format: cValue == cLabel ? '<b>{point.name}</b>' : '<b>{point.name}</b><br/>{point.formattedValue}'
-						},
-						startAngle: startAngle
-					}
+			chart: {
+				type: 'pie',
+				backgroundColor: bgColor,
+				plotBackgroundColor: bgColor,
+				plotBorderWidth: 0,
+				options3d: {
+					enabled: pie3d,
+					alpha: 45
 				}
+
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			title: {
+				text: title
+			},
+
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+			},
+
+			plotOptions: {
+				pie: {
+					dataLabels: {
+						enabled: true,
+						format: cValue == cLabel ? '<b>{point.name}</b>' : '<b>{point.name}</b><br/>{point.formattedValue}'
+					},
+					startAngle: startAngle
+				}
+			}
 		};
 
 		chart.series = [];
@@ -408,18 +408,18 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 		if (cValue == cLabel) {
 
 			// frequency pie chart
-			var distinctValues = {}; 
+			var distinctValues = {};
 			for (var r = 0; r < rowCount; r++) {
 				if (skipRow(r)) continue;
-				var rowValue = getValueAt(r,cValue);
+				var rowValue = getValueAt(r, cValue);
 				if (rowValue in distinctValues) distinctValues[rowValue]++;
 				else distinctValues[rowValue] = 1;
 			}
 
 			for (var value in distinctValues) {
 				var occurences = distinctValues[value];
-				serie.data.push({ 
-					y : occurences, 
+				serie.data.push({
+					y: occurences,
 					name: value,
 					formattedValue: value
 					// let Highcharts handle smart colors
@@ -432,11 +432,11 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
 
 			for (var r = 0; r < rowCount; r++) {
 				if (skipRow(r)) continue;
-				var value = getValueAt(r,cValue);
+				var value = getValueAt(r, cValue);
 				var label = getRowAttribute(r, "barlabel"); // if there is a barlabel attribute, use it and ignore labelColumn
-				if (value !== null && !isNaN(value)) serie.data.push({ 
-					y : value, 
-					name: (label ? label : getValueAt(r,cLabel)),
+				if (value !== null && !isNaN(value)) serie.data.push({
+					y: value,
+					name: (label ? label : getValueAt(r, cLabel)),
 					formattedValue: this.getFormattedValue(cValue, value)
 					// let Highcharts handle smart colors
 					// color: hex2rgba(smartColorsBar[serie.data.length % smartColorsPie.length], alpha)
@@ -454,7 +454,6 @@ EditableGrid.prototype.renderPieChart = function(divId, title, valueColumnIndexO
  * @param divId
  * @return
  */
-EditableGrid.prototype.clearChart = function(divId) 
-{
+EditableGrid.prototype.clearChart = function (divId) {
 	$('#' + divId).html('');
 };
