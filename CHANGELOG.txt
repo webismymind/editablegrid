@@ -38,7 +38,7 @@ MISC.:
 * Function sort() is called by renderGrid only if there is a currently defined sorting order (to avoid a double render) but the expected callback tableSorted is still called
 * Added column attributes: decimal_point, thousands_separator, unit_before_number.
   All have a default value and can be overridden in the XML column type declaration, as follows:
-  datatype(unit, precision, decimal_point, thousands_separator, unit_before_number[, nanSymbol])
+  datatype(unit, precision, decimal_point, thousands_separator, unit_before_number[, nansymbol])
   e.g. double(€, 2, comma, dot, 0, n/a)
 * Lots of other bugfixes and minor improvements!
 
