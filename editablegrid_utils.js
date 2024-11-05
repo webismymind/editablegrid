@@ -270,6 +270,8 @@ EditableGrid.prototype.isSame = function(v1, v2)
 { 
 	if (v1 === v2) return true;
 	if (typeof v1 == 'number' && isNaN(v1) && typeof v2 == 'number' && isNaN(v2)) return true;
+	if (typeof v1 == 'number' && isNaN(v1) && v2 == null) return true;
+	if (typeof v2 == 'number' && isNaN(v2) && v1 == null) return true;
 	if (v1 === '' && v2 === null) return true;
 	if (v2 === '' && v1 === null) return true;
 	return false;
