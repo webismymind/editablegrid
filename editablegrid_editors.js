@@ -47,10 +47,12 @@ CellEditor.prototype.edit = function (rowIndex, columnIndex, element, value) {
 
 					var candidateRowIndex = this.element.rowIndex;
 					var candidateColumnIndex = this.element.columnIndex;
+					var nextDirection = event.keyCode == 9 ? this.celleditor.editablegrid.editNextDirectionOnTab : this.celleditor.editablegrid.editNextDirectionOnEnter;
+
 					while (true) {
 
 						// find next cell in grid
-						if (this.celleditor.editablegrid.editNextDirection == 'horizontal') {
+						if (nextDirection == 'horizontal') {
 							if (candidateColumnIndex < this.celleditor.editablegrid.getColumnCount() - 1) candidateColumnIndex++;
 							else { candidateRowIndex++; candidateColumnIndex = 0; }
 							if (!this.celleditor.editablegrid.getRow(candidateRowIndex)) candidateRowIndex = 0;

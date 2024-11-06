@@ -106,7 +106,8 @@ function EnumProvider(config)
  * <li>saveOnBlur: should be cells saved when clicking elsewhere ? (default=true)</li>
  * <li>editNextOnTab: should next cell turn into edition when current cell is saved using TAB ? (default=true)</li>
  * <li>editNextOnEnter: should next cell turn into edition when current cell is saved using ENTER ? (default=false)</li>
- * <li>editNextDirection: when next cell turns into edition, should we go to the right or down first ? (default='horizontal')</li>
+ * <li>editNextDirectionOnTab: when next cell turns into edition, should we go to the right or down first ? (default='horizontal')</li>
+ * <li>editNextDirectionOnEnter: when next cell turns into edition, should we go to the right or down first ? (default='vertical')</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
  * <li>ignoreLastRow: ignore last row when sorting and charting the data (typically for a 'total' row)</li>
  * <li>caption: text to use as the grid's caption</li>
@@ -138,7 +139,8 @@ EditableGrid.prototype.allowSimultaneousEdition = false;
 EditableGrid.prototype.saveOnBlur = true;
 EditableGrid.prototype.editNextOnTab = true;
 EditableGrid.prototype.editNextOnEnter = false;
-EditableGrid.prototype.editNextDirection = 'horizontal';
+EditableGrid.prototype.editNextDirectionOnTab = 'horizontal';
+EditableGrid.prototype.editNextDirectionOnEnter = 'vertical';
 EditableGrid.prototype.invalidClassName = "invalid";
 EditableGrid.prototype.ignoreLastRow = false;
 EditableGrid.prototype.caption = null;
