@@ -104,6 +104,9 @@ function EnumProvider(config)
  * So practically, in these browsers you should set allowSimultaneousEdition to true if you want to use columns with option values and/or enum providers.
  * This also used to happen in older versions of Google Chrome Linux but it has been fixed, so upgrade if needed.</li>
  * <li>saveOnBlur: should be cells saved when clicking elsewhere ? (default=true)</li>
+ * <li>editNextOnTab: should next cell turn into edition when current cell is saved using TAB ? (default=true)</li>
+ * <li>editNextOnEnter: should next cell turn into edition when current cell is saved using ENTER ? (default=false)</li>
+ * <li>editNextDirection: when next cell turns into edition, should we go to the right or down first ? (default='horizontal')</li>
  * <li>invalidClassName: CSS class to apply to text fields when the entered value is invalid (default="invalid")</li>
  * <li>ignoreLastRow: ignore last row when sorting and charting the data (typically for a 'total' row)</li>
  * <li>caption: text to use as the grid's caption</li>
@@ -133,6 +136,9 @@ EditableGrid.prototype.editmode = "absolute";
 EditableGrid.prototype.editorzoneid = "";
 EditableGrid.prototype.allowSimultaneousEdition = false;
 EditableGrid.prototype.saveOnBlur = true;
+EditableGrid.prototype.editNextOnTab = true;
+EditableGrid.prototype.editNextOnEnter = false;
+EditableGrid.prototype.editNextDirection = 'horizontal';
 EditableGrid.prototype.invalidClassName = "invalid";
 EditableGrid.prototype.ignoreLastRow = false;
 EditableGrid.prototype.caption = null;

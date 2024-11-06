@@ -6,17 +6,15 @@
 
 function CellEditor(config) { this.init(config); }
 
-CellEditor.prototype.init = function(config) 
-{
+CellEditor.prototype.init = function (config) {
 	// override default properties with the ones given
 	if (config) for (var p in config) this[p] = config[p];
 };
 
-CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value) 
-{
+CellEditor.prototype.edit = function (rowIndex, columnIndex, element, value) {
 	// tag element and remember all the things we need to apply/cancel edition
 	element.isEditing = true;
-	element.rowIndex = rowIndex; 
+	element.rowIndex = rowIndex;
 	element.columnIndex = columnIndex;
 
 	// call the specialized getEditor method
@@ -31,7 +29,7 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	// - tab does not work with onkeyup (it's too late)
 	// - on Safari escape does not work with onkeypress
 	// - with onkeydown everything is fine (but don't forget to return false)
-	editorInput.onkeydown = function(event) {
+	editorInput.onkeydown = function (event) {
 
 		event = event || window.event;
 
@@ -39,12 +37,12 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		if (event.keyCode == 13 || event.keyCode == 9) {
 
 			// backup onblur then remove it: it will be restored if editing could not be applied
-			this.onblur_backup = this.onblur; 
+			this.onblur_backup = this.onblur;
 			this.onblur = null;
 			if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup;
 
 			// TAB: move to next cell
-			if (event.keyCode == 9) {
+			if ((event.keyCode == 9 && this.celleditor.editablegrid.editNextOnTab) || (event.keyCode == 13 && this.celleditor.editablegrid.editNextOnEnter)) {
 				if (this.element.rowIndex >= 0 && this.celleditor.editablegrid.getColumnCount() > 0 && this.celleditor.editablegrid.getRowCount() > 0) {
 
 					var candidateRowIndex = this.element.rowIndex;
@@ -52,19 +50,23 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 					while (true) {
 
 						// find next cell in grid
-						if (candidateColumnIndex < this.celleditor.editablegrid.getColumnCount() - 1) candidateColumnIndex++;
-						else { candidateRowIndex++; candidateColumnIndex = 0; }
-						if (!this.celleditor.editablegrid.getRow(candidateRowIndex)) candidateRowIndex = 0;
+						if (this.celleditor.editablegrid.editNextDirection == 'horizontal') {
+							if (candidateColumnIndex < this.celleditor.editablegrid.getColumnCount() - 1) candidateColumnIndex++;
+							else { candidateRowIndex++; candidateColumnIndex = 0; }
+							if (!this.celleditor.editablegrid.getRow(candidateRowIndex)) candidateRowIndex = 0;
+						}
+						else {
+							if (candidateRowIndex < this.celleditor.editablegrid.getRowCount() - 1) candidateRowIndex++;
+							else { candidateColumnIndex++; candidateRowIndex = 0; }
+							if (candidateColumnIndex >= this.celleditor.editablegrid.getColumnCount()) candidateColumnIndex = 0;
+						}
 
 						// candidate cell is editable: edit it and break
 						var column = this.celleditor.editablegrid.getColumn(candidateColumnIndex);
-						if (column.editable && column.datatype != 'boolean' && this.celleditor.editablegrid.isEditable(candidateRowIndex, candidateColumnIndex)) {
+						if (column.editable && column.datatype != 'boolean' && column.datatype != 'date' && this.celleditor.editablegrid.isEditable(candidateRowIndex, candidateColumnIndex)) {
 							this.celleditor.editablegrid.editCell(candidateRowIndex, candidateColumnIndex);
 							break;
 						}
-
-						// if we ever come back to the original cell, break
-						if (candidateRowIndex == this.element.rowIndex && candidateColumnIndex == this.element.columnIndex) break;
 					}
 				}
 			}
@@ -73,25 +75,25 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		}
 
 		// ESC: cancel editing
-		if (event.keyCode == 27) { 
-			this.onblur = null; 
-			this.celleditor.cancelEditing(this.element); 
-			return false; 
+		if (event.keyCode == 27) {
+			this.onblur = null;
+			this.celleditor.cancelEditing(this.element);
+			return false;
 		}
 	};
 
 	// if simultaneous edition is not allowed, we cancel edition when focus is lost
-	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ? function(event) { 
+	if (!this.editablegrid.allowSimultaneousEdition) editorInput.onblur = this.editablegrid.saveOnBlur ? function (event) {
 
 		// backup onblur then remove it: it will be restored if editing could not be applied
-		this.onblur_backup = this.onblur; 
+		this.onblur_backup = this.onblur;
 		this.onblur = null;
-		if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup; 
+		if (this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)) === false) this.onblur = this.onblur_backup;
 	}
-	: function(event) { 
-		this.onblur = null; 
-		this.celleditor.cancelEditing(this.element); 
-	};
+		: function (event) {
+			this.onblur = null;
+			this.celleditor.cancelEditing(this.element);
+		};
 
 	// display the resulting editor widget
 	this.displayEditor(element, editorInput);
@@ -100,27 +102,26 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 	this.autoFocus(editorInput);
 };
 
-CellEditor.prototype.autoFocus = function(editorInput) {
+CellEditor.prototype.autoFocus = function (editorInput) {
 	editorInput.focus();
 };
 
-CellEditor.prototype.getEditor = function(element, value) {
+CellEditor.prototype.getEditor = function (element, value) {
 	return null;
 };
 
-CellEditor.prototype.getEditorValue = function(editorInput) {
+CellEditor.prototype.getEditorValue = function (editorInput) {
 	return editorInput.value;
 };
 
-CellEditor.prototype.formatValue = function(value) {
+CellEditor.prototype.formatValue = function (value) {
 	return value;
 };
 
-CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adjustY) 
-{
+CellEditor.prototype.displayEditor = function (element, editorInput, adjustX, adjustY) {
 	// use same font in input as in cell content
-	editorInput.style.fontFamily = this.editablegrid.getStyle(element, "fontFamily", "font-family"); 
-	editorInput.style.fontSize = this.editablegrid.getStyle(element, "fontSize", "font-size"); 
+	editorInput.style.fontFamily = this.editablegrid.getStyle(element, "fontFamily", "font-family");
+	editorInput.style.fontSize = this.editablegrid.getStyle(element, "fontSize", "font-size");
 
 	// static mode: add input field in the table cell
 	if (this.editablegrid.editmode == "static") {
@@ -166,8 +167,7 @@ CellEditor.prototype.displayEditor = function(element, editorInput, adjustX, adj
 	}
 };
 
-CellEditor.prototype._clearEditor = function(element) 
-{
+CellEditor.prototype._clearEditor = function (element) {
 	// untag element
 	element.isEditing = false;
 
@@ -175,11 +175,10 @@ CellEditor.prototype._clearEditor = function(element)
 	if (this.editablegrid.editmode == "fixed") {
 		var editorzone = _$(this.editablegrid.editorzoneid);
 		while (editorzone.hasChildNodes()) editorzone.removeChild(editorzone.firstChild);
-	}	
+	}
 };
 
-CellEditor.prototype.cancelEditing = function(element) 
-{
+CellEditor.prototype.cancelEditing = function (element) {
 	with (this) {
 
 		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
@@ -194,8 +193,7 @@ CellEditor.prototype.cancelEditing = function(element)
 	}
 };
 
-CellEditor.prototype.applyEditing = function(element, newValue) 
-{
+CellEditor.prototype.applyEditing = function (element, newValue) {
 	with (this) {
 
 		// check that the element is still being edited (otherwise onblur will be called on textfields that have been closed when we go to another tab in Firefox) 
@@ -216,7 +214,7 @@ CellEditor.prototype.applyEditing = function(element, newValue)
 				editablegrid.modelChanged(element.rowIndex, element.columnIndex, previousValue, newValue, editablegrid.getRow(element.rowIndex));
 			}
 
-			_clearEditor(element);	
+			_clearEditor(element);
 			return true;
 		}
 
@@ -230,10 +228,10 @@ CellEditor.prototype.applyEditing = function(element, newValue)
  * @class Class to edit a cell with an HTML text input 
  */
 
-function TextCellEditor(size, maxlen, config) { 
-	if (size) this.fieldSize = size; 
-	if (maxlen) this.maxLength = maxlen; 
-	if (config) this.init(config); 
+function TextCellEditor(size, maxlen, config) {
+	if (size) this.fieldSize = size;
+	if (maxlen) this.maxLength = maxlen;
+	if (config) this.init(config);
 };
 
 TextCellEditor.prototype = new CellEditor();
@@ -241,21 +239,19 @@ TextCellEditor.prototype.fieldSize = -1;
 TextCellEditor.prototype.maxLength = -1;
 TextCellEditor.prototype.autoHeight = true;
 
-TextCellEditor.prototype.editorValue = function(value) {
+TextCellEditor.prototype.editorValue = function (value) {
 	return value;
 };
 
-TextCellEditor.prototype.updateStyle = function(htmlInput)
-{
+TextCellEditor.prototype.updateStyle = function (htmlInput) {
 	// change style for invalid values
 	if (this.column.isValid(this.getEditorValue(htmlInput))) this.editablegrid.removeClassName(htmlInput, this.editablegrid.invalidClassName);
 	else this.editablegrid.addClassName(htmlInput, this.editablegrid.invalidClassName);
 };
 
-TextCellEditor.prototype.getEditor = function(element, value)
-{
+TextCellEditor.prototype.getEditor = function (element, value) {
 	// create and initialize text field
-	var htmlInput = document.createElement("input"); 
+	var htmlInput = document.createElement("input");
 	htmlInput.setAttribute("type", "text");
 	if (this.maxLength > 0) htmlInput.setAttribute("maxlength", this.maxLength);
 
@@ -267,13 +263,12 @@ TextCellEditor.prototype.getEditor = function(element, value)
 	htmlInput.value = this.editorValue(value);
 
 	// listen to keyup to check validity and update style of input field 
-	htmlInput.onkeyup = function(event) { this.celleditor.updateStyle(this); };
+	htmlInput.onkeyup = function (event) { this.celleditor.updateStyle(this); };
 
-	return htmlInput; 
+	return htmlInput;
 };
 
-TextCellEditor.prototype.displayEditor = function(element, htmlInput) 
-{
+TextCellEditor.prototype.displayEditor = function (element, htmlInput) {
 	// call base method
 	CellEditor.prototype.displayEditor.call(this, element, htmlInput, -1 * this.editablegrid.borderLeft(htmlInput), -1 * (this.editablegrid.borderTop(htmlInput) + 1));
 
@@ -290,7 +285,7 @@ TextCellEditor.prototype.displayEditor = function(element, htmlInput)
  * @class Class to edit a numeric cell with an HTML text input 
  */
 
-function NumberCellEditor(type, config) { 
+function NumberCellEditor(type, config) {
 	this.type = type;
 	this.init(config);
 }
@@ -298,18 +293,17 @@ function NumberCellEditor(type, config) {
 NumberCellEditor.prototype = new TextCellEditor(-1, 32);
 
 //editorValue is called in getEditor to initialize field
-NumberCellEditor.prototype.editorValue = function(value) {
+NumberCellEditor.prototype.editorValue = function (value) {
 	return (value === null || isNaN(value)) ? "" : (value + '').replace('.', this.column.decimal_point);
 };
 
 //getEditorValue is called before passing to isValid and applyEditing
-NumberCellEditor.prototype.getEditorValue = function(editorInput) {
+NumberCellEditor.prototype.getEditorValue = function (editorInput) {
 	return editorInput.value.replace(',', '.');
 };
 
 //formatValue is called in applyEditing
-NumberCellEditor.prototype.formatValue = function(value)
-{
+NumberCellEditor.prototype.formatValue = function (value) {
 	return this.type == 'integer' ? parseInt(value) : parseFloat(value);
 };
 
@@ -319,27 +313,26 @@ NumberCellEditor.prototype.formatValue = function(value)
  * @class Class to edit a cell with an HTML select input 
  */
 
-function SelectCellEditor(config) { 
-	this.minWidth = 75; 
-	this.minHeight = 22; 
-	this.adaptHeight = true; 
+function SelectCellEditor(config) {
+	this.minWidth = 75;
+	this.minHeight = 22;
+	this.adaptHeight = true;
 	this.adaptWidth = true;
-	this.init(config); 
+	this.init(config);
 }
 
 SelectCellEditor.prototype = new CellEditor();
 // use select2 if defined and not on iPad
-SelectCellEditor.prototype.useSelect2 = function() { return typeof jQuery.fn.select2 != 'undefined' && navigator.userAgent.match(/iPad/i) === null; };
-SelectCellEditor.prototype.isValueSelected = function(htmlInput, optionValue, value) { return (!optionValue && !value) || (optionValue == value); };
-SelectCellEditor.prototype.getEditor = function(element, value)
-{
+SelectCellEditor.prototype.useSelect2 = function () { return typeof jQuery.fn.select2 != 'undefined' && navigator.userAgent.match(/iPad/i) === null; };
+SelectCellEditor.prototype.isValueSelected = function (htmlInput, optionValue, value) { return (!optionValue && !value) || (optionValue == value); };
+SelectCellEditor.prototype.getEditor = function (element, value) {
 	var self = this;
 
 	// create select list
 	var htmlInput = document.createElement("select");
 
 	// auto adapt dimensions to cell, with a min width
-	if (this.adaptWidth && !this.useSelect2()) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px'; 
+	if (this.adaptWidth && !this.useSelect2()) htmlInput.style.width = Math.max(this.minWidth, this.editablegrid.autoWidth(element)) + 'px';
 	if (this.adaptHeight && !this.useSelect2()) htmlInput.style.height = Math.max(this.minHeight, this.editablegrid.autoHeight(element)) + 'px';
 
 	// get column option values for this row 
@@ -354,16 +347,16 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 		if (typeof optionValue.values == 'object') {
 
 			var optgroup = document.createElement('optgroup');
-			optgroup.label = optionValue.label; 
-			htmlInput.appendChild(optgroup); 
+			optgroup.label = optionValue.label;
+			htmlInput.appendChild(optgroup);
 
 			for (var groupOptionIndex = 0; groupOptionIndex < optionValue.values.length; groupOptionIndex++) {
 				var groupOptionValue = optionValue.values[groupOptionIndex];
 				var option = document.createElement('option');
 				option.text = groupOptionValue.label;
 				option.value = groupOptionValue.value ? groupOptionValue.value : ""; // this otherwise changes a null into a "null" !
-				optgroup.appendChild(option); 
-				if (this.isValueSelected(htmlInput, groupOptionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
+				optgroup.appendChild(option);
+				if (this.isValueSelected(htmlInput, groupOptionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;
 				index++;
 			}
 		}
@@ -373,8 +366,8 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 			option.text = optionValue.label;
 			option.value = optionValue.value ? optionValue.value : ""; // this otherwise changes a null into a "null" !
 			// add does not work as expected in IE7 (cf. second arg)
-			try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); } 
-			if (this.isValueSelected(htmlInput, optionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;  
+			try { htmlInput.add(option, null); } catch (e) { htmlInput.add(option); }
+			if (this.isValueSelected(htmlInput, optionValue.value, value)) { option.selected = true; valueFound = true; } else option.selected = false;
 			index++;
 		}
 	}
@@ -386,19 +379,18 @@ SelectCellEditor.prototype.getEditor = function(element, value)
 		option.text = value_label ? value_label : "";
 		option.value = value ? value : "";
 		// add does not work as expected in IE7 (cf. second arg)
-		try { htmlInput.add(option, htmlInput.options[0]); } catch (e) { htmlInput.add(option); } 
+		try { htmlInput.add(option, htmlInput.options[0]); } catch (e) { htmlInput.add(option); }
 		htmlInput.selectedIndex = 0;
 	}
 
 	// when a new value is selected we apply it
-	htmlInput.onchange = function(event) { this.onblur = null; this.celleditor.applyEditing(this.element, self.getEditorValue(this)); };
+	htmlInput.onchange = function (event) { this.onblur = null; this.celleditor.applyEditing(this.element, self.getEditorValue(this)); };
 
-	return htmlInput; 
+	return htmlInput;
 };
 
 //redefine displayEditor to setup select2
-SelectCellEditor.prototype.displayEditor = function(element, htmlInput) 
-{
+SelectCellEditor.prototype.displayEditor = function (element, htmlInput) {
 	// call base method
 	CellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
@@ -418,22 +410,20 @@ SelectCellEditor.prototype.displayEditor = function(element, htmlInput)
 
 		// catches select2-blur and select2-close to apply (or cancel) editing
 		jQuery(htmlInput)
-		.on('select2:close', function() { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }) // v4
-		.on('select2-blur', function() { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }) // v3
-		.on('select2-close', function() { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }); // v3
+			.on('select2:close', function () { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }) // v4
+			.on('select2-blur', function () { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }) // v3
+			.on('select2-close', function () { this.celleditor.applyEditing(this.element, this.celleditor.getEditorValue(this)); }); // v3
 	}
 };
 
-SelectCellEditor.prototype.select2 = function(element, htmlInput) 
-{
+SelectCellEditor.prototype.select2 = function (element, htmlInput) {
 	jQuery(htmlInput).select2({
 		dropdownAutoWidth: true,
 		minimumResultsForSearch: 10 // since Select2 v4, escape and arrow keys will not work correctly if no search box present... cf. TODO in autoFocus below
 	});
 };
 
-SelectCellEditor.prototype.autoFocus = function(editorInput)
-{
+SelectCellEditor.prototype.autoFocus = function (editorInput) {
 	// no autofocus on original select otherwise this select appears when hitting arrow
 	if (this.useSelect2()) {
 
@@ -444,16 +434,14 @@ SelectCellEditor.prototype.autoFocus = function(editorInput)
 	return CellEditor.prototype.autoFocus.call(this, editorInput);
 };
 
-SelectCellEditor.prototype.getEditorValue = function(editorInput)
-{
+SelectCellEditor.prototype.getEditorValue = function (editorInput) {
 	// use select2 if loaded
 	if (this.useSelect2()) return jQuery(editorInput).val();
 
 	return CellEditor.prototype.getEditorValue.call(this, editorInput);
 };
 
-SelectCellEditor.prototype.cancelEditing = function(element) 
-{
+SelectCellEditor.prototype.cancelEditing = function (element) {
 	// destroy select2 if loaded
 	if (this.useSelect2()) jQuery(element).find('select').select2('destroy');
 
@@ -475,33 +463,31 @@ SelectCellEditor.prototype.cancelEditing = function(element)
  * @class Class to edit a cell with a datepicker linked to the HTML text input
  */
 
-function DateCellEditor(config) 
-{
+function DateCellEditor(config) {
 	// erase defaults with given options
-	this.init(config); 
+	this.init(config);
 };
 
 //inherits TextCellEditor functionalities
 DateCellEditor.prototype = new TextCellEditor();
 
 //redefine displayEditor to setup datepicker
-DateCellEditor.prototype.displayEditor = function(element, htmlInput) 
-{
+DateCellEditor.prototype.displayEditor = function (element, htmlInput) {
 	// call base method
 	TextCellEditor.prototype.displayEditor.call(this, element, htmlInput);
 
-	jQuery(htmlInput).datepicker({ 
+	jQuery(htmlInput).datepicker({
 		dateFormat: (this.editablegrid.dateFormat == "EU" ? "dd/mm/yy" : "mm/dd/yy"),
 		changeMonth: true,
 		changeYear: true,
 		yearRange: "c-100:c+10",
-		beforeShow: function() {
+		beforeShow: function () {
 			// the field cannot be blurred until the datepicker has gone away
 			// otherwise we get the "missing instance data" exception
 			this.onblur_backup = this.onblur;
 			this.onblur = null;
 		},
-		onClose: function(dateText) {
+		onClose: function (dateText) {
 			// apply date if any, otherwise call original onblur event
 			if (dateText != '') this.celleditor.applyEditing(htmlInput.element, dateText);
 			else if (this.onblur_backup != null) this.onblur_backup();
