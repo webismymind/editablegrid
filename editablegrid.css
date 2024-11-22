@@ -1,6 +1,21 @@
+td.vertical-align-top
+{
+	vertical-align: top;
+}
+
+td.vertical-align-center
+{
+	vertical-align: center;
+}
+
+td.vertical-align-bottom
+{
+	vertical-align: bottom;
+}
+
 td.number {
 	text-align: right;
-	font-weight: bold;
+
 	padding-right: 5px;
 	white-space: nowrap;
 }
