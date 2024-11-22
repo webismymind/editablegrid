@@ -20,8 +20,8 @@ function Column(config)
 			unit: null,
 			precision: -1, // means that all decimals are displayed
 			nansymbol: '',
-			decimal_point: ',',
-			thousands_separator: '.',
+			decimal_point: ',', // can also be specified by comma or dot
+			thousands_separator: '.', // can also be specified by comma or dot
 			unit_before_number: false,
 			bar: true, // is the column to be displayed in a bar chart ? relevant only for numerical columns 
 			hidden: false, // should the column be hidden by default
@@ -37,7 +37,7 @@ function Column(config)
 	};
 
 	// override default properties with the ones given
-	for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined') ? props[p] : config[p];
+	for (var p in props) this[p] = (typeof config == 'undefined' || typeof config[p] == 'undefined' || config[p] == null) ? props[p] : config[p];
 }
 
 Column.prototype.getOptionValuesForRender = function(rowIndex) { 
@@ -610,10 +610,16 @@ EditableGrid.prototype.processJSON = function(jsonData)
 			this.columns.push(new Column({
 				name: columndata.name,
 				label: (columndata.label ? columndata.label : columndata.name),
-				datatype: (columndata.datatype ? columndata.datatype : "string"),
 				editable: (columndata.editable ? true : false),
-				bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar || false)),
+				renderable: columndata.renderable,
+				datatype: (columndata.datatype ? columndata.datatype : "string"),
+				decimal_point: columndata.decimal_point,
+                unit: columndata.unit,
+                unit_before_number: columndata.unit_before_number,
+                thousands_separator: columndata.thousands_separator,
+                bar: (typeof columndata.bar == 'undefined' ? true : (columndata.bar || false)),
 				hidden: (typeof columndata.hidden == 'undefined' ? false : (columndata.hidden ? true : false)),
+				nansymbol: columndata.nansymbol,
 				optionValuesForRender: optionValuesForRender,
 				optionValues: optionValues
 			}));
@@ -705,14 +711,6 @@ EditableGrid.prototype.processColumns = function()
 
 EditableGrid.prototype.parseColumnType = function(column)
 {
-	// reset
-	column.unit = null;
-	column.precision = -1;
-	column.decimal_point = ',';
-	column.thousands_separator = '.';
-	column.unit_before_number = false;
-	column.nansymbol = '';
-
 	// extract precision, unit and number format from type if 6 given
 	if (column.datatype.match(/(.*)\((.*),(.*),(.*),(.*),(.*),(.*)\)$/)) {
 		column.datatype = RegExp.$1;
