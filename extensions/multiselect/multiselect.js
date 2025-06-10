@@ -117,6 +117,7 @@ function MultiselectCellRenderer(config)
 	this.noneColor = "ddd";
 	this.minWidth = 100;
 	this.maxWidth = 150;
+	this.separator = ", ";
 
 	// erase defaults with given options
 	this.init(config); 
@@ -138,7 +139,7 @@ MultiselectCellRenderer.prototype.getLabel = function(rowIndex, value)
 	var label = "";
 	var values = value ? value.split(",") : [];
 	for (var i = 0; i < values.length; i++) {
-		if (label != "") label += ", ";
+		if (label != "") label += this.separator;
 		label += EnumCellRenderer.prototype.getLabel.call(this, rowIndex, values[i]);
 	}
 	return label;
