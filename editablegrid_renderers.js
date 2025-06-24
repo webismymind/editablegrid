@@ -106,14 +106,19 @@ NumberCellRenderer.prototype.render = function(element, value)
 	var displayValue = isNAN ? (column.nansymbol || "") : value;
 	if (typeof displayValue == 'number') {
 
-		if (column.precision !== null) {
-			// displayValue = displayValue.toFixed(column.precision);
-			displayValue = number_format(displayValue, column.precision, column.decimal_point, column.thousands_separator);
+		const rowUnit = this.editablegrid.getRowAttribute(element.rowIndex, 'unit');
+		const rowPrecision = this.editablegrid.getRowAttribute(element.rowIndex, 'precision');
+		
+		const usedPrecision = rowPrecision ? rowPrecision : column.precision;
+		const usedUnit = rowUnit ? rowUnit : column.unit;
+
+		if (usedPrecision !== null) {
+			displayValue = number_format(displayValue, usedPrecision, column.decimal_point, column.thousands_separator);
 		}
 
-		if (column.unit !== null) {
-			if (column.unit_before_number) displayValue = column.unit + ' ' + displayValue;
-			else displayValue = displayValue + ' ' + column.unit;
+		if (usedUnit !== null) {
+			if (column.unit_before_number) displayValue = usedUnit + ' ' + displayValue;
+			else displayValue = displayValue + ' ' + usedUnit;
 		}
 	}
 
