@@ -106,8 +106,8 @@ NumberCellRenderer.prototype.render = function(element, value)
 	var displayValue = isNAN ? (column.nansymbol || "") : value;
 	if (typeof displayValue == 'number') {
 
-		const rowUnit = this.editablegrid.getRowAttribute(element.rowIndex, 'unit');
-		const rowPrecision = this.editablegrid.getRowAttribute(element.rowIndex, 'precision');
+		const rowUnit = this.editablegrid.allowOverrideUnitPerRow ? this.editablegrid.getRowAttribute(element.rowIndex, 'unit') : null;
+		const rowPrecision = this.editablegrid.allowOverrideUnitPerRow ? this.editablegrid.getRowAttribute(element.rowIndex, 'precision') : null;
 		
 		const usedPrecision = rowPrecision ? rowPrecision : column.precision;
 		const usedUnit = rowUnit ? rowUnit : column.unit;

@@ -136,6 +136,7 @@ EditableGrid.prototype.doubleclick = false;
 EditableGrid.prototype.editmode = "absolute";
 EditableGrid.prototype.editorzoneid = "";
 EditableGrid.prototype.allowSimultaneousEdition = false;
+EditableGrid.prototype.allowOverrideUnitPerRow = false;
 EditableGrid.prototype.saveOnBlur = true;
 EditableGrid.prototype.editNextOnTab = true;
 EditableGrid.prototype.editNextOnEnter = false;
