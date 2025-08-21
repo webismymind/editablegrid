@@ -70,7 +70,7 @@ EditableGrid.prototype.localset = function(key, value)
 
 EditableGrid.prototype.localunset = function(key) 
 {
-	if (this.enableStore) return this._localunset(this.name + '_' + key, value);
+	if (this.enableStore) return this._localunset(this.name + '_' + key);
 };
 
 EditableGrid.prototype.localget = function(key) 
