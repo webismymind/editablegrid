@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>EditableGrid - Drag & Drop des colonnes</title>
+    
+    <!-- Inclure les fichiers CSS et JS d'EditableGrid -->
+    <link rel="stylesheet" href="../../editablegrid.css">
+    <link rel="stylesheet" href="../../editablegrid_dragdrop.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007acc;
+        }
+        
+        .testgrid {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        .testgrid th,
+        .testgrid td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .testgrid th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>EditableGrid - Drag & Drop des colonnes</h1>
+        
+        <div class="instructions">
+            <h3>Instructions :</h3>
+            <ul>
+                <li>Survolez les en-têtes de colonnes - vous verrez le curseur changer</li>
+                <li>Glissez-déposez les colonnes pour les réorganiser</li>
+                <li>L'ordre est automatiquement sauvegardé dans le localStorage</li>
+                <li>Rechargez la page pour voir que l'ordre est conservé</li>
+            </ul>
+        </div>
+        
+        <div class="column-controls">
+            <button onclick="grid.resetColumnOrder()">Remettre l'ordre par défaut</button>
+            <button onclick="showColumnOrder()">Afficher l'ordre actuel</button>
+            <button onclick="randomizeColumns()">Ordre aléatoire</button>
+        </div>
+        
+        <div id="tablecontent" class="testgrid"></div>
+        
+        <div id="status" class="status">
+            <strong>Statut :</strong> <span id="statusText">Grille initialisée</span>
+        </div>
+    </div>
+
+    <!-- Inclure les scripts -->
+    <script src="../../editablegrid.js"></script>
+    <script src="../../editablegrid_utils.js"></script>
+    <script src="../../editablegrid_renderers.js"></script>
+    <script src="../../editablegrid_editors.js"></script>
+    <script src="../../editablegrid_validators.js"></script>
+    <script src="../../editablegrid_dragdrop.js"></script>
+
+    <script>
+        // Variable globale pour la grille
+        var grid;
+        
+        // Initialiser la grille
+        function initGrid() {
+            grid = new EditableGrid("SortableEddy", {
+                enableColumnDragDrop: true,
+            });
+
+             // Charger les données
+             grid.loadJSON("grid.json");
+            
+            // Callback appelé quand une colonne est déplacée
+            grid.columnOrderChanged = function(oldIndex, newIndex, columnName) {
+                updateStatus("Colonne '" + columnName + "' déplacée de la position " + oldIndex + " à " + newIndex);
+            };
+            
+            // Callback appelé quand la table est chargée
+            grid.tableLoaded = function() {
+                this.renderGrid("tablecontent","editablegrid");
+                updateStatus("Grille rendue avec drag & drop activé");
+            };
+            
+            // Callback appelé quand une cellule est modifiée
+            grid.modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) {
+                updateStatus("Cellule modifiée: " + this.getColumnLabel(columnIndex) + " = " + newValue);
+            };
+        }
+        
+        // Fonctions utilitaires
+        function updateStatus(message) {
+            document.getElementById('statusText').textContent = message;
+        }
+        
+        function showColumnOrder() {
+            var order = grid.getColumnOrder();
+            var orderText = order.map(function(col, index) {
+                return (index + 1) + ". " + col.label + " (" + col.name + ")";
+            }).join('\n');
+            
+            alert("Ordre actuel des colonnes :\n\n" + orderText);
+        }
+        
+        function randomizeColumns() {
+            var columnNames = [];
+            for (var i = 0; i < grid.columns.length; i++) {
+                columnNames.push(grid.columns[i].name);
+            }
+            
+            // Mélanger aléatoirement
+            for (var i = columnNames.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = columnNames[i];
+                columnNames[i] = columnNames[j];
+                columnNames[j] = temp;
+            }
+            
+            grid.setColumnOrder(columnNames);
+            updateStatus("Colonnes mélangées aléatoirement");
+        }
+        
+        // Initialiser quand la page est chargée
+        window.onload = function() {
+            initGrid();
+        };
+    </script>
+</body>
+</html>
