@@ -538,7 +538,7 @@ EditableGrid.prototype.update = function(object)
 	if (object.data) for (var i = 0; i < object.data.length; i++) 
 	{
 		var row = object.data[i];
-		if (!row.id || !row.values) continue;
+		if (row.id == undefined || !row.values) continue;
 
 		// get row to update in our model
 		var rowIndex = this.getRowIndex(row.id);
