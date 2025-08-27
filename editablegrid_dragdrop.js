@@ -10,65 +10,43 @@ EditableGrid.prototype.dragColumnClassName = "dragging-column";
 EditableGrid.prototype.dropZoneClassName = "drop-zone";
 
 /**
- * Initialise le drag & drop des colonnes
- */
-EditableGrid.prototype.initColumnDragDrop = function() {
-    if (!this.enableColumnDragDrop) return;
-    
-    var self = this;
-    
-    // Restaurer l'ordre des colonnes sauvegardé
-    this.restoreColumnOrder();
-    
-    // Ajouter les event listeners aux headers quand la table est rendue
-    var originalTableRendered = this.tableRendered;
-    this.tableRendered = function(containerid, className, tableid) {
-        // Appeler la fonction originale
-        originalTableRendered.call(this, containerid, className, tableid);
-        
-        // Initialiser le drag & drop
-        self.setupColumnDragDrop();
-    };
-};
-
-/**
  * Configure le drag & drop sur les headers de colonnes
  */
 EditableGrid.prototype.setupColumnDragDrop = function() {
     if (!this.tHead || !this.tHead.rows || !this.tHead.rows[0]) return;
-    
+
     var self = this;
     var headerRow = this.tHead.rows[0];
-    
+
     for (var i = 0; i < headerRow.cells.length; i++) {
         var cell = headerRow.cells[i];
-        
+
         // Ajouter les attributs de drag
         cell.draggable = true;
         cell.columnIndex = i;
         cell.style.cursor = 'move';
-        
+
         // Event listeners pour le drag
         cell.addEventListener('dragstart', function(e) {
             self.handleDragStart.call(self, e);
         });
-        
+
         cell.addEventListener('dragover', function(e) {
             self.handleDragOver.call(self, e);
         });
-        
+
         cell.addEventListener('drop', function(e) {
             self.handleDrop.call(self, e);
         });
-        
+
         cell.addEventListener('dragend', function(e) {
             self.handleDragEnd.call(self, e);
         });
-        
+
         cell.addEventListener('dragenter', function(e) {
             self.handleDragEnter.call(self, e);
         });
-        
+
         cell.addEventListener('dragleave', function(e) {
             self.handleDragLeave.call(self, e);
         });
@@ -84,7 +62,7 @@ EditableGrid.prototype.handleDragStart = function(e) {
         index: e.target.columnIndex,
         name: this.columns[e.target.columnIndex].name
     };
-    
+
     e.target.classList.add(this.dragColumnClassName);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.target.outerHTML);
@@ -120,14 +98,14 @@ EditableGrid.prototype.handleDragLeave = function(e) {
  */
 EditableGrid.prototype.handleDrop = function(e) {
     if (e.stopPropagation) e.stopPropagation();
-    
+
     var targetIndex = e.target.columnIndex;
     var sourceIndex = this.draggedColumn.index;
-    
+
     if (sourceIndex !== targetIndex) {
         this.moveColumn(sourceIndex, targetIndex);
     }
-    
+
     return false;
 };
 
@@ -141,7 +119,7 @@ EditableGrid.prototype.handleDragEnd = function(e) {
         headers[i].classList.remove(this.dragColumnClassName);
         headers[i].classList.remove(this.dropZoneClassName);
     }
-    
+
     this.draggedColumn = null;
 };
 
@@ -150,35 +128,35 @@ EditableGrid.prototype.handleDragEnd = function(e) {
  */
 EditableGrid.prototype.moveColumn = function(fromIndex, toIndex) {
     if (fromIndex === toIndex) return;
-    
+
     var columnNames = [];
     var newColumns = [];
     var oldColumnName = this.columns[fromIndex].name;
-    
+
     // Créer le nouvel ordre des colonnes
     for (var i = 0; i < this.columns.length; i++) {
         newColumns.push(this.columns[i]);
     }
-    
+
     // Déplacer la colonne dans le tableau
     var movedColumn = newColumns.splice(fromIndex, 1)[0];
     newColumns.splice(toIndex, 0, movedColumn);
-    
+
     // Extraire les noms dans le nouvel ordre
     for (var i = 0; i < newColumns.length; i++) {
         columnNames.push(newColumns[i].name);
     }
-    
+
     // Utiliser la méthode sortColumns existante
     if (this.sortColumns(columnNames)) {
         // Sauvegarder le nouvel ordre
         this.saveColumnOrder();
-        
+
         // Callback utilisateur
         this.columnOrderChanged(fromIndex, toIndex, oldColumnName);
-        
+
         // Re-rendre le grid
-        this.refreshGrid();
+        EditableGrid.prototype.refreshGrid.call(this);
     }
 };
 
@@ -187,12 +165,12 @@ EditableGrid.prototype.moveColumn = function(fromIndex, toIndex) {
  */
 EditableGrid.prototype.saveColumnOrder = function() {
     if (!this.enableStore) return;
-    
+
     var columnOrder = [];
     for (var i = 0; i < this.columns.length; i++) {
         columnOrder.push(this.columns[i].name);
     }
-    
+
     this.localset('columnOrder', JSON.stringify(columnOrder));
 };
 
@@ -201,12 +179,12 @@ EditableGrid.prototype.saveColumnOrder = function() {
  */
 EditableGrid.prototype.restoreColumnOrder = function() {
     if (!this.enableStore) return;
-    
+
     var savedOrder = this.localget('columnOrder');
     if (savedOrder) {
         try {
             var columnNames = JSON.parse(savedOrder);
-            
+
             // Vérifier que tous les noms de colonnes sont valides
             var allValid = true;
             for (var i = 0; i < columnNames.length; i++) {
@@ -215,7 +193,7 @@ EditableGrid.prototype.restoreColumnOrder = function() {
                     break;
                 }
             }
-            
+
             // Vérifier que nous avons le bon nombre de colonnes
             if (allValid && columnNames.length === this.columns.length) {
                 this.sortColumns(columnNames);
@@ -235,7 +213,7 @@ EditableGrid.prototype.restoreColumnOrder = function() {
  */
 EditableGrid.prototype.resetColumnOrder = function() {
     this.localunset('columnOrder');
-    
+
     // Recharger les données pour restaurer l'ordre original
     if (this.lastURL) {
         if (this.lastURL.indexOf('.json') !== -1) {
@@ -269,18 +247,23 @@ EditableGrid.prototype.getColumnOrder = function() {
 EditableGrid.prototype.setColumnOrder = function(columnNames) {
     if (this.sortColumns(columnNames)) {
         this.saveColumnOrder();
-        this.refreshGrid();
+        EditableGrid.prototype.refreshGrid.call(this);
         return true;
     }
     return false;
 };
 
-// Extension pour l'initialisation automatique
-var originalInit = EditableGrid.prototype.init;
-EditableGrid.prototype.init = function(name, config) {
-    // Appeler l'init original
-    originalInit.call(this, name, config);
-    
-    // Initialiser le drag & drop
-    this.initColumnDragDrop();
+
+// Restaurer l'ordre des colonnes avant render
+var original_rendergrid = EditableGrid.prototype._rendergrid;
+EditableGrid.prototype._rendergrid = function(containerid, className, tableid) {
+    if (this.enableColumnDragDrop) this.restoreColumnOrder();
+    return original_rendergrid.call(this, containerid, className, tableid);
+};
+
+// Initialiser le drag & drop après render
+var originalTableRendered = EditableGrid.prototype.tableRendered;
+EditableGrid.prototype.tableRendered = function(containerid, className, tableid) {
+    originalTableRendered.call(this, containerid, className, tableid);
+    if (this.enableColumnDragDrop) this.setupColumnDragDrop();
 };

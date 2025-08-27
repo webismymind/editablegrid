@@ -1716,7 +1716,7 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 
 			// create editablegrid table and add it to our container 
 			this.table = document.createElement("table");
-			table.className = className || "editablegrid";          
+			table.className = className ? className + " editablegrid" : "editablegrid";
 			if (typeof tableid != "undefined") table.id = tableid;
 			while (_$(containerid).hasChildNodes()) _$(containerid).removeChild(_$(containerid).firstChild);
 			_$(containerid).appendChild(table);
