@@ -24,9 +24,47 @@
 
 /* Style pour les zones de drop */
 .editablegrid th.drop-zone {
-    background-color: #d4edda;
-    border: 2px solid #28a745;
-    box-shadow: inset 0 0 10px rgba(40, 167, 69, 0.2);
+    position: relative;
+}
+
+/* Indicateur de position de drop - gauche */
+.editablegrid th.drop-zone-left::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #007acc;
+    box-shadow: 0 0 6px rgba(0, 122, 204, 0.6);
+    z-index: 1000;
+    animation: dropIndicator 0.8s ease-in-out infinite alternate;
+}
+
+/* Indicateur de position de drop - droite */
+.editablegrid th.drop-zone-right::after {
+    content: "";
+    position: absolute;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #007acc;
+    box-shadow: 0 0 6px rgba(0, 122, 204, 0.6);
+    z-index: 1000;
+    animation: dropIndicator 0.8s ease-in-out infinite alternate;
+}
+
+/* Animation pour l'indicateur de drop */
+@keyframes dropIndicator {
+    from {
+        opacity: 0.6;
+        transform: scaleY(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
 }
 
 /* Animation pour les transitions */

@@ -3,9 +3,8 @@
  * Ajoute la fonctionnalité de déplacement des colonnes avec sauvegarde
  */
 
-// Étendre EditableGrid avec les nouvelles propriétés
-EditableGrid.prototype.enableColumnDragDrop = true;
-EditableGrid.prototype.columnOrderChanged = function(oldIndex, newIndex, columnName) {};
+EditableGrid.prototype.enableColumnDragDrop = false;
+EditableGrid.prototype.columnOrderChanged = function(oldIndex, newIndex, columnName) { };
 EditableGrid.prototype.dragColumnClassName = "dragging-column";
 EditableGrid.prototype.dropZoneClassName = "drop-zone";
 
@@ -33,6 +32,7 @@ EditableGrid.prototype.setupColumnDragDrop = function() {
 
         cell.addEventListener('dragover', function(e) {
             self.handleDragOver.call(self, e);
+            self.updateDropZoneIndicator.call(self, e);
         });
 
         cell.addEventListener('drop', function(e) {
@@ -82,7 +82,7 @@ EditableGrid.prototype.handleDragOver = function(e) {
  */
 EditableGrid.prototype.handleDragEnter = function(e) {
     if (e.target !== this.draggedColumn.element) {
-        e.target.classList.add(this.dropZoneClassName);
+        this.updateDropZoneIndicator(e);
     }
 };
 
@@ -90,7 +90,7 @@ EditableGrid.prototype.handleDragEnter = function(e) {
  * Gestion de la sortie d'une zone de drop
  */
 EditableGrid.prototype.handleDragLeave = function(e) {
-    e.target.classList.remove(this.dropZoneClassName);
+    this.clearDropZoneIndicators();
 };
 
 /**
@@ -99,11 +99,11 @@ EditableGrid.prototype.handleDragLeave = function(e) {
 EditableGrid.prototype.handleDrop = function(e) {
     if (e.stopPropagation) e.stopPropagation();
 
-    var targetIndex = e.target.columnIndex;
+    var targetTH = this.findTH(e.target);
     var sourceIndex = this.draggedColumn.index;
 
-    if (sourceIndex !== targetIndex) {
-        this.moveColumn(sourceIndex, targetIndex);
+    if (targetTH && targetTH.columnIndex !== undefined && sourceIndex !== targetTH.columnIndex) {
+        this.moveColumn(sourceIndex, targetTH.columnIndex);
     }
 
     return false;
@@ -113,11 +113,12 @@ EditableGrid.prototype.handleDrop = function(e) {
  * Gestion de la fin de drag
  */
 EditableGrid.prototype.handleDragEnd = function(e) {
+    this.clearDropZoneIndicators();
+
     // Nettoyer les classes CSS
     var headers = this.tHead.rows[0].cells;
     for (var i = 0; i < headers.length; i++) {
         headers[i].classList.remove(this.dragColumnClassName);
-        headers[i].classList.remove(this.dropZoneClassName);
     }
 
     this.draggedColumn = null;
@@ -251,6 +252,47 @@ EditableGrid.prototype.setColumnOrder = function(columnNames) {
         return true;
     }
     return false;
+};
+
+/**
+ * Met à jour l'indicateur de zone de drop selon la position de la souris
+ */
+EditableGrid.prototype.updateDropZoneIndicator = function(e) {
+    this.clearDropZoneIndicators();
+    var targetTH = this.findTH(e.target);
+    if (targetTH && targetTH !== this.draggedColumn.element && targetTH.columnIndex !== undefined) {
+        const targetIndex = targetTH.columnIndex;
+        const sourceIndex = this.draggedColumn.index;
+
+        // Déterminer la position d'insertion selon le sens du déplacement
+        if (sourceIndex < targetIndex) targetTH.classList.add('drop-zone-right');
+        else targetTH.classList.add('drop-zone-left');
+        targetTH.classList.add('drop-zone');
+    }
+};
+
+/**
+ * Nettoie tous les indicateurs de drop zone
+ */
+EditableGrid.prototype.clearDropZoneIndicators = function() {
+    var headers = this.tHead.rows[0].cells;
+    for (var i = 0; i < headers.length; i++) {
+        headers[i].classList.remove('drop-zone');
+        headers[i].classList.remove('drop-zone-left');
+        headers[i].classList.remove('drop-zone-right');
+    }
+};
+
+/**
+ * Trouve un TH dans la hiérarchie DOM (élément lui-même ou parent)
+ */
+EditableGrid.prototype.findTH = function(element) {
+    var current = element;
+    while (current && current !== document) {
+        if (current.tagName === 'TH' && current.columnIndex !== undefined) return current;
+        current = current.parentElement;
+    }
+    return null;
 };
 
 
