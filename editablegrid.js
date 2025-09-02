@@ -395,6 +395,11 @@ EditableGrid.prototype.processXML = function()
 			// process columns
 			processColumns();
 		}
+		else {
+			
+			// if columns are currently sorted, restore original order before reloading data
+			if (this.columnsOriginal) this.columns = this.columnsOriginal;
+		}
 
 		// load server-side pagination data
 		var paginator = xmlDoc.getElementsByTagName("paginator");
@@ -623,6 +628,11 @@ EditableGrid.prototype.processJSON = function(jsonData)
 		// process columns
 		this.processColumns();
 	}
+	else {
+
+		// if columns are currently sorted, restore original ordr before reloading data
+		if (this.columnsOriginal) this.columns = this.columnsOriginal;
+	}
 
 	// load server-side pagination data
 	if (jsonData.paginator) {
@@ -697,6 +707,9 @@ EditableGrid.prototype.processColumns = function()
 		// add default cell validators based on the column type
 		this._addDefaultCellValidators(column);
 	}
+
+	// backup original column order
+	this.columnsOriginal = this.columns;
 };
 
 /**
