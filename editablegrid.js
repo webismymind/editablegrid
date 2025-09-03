@@ -1911,7 +1911,7 @@ EditableGrid.prototype.sortColumns = function(headerArray)
 
 			columnIndex = this.getColumnIndex(headerArray[i]);
 			if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
-				console.error("[sortColumns] Invalid column: " + columnIndex);
+				console.error("[sortColumns] Invalid column: \"" + headerArray[i] + "\"");
 				return false;
 			}
 
