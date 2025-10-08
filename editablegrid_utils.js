@@ -290,10 +290,10 @@ EditableGrid.prototype.removeClassName = function(element, className) { element.
  * Useful string methods 
  * @private
  */
-String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")); };
-String.prototype.contains = function(str) { return (this.match(str)==str); };
-String.prototype.startsWith = function(str) { return (this.match("^"+str)==str); };
-String.prototype.endsWith = function(str) { return (this.match(str+"$")==str); };
+if (!String.prototype.trim) String.prototype.trim = function() { return (this.replace(/^[\s\xA0]+/, "").replace(/[\s\xA0]+$/, "")); };
+if (!String.prototype.contains) String.prototype.contains = function(str) { return this.indexOf(str) !== -1; };
+if (!String.prototype.startsWith) String.prototype.startsWith = function(str) { return this.substring(0, str.length) === str; };
+if (!String.prototype.endsWith) String.prototype.endsWith = function(str) { return this.substring(this.length - str.length) === str; };
 
 //Accepted formats: (for EU just switch month and day)
 
