@@ -2019,6 +2019,44 @@ EditableGrid.prototype.sort = function(columnIndexOrName, descending, backOnFirs
  * @param {String} filterString String string used to filter: all words must be found in the row
  * @param {Array} cols Columns to sort.  If cols is not specified, the filter will be done on all columns
  */
+EditableGrid.prototype.findColumnForFilter = function(columnNameOrTitle)
+{
+	// Fonction pour normaliser une chaîne (insensible à la casse, aux accents et aux espaces)
+	const normalize = function(str) {
+		if (typeof str.normalize === 'function') {
+			// Méthode moderne : utiliser normalize si disponible
+			return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toLowerCase();
+		} else {
+			// Fallback pour les navigateurs anciens (IE, etc.)
+			return str.toLowerCase()
+				.replace(/[àáâãäå]/g, 'a')
+				.replace(/[èéêë]/g, 'e')
+				.replace(/[ìíîï]/g, 'i')
+				.replace(/[òóôõö]/g, 'o')
+				.replace(/[ùúûü]/g, 'u')
+				.replace(/[ýÿ]/g, 'y')
+				.replace(/[ñ]/g, 'n')
+				.replace(/[ç]/g, 'c')
+				.replace(/[æ]/g, 'ae')
+				.replace(/[œ]/g, 'oe')
+				.replace(/\s+/g, '');
+		}
+	};
+
+	// Rechercher d'abord par nom de colonne (exact)
+	const colIndex = this.getColumnIndex(columnNameOrTitle);
+	if (colIndex >= 0) return colIndex;
+
+	// Rechercher ensuite par label (insensible à la casse et aux accents)
+	const normalizedSearch = normalize(columnNameOrTitle);
+	for (var c = 0; c < this.columns.length; c++) {
+		const columnLabel = this.getColumnLabel(c);
+		if (normalize(columnLabel) === normalizedSearch) return c;
+	}
+
+	return -1;
+}
+
 EditableGrid.prototype.filter = function(filterString, cols)
 {
 	with (this) {
@@ -2083,7 +2121,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 				var attributeName = null;
 				if (word.contains("!=")) {
 					var parts = word.split("!=");
-					colindex = getColumnIndex(parts[0]);
+					colindex = findColumnForFilter(parts[0]);
 					if (colindex >= 0) {
 						word = parts[1];
 						invertMatch = !invertMatch;
@@ -2096,7 +2134,7 @@ EditableGrid.prototype.filter = function(filterString, cols)
 				}
 				else if (word.contains("=")) {
 					var parts = word.split("=");
-					colindex = getColumnIndex(parts[0]);
+					colindex = findColumnForFilter(parts[0]);
 					if (colindex >= 0) word = parts[1];
 					else if (typeof row[parts[0]] != 'undefined') {
 						attributeName = parts[0];
