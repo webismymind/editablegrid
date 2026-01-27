@@ -549,21 +549,34 @@ EditableGrid.prototype.update = function(object)
 		var rowIndex = this.getRowIndex(row.id);
 		var rowData = this.data[rowIndex];
 
+		// if columns are currently sorted, use original order for reading data
+		const columnsForReadingData = this.columnsOriginal ? this.columnsOriginal : this.columns;
+
 		// row values can be given as an array (same order as columns) or as an object (associative array)
 		if (Object.prototype.toString.call(row.values) !== '[object Array]' ) cellValues = row.values;
 		else {
 			cellValues = {};
-			for (var j = 0; j < row.values.length && j < this.columns.length; j++) cellValues[this.columns[j].name] = row.values[j];
+			for (var j = 0; j < row.values.length && j < columnsForReadingData.length; j++) cellValues[columnsForReadingData[j].name] = row.values[j];
 		}
 
 		// set all attributes that may have been set in the JSON
 		for (var attributeName in row) if (attributeName != "id" && attributeName != "values") rowData[attributeName] = row[attributeName];
 
-		// get column values for this rows
+		// read column values for this rows
 		rowData.columns = [];
-		for (var c = 0; c < this.columns.length; c++) {
-			var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
+		for (var c = 0; c < columnsForReadingData.length; c++) {
+			var cellValue = columnsForReadingData[c].name in cellValues ? cellValues[columnsForReadingData[c].name] : "";
 			rowData.columns.push(this.getTypedValue(c, cellValue));
+		}
+
+		// re-arrange row if columns are sorted
+		if (this.columnIndexMapping) {
+			const newDataColumns = [];
+			for (let j = 0; j < rowData.columns.length; j++) {
+				const newIndex = this.columnIndexMapping[j];
+				newDataColumns[j] = rowData.columns[newIndex];
+			}
+			rowData.columns = newDataColumns;
 		}
 
 		// render row
@@ -630,7 +643,7 @@ EditableGrid.prototype.processJSON = function(jsonData)
 	}
 	else {
 
-		// if columns are currently sorted, restore original ordr before reloading data
+		// if columns are currently sorted, restore original order before reloading data
 		if (this.columnsOriginal) this.columns = this.columnsOriginal;
 	}
 
@@ -1903,41 +1916,39 @@ EditableGrid.prototype.editCell = function(rowIndex, columnIndex)
  */
 EditableGrid.prototype.sortColumns = function(headerArray)
 {
-	with (this) {
-		newColumns = [];
-		newColumnIndices = [];
+	const newColumns = [];
+	const columnIndexMapping = [];
 
-		for (var i = 0; i < headerArray.length; i++) {
-
-			columnIndex = this.getColumnIndex(headerArray[i]);
-			if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
-				console.error("[sortColumns] Invalid column: \"" + headerArray[i] + "\"");
-				return false;
-			}
-
-			newColumns[i] = this.columns[columnIndex];
-			newColumnIndices[i] = columnIndex;
+	for (let i = 0; i < headerArray.length; i++) {
+		const columnIndex = this.getColumnIndex(headerArray[i]);
+		if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
+			console.error("[sortColumns] Invalid column: \"" + headerArray[i] + "\"");
+			return false;
 		}
 
-		// rearrange headers
-		this.columns = newColumns;
-
-		// need to rearrange all of the data elements as well
-		for (var i = 0; i < this.data.length; i++) {
-			var myData = this.data[i];
-			var myDataColumns = myData.columns;
-			var newDataColumns = [];
-
-			for (var j = 0; j < myDataColumns.length; j++) {
-				newIndex = newColumnIndices[j];
-				newDataColumns[j] = myDataColumns[newIndex];
-			}
-
-			this.data[i].columns = newDataColumns;
-		}
-
-		return true;
+		newColumns[i] = this.columns[columnIndex];
+		columnIndexMapping[i] = columnIndex;
 	}
+
+	// rearrange headers
+	this.columns = newColumns;
+	this.columnIndexMapping = columnIndexMapping;
+
+	// need to rearrange all of the data elements as well
+	for (let i = 0; i < this.data.length; i++) {
+		const myData = this.data[i];
+		const myDataColumns = myData.columns;
+		const newDataColumns = [];
+
+		for (let j = 0; j < myDataColumns.length; j++) {
+			const newIndex = columnIndexMapping[j];
+			newDataColumns[j] = myDataColumns[newIndex];
+		}
+
+		this.data[i].columns = newDataColumns;
+	}
+
+	return true;
 };
 
 /**

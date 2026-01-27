@@ -263,7 +263,7 @@ class EditableGrid {
 		return $str;
 	}
 
-	protected function parseColumnType($type, $unitTranslations = FALSE)
+	protected static function parseColumnType($type, $unitTranslations = FALSE)
 	{
 		$info = array(
 			'unit' => '',
