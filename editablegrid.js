@@ -572,7 +572,7 @@ EditableGrid.prototype.update = function(object)
 		// re-arrange row if columns are sorted
 		if (this.columnIndexMapping) {
 			const newDataColumns = [];
-			for (let j = 0; j < rowData.columns.length; j++) {
+			for (var j = 0; j < rowData.columns.length; j++) {
 				const newIndex = this.columnIndexMapping[j];
 				newDataColumns[j] = rowData.columns[newIndex];
 			}
@@ -1919,7 +1919,7 @@ EditableGrid.prototype.sortColumns = function(headerArray)
 	const newColumns = [];
 	const columnIndexMapping = [];
 
-	for (let i = 0; i < headerArray.length; i++) {
+	for (var i = 0; i < headerArray.length; i++) {
 		const columnIndex = this.getColumnIndex(headerArray[i]);
 		if (columnIndex == -1) { // a column could not be found. can't reorder anything or data may be lost
 			console.error("[sortColumns] Invalid column: \"" + headerArray[i] + "\"");
@@ -1935,12 +1935,12 @@ EditableGrid.prototype.sortColumns = function(headerArray)
 	this.columnIndexMapping = columnIndexMapping;
 
 	// need to rearrange all of the data elements as well
-	for (let i = 0; i < this.data.length; i++) {
+	for (var i = 0; i < this.data.length; i++) {
 		const myData = this.data[i];
 		const myDataColumns = myData.columns;
 		const newDataColumns = [];
 
-		for (let j = 0; j < myDataColumns.length; j++) {
+		for (var j = 0; j < myDataColumns.length; j++) {
 			const newIndex = columnIndexMapping[j];
 			newDataColumns[j] = myDataColumns[newIndex];
 		}
