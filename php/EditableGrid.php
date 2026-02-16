@@ -149,7 +149,7 @@ class EditableGrid {
 		// data
 		$rootNode->appendChild($dataNode = $DOMDocument->createElement('data'));
 		if ($rows) {
-			$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
+			$fetchMethod = NULL;//method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
 			if (!$fetchMethod) foreach ($rows as $row) $dataNode->appendChild($this->getRowXML($DOMDocument, $row, $customRowAttributes, $encodeCustomAttributes));
 			else while ($row = call_user_func(array($rows, $fetchMethod))) $dataNode->appendChild($this->getRowXML($DOMDocument, $row, $customRowAttributes, $encodeCustomAttributes));
 		}
@@ -220,7 +220,7 @@ class EditableGrid {
 
 		$results['data'] = array();
 		if ($rows) {
-			$fetchMethod = method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
+			$fetchMethod = NULL;//method_exists($rows, 'fetch') ? 'fetch' : (method_exists($rows, 'fetch_assoc') ? 'fetch_assoc' : (method_exists($rows, 'FetchRow') ? 'FetchRow' : NULL));
 			if (!$fetchMethod) foreach ($rows as $row) $results['data'][] = $this->getRowPOJO($row, $customRowAttributes, $encodeCustomAttributes);
 			else while ($row = call_user_func(array($rows, $fetchMethod))) $results['data'][] = $this->getRowPOJO($row, $customRowAttributes, $encodeCustomAttributes);
 		}
