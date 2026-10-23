@@ -249,11 +249,11 @@ class EditableGrid {
 	}
 
 	public static function parseInt($string) {
-		return preg_match('/[-+]{0,1}(\d+)/', $string, $array) ? intval($array[0]) : NULL;
+		return preg_match('/[-+]{0,1}(\d+)/', (string) $string, $array) ? intval($array[0]) : NULL;
 	}
 
 	public static function parseFloat($string) {
-		return preg_match('/[-+]{0,1}([\d\.]+)/', $string, $array) ? floatval($array[0]) : NULL;
+		return preg_match('/[-+]{0,1}([\d\.]+)/', (string) $string, $array) ? floatval($array[0]) : NULL;
 	}
 
 	public static function repeat($len, $pattern=" ")
