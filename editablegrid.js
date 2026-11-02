@@ -217,7 +217,7 @@ EditableGrid.prototype.init = function (name, config)
 	}
 
 	// restore stored parameters, or use default values if nothing stored
-	this.currentPageIndex = this.localisset('pageIndex') ? parseInt(this.localget('pageIndex')) : 0;
+	this.currentPageIndex = this.localisset('pageIndex') ? this.sanitizePageIndex(this.localget('pageIndex')) : 0;
 	this.sortedColumnName = this.localisset('sortColumnIndexOrName') ? this.localget('sortColumnIndexOrName') : -1;
 	this.sortDescending = this.localisset('sortColumnIndexOrName') && this.localisset('sortDescending') ? this.localget('sortDescending') == 'true' : false;
 	this.currentFilter = this.localisset('filter') ? this.localget('filter') : null;
@@ -2225,11 +2225,23 @@ EditableGrid.prototype.getCurrentPageIndex = function()
 };
 
 /**
+ * Returns the given page index as an integer, or 0 if it is not a valid page index
+ * @param pageIndex page index, possibly read from the local storage
+ * @return {Integer}
+ */
+EditableGrid.prototype.sanitizePageIndex = function(pageIndex)
+{
+	pageIndex = parseInt(pageIndex);
+	return isNaN(pageIndex) || pageIndex < 0 ? 0 : pageIndex;
+};
+
+/**
  * Sets the current page (no effect if pageSize is 0)
  * @param {Integer} pageIndex Integer page index
  */
 EditableGrid.prototype.setPageIndex = function(pageIndex)
 {
+	pageIndex = this.sanitizePageIndex(pageIndex);
 	this.currentPageIndex = pageIndex;
 	this.localset('pageIndex', pageIndex);
 	this.refreshGrid();
